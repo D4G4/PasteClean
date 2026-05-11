@@ -1,0 +1,29 @@
+{
+  "name": "@pasteclean/gmail-sanitizer",
+  "version": "0.1.0",
+  "description": "Transforms arbitrary HTML into Gmail-compatible inline-styled HTML",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "juice": "^11.0.0",
+    "color": "^5.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.0",
+    "vitest": "^3.2.0",
+    "@types/color": "^4.2.0"
+  }
+}

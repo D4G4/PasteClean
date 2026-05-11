@@ -1,0 +1,15 @@
+{
+  "name": "pasteclean",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Gmail-safe rich text editor — write styled text, copy Gmail-compatible HTML",
+  "scripts": {
+    "build": "turbo build",
+    "test": "turbo test",
+    "lint": "turbo lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0",
+    "typescript": "^5.8.0"
+  }
+}
