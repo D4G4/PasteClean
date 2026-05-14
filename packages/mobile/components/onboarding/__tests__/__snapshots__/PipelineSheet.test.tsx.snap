@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PipelineSheet matches snapshot — closed 1`] = `null`;
+
+exports[`PipelineSheet matches snapshot — open 1`] = `null`;

@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ThemeScreen matches snapshot — Coral selected 1`] = `null`;
+
+exports[`ThemeScreen matches snapshot — Iris selected 1`] = `null`;

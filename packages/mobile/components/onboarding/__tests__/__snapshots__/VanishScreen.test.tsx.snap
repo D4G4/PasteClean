@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`VanishScreen matches snapshot at initial state (compose visible, sent hidden) 1`] = `null`;

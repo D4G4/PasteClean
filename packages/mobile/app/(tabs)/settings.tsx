@@ -1,120 +1,299 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, Linking, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useColorScheme } from '@/components/useColorScheme';
-import Colors from '@/constants/Colors';
+import { getColors } from '@/constants/Colors';
+import { useTheme } from '@/contexts/ThemeContext';
+import AccentPicker from '@/components/AccentPicker';
 
+// ---------------------------------------------------------------------------
+// Settings row
+// ---------------------------------------------------------------------------
 function SettingsRow({
-  icon,
-  label,
-  value,
+  title,
+  detail,
+  showChevron = false,
+  isLast = false,
+  colorCircle,
   onPress,
-  colors,
+  fg,
+  fgMuted,
+  fgFaint,
+  sep,
 }: {
-  icon: React.ComponentProps<typeof FontAwesome>['name'];
-  label: string;
-  value?: string;
+  title: string;
+  detail?: string;
+  showChevron?: boolean;
+  isLast?: boolean;
+  colorCircle?: string;
   onPress?: () => void;
-  colors: (typeof Colors)['light'];
+  fg: string;
+  fgMuted: string;
+  fgFaint: string;
+  sep: string;
 }) {
   return (
     <TouchableOpacity
-      style={[styles.row, { borderBottomColor: colors.border }]}
+      style={styles.row}
+      activeOpacity={onPress ? 0.5 : 1}
       onPress={onPress}
       disabled={!onPress}>
-      <View style={styles.rowLeft}>
-        <FontAwesome name={icon} size={18} color={colors.tint} style={styles.rowIcon} />
-        <Text style={[styles.rowLabel, { color: colors.text }]}>{label}</Text>
+      <Text style={[styles.rowTitle, { color: fg }]}>{title}</Text>
+      <View style={styles.rowRight}>
+        {detail != null && (
+          <Text style={[styles.rowDetail, { color: fgMuted }]}>{detail}</Text>
+        )}
+        {colorCircle != null && (
+          <View
+            style={[
+              styles.colorCircle,
+              { backgroundColor: colorCircle },
+            ]}
+          />
+        )}
+        {showChevron && (
+          <FontAwesome name="chevron-right" size={13} color={fgFaint} />
+        )}
       </View>
-      {value && (
-        <Text style={[styles.rowValue, { color: colors.textSecondary }]}>{value}</Text>
-      )}
-      {onPress && (
-        <FontAwesome name="chevron-right" size={14} color={colors.tabIconDefault} />
+      {/* Bottom border (left-aligned at 16px, not full width) */}
+      {!isLast && (
+        <View style={[styles.rowBorder, { backgroundColor: sep }]} />
       )}
     </TouchableOpacity>
   );
 }
 
+// ---------------------------------------------------------------------------
+// Settings screen
+// ---------------------------------------------------------------------------
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const dark = colorScheme === 'dark';
+  const colors = getColors(dark);
+  const { accent, setAccent } = useTheme();
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.sectionHeader, { color: colors.textSecondary }]}>GENERAL</Text>
-      <View style={[styles.section, { backgroundColor: colors.surface }]}>
-        <SettingsRow icon="font" label="Default Font Size" value="14px" colors={colors} />
-        <SettingsRow icon="paint-brush" label="Default Text Color" value="Black" colors={colors} />
-      </View>
-
-      <Text style={[styles.sectionHeader, { color: colors.textSecondary }]}>ABOUT</Text>
-      <View style={[styles.section, { backgroundColor: colors.surface }]}>
-        <SettingsRow icon="info-circle" label="Version" value="0.1.0" colors={colors} />
-        <SettingsRow
-          icon="question-circle"
-          label="How It Works"
-          colors={colors}
-          onPress={() => {}}
-        />
-      </View>
-
-      <View style={styles.footer}>
-        <Text style={[styles.footerText, { color: colors.textSecondary }]}>
-          PasteClean ensures your emails look exactly as intended in Gmail, regardless of dark mode.
+    <View style={[styles.container, { backgroundColor: dark ? '#000' : '#f2f2f7' }]}>
+      {/* Header */}
+      <View
+        style={[
+          styles.header,
+          {
+            backgroundColor: dark
+              ? 'rgba(0,0,0,0.85)'
+              : 'rgba(242,242,247,0.85)',
+          },
+        ]}>
+        <Text style={[styles.headerTitle, { color: colors.fg }]}>
+          Settings
         </Text>
       </View>
-    </ScrollView>
+
+      {/* Body */}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}>
+        {/* ---- Appearance ---- */}
+        <Text style={[styles.sectionHeader, { color: colors.fgMuted }]}>
+          APPEARANCE
+        </Text>
+        <AccentPicker selected={accent} onPick={setAccent} />
+
+        {/* ---- Defaults ---- */}
+        <Text style={[styles.sectionHeader, { color: colors.fgMuted }]}>
+          DEFAULTS
+        </Text>
+        <View style={[styles.section, { backgroundColor: colors.cardBg }]}>
+          <SettingsRow
+            title="Default Font Size"
+            detail="15px"
+            showChevron
+            fg={colors.fg}
+            fgMuted={colors.fgMuted}
+            fgFaint={colors.fgFaint}
+            sep={colors.sep}
+          />
+          <SettingsRow
+            title="Default Text Color"
+            colorCircle={colors.fg}
+            showChevron
+            isLast
+            fg={colors.fg}
+            fgMuted={colors.fgMuted}
+            fgFaint={colors.fgFaint}
+            sep={colors.sep}
+          />
+        </View>
+
+        {/* ---- About ---- */}
+        <Text style={[styles.sectionHeader, { color: colors.fgMuted }]}>
+          ABOUT
+        </Text>
+        <View style={[styles.section, { backgroundColor: colors.cardBg }]}>
+          <SettingsRow
+            title="Version"
+            detail="1.0.0"
+            fg={colors.fg}
+            fgMuted={colors.fgMuted}
+            fgFaint={colors.fgFaint}
+            sep={colors.sep}
+          />
+          <SettingsRow
+            title="How It Works"
+            showChevron
+            isLast
+            onPress={() => {}}
+            fg={colors.fg}
+            fgMuted={colors.fgMuted}
+            fgFaint={colors.fgFaint}
+            sep={colors.sep}
+          />
+        </View>
+
+        {/* ---- Support ---- */}
+        <Text style={[styles.sectionHeader, { color: colors.fgMuted }]}>
+          SUPPORT
+        </Text>
+        <View style={[styles.section, { backgroundColor: colors.cardBg }]}>
+          <SettingsRow
+            title="Send Feedback"
+            showChevron
+            onPress={() => {}}
+            fg={colors.fg}
+            fgMuted={colors.fgMuted}
+            fgFaint={colors.fgFaint}
+            sep={colors.sep}
+          />
+          <SettingsRow
+            title="Rate PasteClean"
+            showChevron
+            onPress={() => {}}
+            fg={colors.fg}
+            fgMuted={colors.fgMuted}
+            fgFaint={colors.fgFaint}
+            sep={colors.sep}
+          />
+          <SettingsRow
+            title="Privacy Policy"
+            showChevron
+            isLast
+            onPress={() => {}}
+            fg={colors.fg}
+            fgMuted={colors.fgMuted}
+            fgFaint={colors.fgFaint}
+            sep={colors.sep}
+          />
+        </View>
+
+        {/* Footer */}
+        <Text style={[styles.footer, { color: colors.fgMuted }]}>
+          PasteClean keeps your formatting intact when pasting into Gmail. We
+          strip dark-mode and inline styles that Gmail would render as invisible
+          white-on-white.
+        </Text>
+      </ScrollView>
+    </View>
   );
 }
 
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
+  // Header
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    paddingTop: 56,
+    paddingBottom: 6,
+    paddingLeft: 20,
+    paddingRight: 12,
+  },
+  headerTitle: {
+    fontSize: 34,
+    fontWeight: '700',
+    letterSpacing: 0.36,
+  },
+
+  // Scroll body
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingTop: 12,
+    paddingBottom: 100,
+  },
+
+  // Section
   sectionHeader: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     letterSpacing: 0.5,
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: 8,
+    textTransform: 'uppercase',
+    paddingHorizontal: 32,
+    paddingBottom: 6,
+    paddingTop: 20,
   },
   section: {
-    marginHorizontal: 12,
-    borderRadius: 10,
+    marginHorizontal: 16,
+    borderRadius: 12,
     overflow: 'hidden',
   },
+
+  // Row
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
+    minHeight: 44,
     paddingHorizontal: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  rowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  rowTitle: {
+    fontSize: 17,
+    letterSpacing: -0.4,
     flex: 1,
   },
-  rowIcon: {
-    width: 28,
-  },
-  rowLabel: {
-    fontSize: 16,
-  },
-  rowValue: {
-    fontSize: 15,
-    marginRight: 8,
-  },
-  footer: {
-    padding: 24,
+  rowRight: {
+    flexDirection: 'row',
     alignItems: 'center',
   },
-  footerText: {
+  rowDetail: {
+    fontSize: 17,
+    marginRight: 6,
+  },
+  colorCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    marginRight: 6,
+  },
+  rowBorder: {
+    position: 'absolute',
+    bottom: 0,
+    left: 16,
+    right: 0,
+    height: 0.5,
+  },
+
+  // Footer
+  footer: {
     fontSize: 13,
     textAlign: 'center',
     lineHeight: 18,
+    paddingHorizontal: 32,
+    paddingTop: 8,
+    paddingBottom: 24,
   },
 });

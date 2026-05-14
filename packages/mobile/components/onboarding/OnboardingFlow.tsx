@@ -1,0 +1,152 @@
+import React, { useRef, useState, useCallback } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import PagerView from 'react-native-pager-view';
+
+import ProblemScreen from './screens/ProblemScreen';
+import VanishScreen from './screens/VanishScreen';
+import FixedScreen from './screens/FixedScreen';
+import FlowScreen from './screens/FlowScreen';
+import ThemeScreen from './screens/ThemeScreen';
+import PipelineSheet from './PipelineSheet';
+
+const PAGE_COUNT = 5;
+
+interface OnboardingFlowProps {
+  accent: string;
+  setAccent: (color: string) => void;
+  onDone: () => void;
+}
+
+export default function OnboardingFlow({
+  accent,
+  setAccent,
+  onDone,
+}: OnboardingFlowProps) {
+  const insets = useSafeAreaInsets();
+  const pagerRef = useRef<PagerView>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [peekOpen, setPeekOpen] = useState(false);
+
+  const goToNext = useCallback(() => {
+    if (currentPage >= PAGE_COUNT - 1) {
+      onDone();
+      return;
+    }
+    pagerRef.current?.setPage(currentPage + 1);
+  }, [currentPage, onDone]);
+
+  const isLast = currentPage === PAGE_COUNT - 1;
+  const ctaLabel = isLast ? 'Get Started' : 'Continue';
+
+  // Keep the title close to the status bar: just safe-area + a small breath.
+  // Each screen owns its internal top padding from there.
+  const topPad = Math.max(20, insets.top + 12);
+  const bottomPad = Math.max(44, insets.bottom + 24);
+
+  return (
+    <View style={[styles.container, { paddingTop: topPad }]}>
+      <PagerView
+        ref={pagerRef}
+        style={styles.pager}
+        initialPage={0}
+        onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}>
+        <View key="0" style={styles.page} testID="onboarding-page-0">
+          <ProblemScreen />
+        </View>
+        <View key="1" style={styles.page} testID="onboarding-page-1">
+          <VanishScreen />
+        </View>
+        <View key="2" style={styles.page} testID="onboarding-page-2">
+          <FixedScreen />
+        </View>
+        <View key="3" style={styles.page} testID="onboarding-page-3">
+          <FlowScreen accent={accent} onPeek={() => setPeekOpen(true)} />
+        </View>
+        <View key="4" style={styles.page} testID="onboarding-page-4">
+          <ThemeScreen accent={accent} setAccent={setAccent} />
+        </View>
+      </PagerView>
+
+      {/* Bottom controls */}
+      <View style={[styles.bottomArea, { paddingBottom: bottomPad }]}>
+        <View style={styles.dotsRow}>
+          {Array.from({ length: PAGE_COUNT }).map((_, i) => (
+            <View
+              key={i}
+              style={[
+                styles.dot,
+                i === currentPage
+                  ? { width: 18, backgroundColor: accent }
+                  : { width: 6, backgroundColor: 'rgba(60,60,67,0.22)' },
+              ]}
+            />
+          ))}
+        </View>
+
+        <TouchableOpacity
+          style={[
+            styles.ctaButton,
+            { backgroundColor: accent, shadowColor: accent },
+          ]}
+          activeOpacity={0.85}
+          onPress={goToNext}
+          testID="onboarding-cta">
+          <Text style={styles.ctaText}>{ctaLabel}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Pipeline sheet — launched from FlowScreen "How do I work?" */}
+      <PipelineSheet open={peekOpen} onClose={() => setPeekOpen(false)} />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  pager: {
+    flex: 1,
+  },
+  page: {
+    flex: 1,
+  },
+  bottomArea: {
+    paddingHorizontal: 24,
+    paddingTop: 8,
+    gap: 16,
+  },
+  dotsRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+  },
+  dot: {
+    height: 6,
+    borderRadius: 3,
+  },
+  ctaButton: {
+    height: 52,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.33,
+    shadowRadius: 20,
+    elevation: 8,
+  },
+  ctaText: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#fff',
+    letterSpacing: -0.2,
+  },
+});
