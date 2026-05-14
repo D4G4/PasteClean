@@ -30,6 +30,23 @@ jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
 
+// react-native-webview is a TurboModule that fails getEnforcing() under Jest.
+// We never render a real WebView in tests, but TenTap's barrel file imports
+// it transitively — stub it so importing @10play/tentap-editor doesn't crash.
+jest.mock('react-native-webview', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const WebView = React.forwardRef((props, ref) => {
+    React.useImperativeHandle(ref, () => ({
+      injectJavaScript: () => {},
+      postMessage: () => {},
+    }));
+    return React.createElement(View, { ...props, ref: undefined });
+  });
+  WebView.displayName = 'WebView';
+  return { __esModule: true, default: WebView, WebView };
+});
+
 // Animations: the real Easing.bezier path crashes under jest-expo. Stub the
 // Animated API so .start() resolves immediately and tests never actually run
 // the loop — we snapshot the static initial render.

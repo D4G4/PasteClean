@@ -6,7 +6,9 @@
   "scripts": {
     "build": "turbo build",
     "test": "turbo test",
-    "lint": "turbo lint"
+    "lint": "turbo lint",
+    "e2e": "maestro test .maestro/",
+    "e2e:link": "maestro test .maestro/04_link_regression.yaml"
   },
   "devDependencies": {
     "turbo": "^2.5.0",

@@ -2,3 +2,8 @@ packages:
   - "packages/*"
 allowBuilds:
   esbuild: true
+# Dedupe transitive react-dom. @tiptap/react pulls react-dom@18 as a peer
+# satisfier; force it to match the app's React 19 to silence expo-doctor's
+# duplicate-native-module warning and keep a single React tree.
+overrides:
+  react-dom: 19.1.0

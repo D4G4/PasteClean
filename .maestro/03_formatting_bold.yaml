@@ -1,0 +1,50 @@
+# Bold-toggle round-trip: type plain, turn bold on, type bold, turn bold off,
+# type plain again. We can't directly assert "this text is bold" without an
+# OCR step, but we CAN verify:
+#   - all the typed text appears
+#   - the Copy flow then captures both the bold and the surrounding text
+#
+# Bold/italic/underline/strike share the same TenTap toolbar-item shape, so a
+# regression in one means a regression in all — we cover bold here as the
+# canary; if it works the rest do too.
+#
+# Toolbar buttons in TenTap don't expose stable testIDs; we target by their
+# accessibility text rendered into the FlatList. "B" is the bold glyph
+# Maestro can match on the iOS accessibility tree.
+appId: com.pasteclean.app
+tags:
+  - formatting
+---
+- launchApp
+
+- runFlow:
+    when:
+      visible:
+        id: "onboarding-page-0"
+    file: 01_onboarding_to_editor.yaml
+
+- tapOn:
+    id: "editor-body"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+- inputText: "Plain "
+
+# Toggle bold ON (the "B" toolbar button).
+- tapOn: "B"
+- inputText: "BOLD"
+# Toggle bold OFF.
+- tapOn: "B"
+- inputText: " plain again"
+
+- assertVisible: "Plain"
+- assertVisible: "BOLD"
+- assertVisible: "plain again"
+
+# Copy and confirm the sanitized payload made it out. We don't validate the
+# clipboard contents from inside Maestro (would need a custom shim), but the
+# "Copied!" affordance proves the whole sanitize → clipboard chain ran
+# without throwing.
+- tapOn:
+    id: "copy-button"
+- assertVisible: "Copied!"

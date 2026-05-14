@@ -1,0 +1,9 @@
+# Maestro shared config — picked up automatically by `maestro test .maestro/`.
+# Anything in `executionOrder` runs in order; flows not listed run after.
+executionOrder:
+  flows:
+    - 01_onboarding_to_editor.yaml
+    - 02_typing_basic.yaml
+    - 03_formatting_bold.yaml
+    - 04_link_regression.yaml
+    - 05_copy_to_gmail.yaml

@@ -1,0 +1,34 @@
+# Bare typing flow: tap into the editor, type a string, verify it shows up
+# inside the WebView. This proves the bridge keyboard path is alive end-to-end
+# (TenTap WebView ↔ react-native-webview ↔ JS input events).
+#
+# We can't assert against the WebView's internal DOM, but Maestro's text
+# matcher does inspect the WebView's rendered text on iOS via the
+# accessibility tree — so assertVisible against the typed string works.
+appId: com.pasteclean.app
+tags:
+  - smoke
+  - typing
+---
+- launchApp
+
+# If the device launched fresh into onboarding (e.g. running this flow
+# in isolation), skip through. The runOptional/runFlow combination below
+# is a no-op when we're already on the editor.
+- runFlow:
+    when:
+      visible:
+        id: "onboarding-page-0"
+    file: 01_onboarding_to_editor.yaml
+
+- tapOn:
+    id: "editor-body"
+
+# Give the WebView a beat to focus and the keyboard to come up.
+- waitForAnimationToEnd:
+    timeout: 2000
+
+- inputText: "Hello team, quick update on Q2"
+
+# The typed string should be readable through the accessibility tree.
+- assertVisible: "Hello team, quick update on Q2"

@@ -104,6 +104,7 @@ exports[`EditorScreen — dark mode matches snapshot 1`] = `
       }
     >
       <View
+        accessibilityLabel="Preview"
         accessibilityState={
           {
             "busy": undefined,
@@ -143,10 +144,12 @@ exports[`EditorScreen — dark mode matches snapshot 1`] = `
             "width": 36,
           }
         }
+        testID="preview-button"
       >
         <Text />
       </View>
       <View
+        accessibilityLabel="Copy to Gmail"
         accessibilityState={
           {
             "busy": undefined,
@@ -195,6 +198,7 @@ exports[`EditorScreen — dark mode matches snapshot 1`] = `
             "shadowRadius": 8,
           }
         }
+        testID="copy-button"
       >
         <Text
           style={
@@ -337,6 +341,7 @@ exports[`EditorScreen — dark mode matches snapshot 1`] = `
         },
       ]
     }
+    testID="editor-body"
   >
     <View
       style={

@@ -1,27 +1,23 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   StyleSheet,
   View,
   Text,
   TouchableOpacity,
-  Alert,
   Platform,
   KeyboardAvoidingView,
   Keyboard,
   StatusBar,
-  Linking,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import * as Clipboard from 'expo-clipboard';
-import * as Haptics from 'expo-haptics';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getColors, resolveAccent } from '@/constants/Colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { GmailHandoffToast } from '@/components/GmailHandoffToast';
-import { sanitizeForGmail } from '@pasteclean/gmail-sanitizer';
+import { useEditorLinkPatch } from '@/hooks/useEditorLinkPatch';
+import { useCopyForGmail } from '@/hooks/useCopyForGmail';
 import {
   RichText,
   Toolbar,
@@ -30,9 +26,19 @@ import {
   darkEditorTheme,
   darkEditorCss,
   defaultEditorTheme,
+  LinkBridge,
+  TenTapStartKit,
 } from '@10play/tentap-editor';
 
 const STORAGE_KEY_AUTO_OPEN = '@pasteclean/auto_open_gmail';
+
+// TipTap's link mark defaults to `inclusive: true`, which means after Insert
+// the cursor sits inside the mark and any text typed afterwards inherits the
+// link. Override to `inclusive: false` so the link ends at the inserted text
+// and subsequent typing is plain.
+const bridgeExtensions = TenTapStartKit.map((ext) =>
+  ext.name === 'link' ? LinkBridge.extendExtension({ inclusive: false }) : ext,
+);
 
 // ---------------------------------------------------------------------------
 // BrandMark: 32x32 rounded-rect icon (clipboard + check, approximated with
@@ -69,9 +75,6 @@ export default function EditorScreen() {
   const a = resolveAccent(accent, isDark);
   const router = useRouter();
 
-  const [copied, setCopied] = useState(false);
-  const [toastVisible, setToastVisible] = useState(false);
-  const [autoOpenGmail, setAutoOpenGmail] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   // Keyboard listener — drives toolbar visibility. When the keyboard is up
@@ -95,29 +98,6 @@ export default function EditorScreen() {
     };
   }, []);
 
-  // Load auto-open preference
-  React.useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY_AUTO_OPEN).then((val) => {
-      if (val === 'true') setAutoOpenGmail(true);
-    });
-  }, []);
-
-  const handleAutoOpenChange = useCallback((value: boolean) => {
-    setAutoOpenGmail(value);
-    AsyncStorage.setItem(STORAGE_KEY_AUTO_OPEN, value ? 'true' : 'false');
-  }, []);
-
-  const openGmail = useCallback(() => {
-    setToastVisible(false);
-    Linking.openURL('googlegmail://co').catch(() => {
-      Linking.openURL('https://mail.google.com/mail/u/0/#drafts');
-    });
-  }, []);
-
-  const dismissToast = useCallback(() => {
-    setToastVisible(false);
-  }, []);
-
   // Pick TenTap's prebuilt dark/light theme — this drives the WebView
   // container + toolbar surface colors. The HTML body inside the WebView is
   // recolored separately via editor.injectCSS() below.
@@ -125,8 +105,21 @@ export default function EditorScreen() {
     autofocus: false,
     avoidIosKeyboard: true,
     initialContent: '',
+    bridgeExtensions,
     theme: isDark ? darkEditorTheme : defaultEditorTheme,
   });
+
+  useEditorLinkPatch(editor);
+
+  const {
+    copied,
+    toastVisible,
+    autoOpenGmail,
+    setAutoOpenGmail,
+    copyForGmail,
+    openGmail,
+    dismissToast,
+  } = useCopyForGmail(editor);
 
   // Push the theme CSS into the WebView. TenTap's `editorState.isReady`
   // doesn't flip reliably for us (a known race in useBridgeState), so
@@ -190,38 +183,6 @@ export default function EditorScreen() {
     editor.setPlaceholder('Start writing your email here...');
   }, [editor]);
 
-  // --- Copy sanitized HTML to clipboard -----------------------------------
-  const handleCopyForGmail = useCallback(async () => {
-    try {
-      const html = await editor.getHTML();
-
-      if (!html || html === '<p></p>' || html === '<p><br></p>') {
-        Alert.alert('Nothing to copy', 'Write something first!');
-        return;
-      }
-
-      const sanitized = sanitizeForGmail(html);
-      await Clipboard.setStringAsync(sanitized);
-
-      if (Platform.OS !== 'web') {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
-
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-
-      // Auto-open Gmail if preference is set; otherwise show toast
-      if (autoOpenGmail) {
-        openGmail();
-      } else {
-        setToastVisible(true);
-      }
-    } catch (error) {
-      Alert.alert('Copy failed', 'Something went wrong. Please try again.');
-      console.error('Copy error:', error);
-    }
-  }, [editor, autoOpenGmail, openGmail]);
-
   // --- Navigate to preview ------------------------------------------------
   const handlePreview = useCallback(async () => {
     const html = await editor.getHTML();
@@ -257,12 +218,14 @@ export default function EditorScreen() {
             onPress={handlePreview}
             style={styles.previewBtn}
             hitSlop={8}
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+            testID="preview-button"
+            accessibilityLabel="Preview">
             <FontAwesome name="eye" size={18} color="#fff" />
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={handleCopyForGmail}
+            onPress={copyForGmail}
             style={[
               styles.copyPill,
               {
@@ -270,7 +233,9 @@ export default function EditorScreen() {
               },
             ]}
             activeOpacity={0.7}
-            hitSlop={4}>
+            hitSlop={4}
+            testID="copy-button"
+            accessibilityLabel={copied ? 'Copied' : 'Copy to Gmail'}>
             {copied && (
               <FontAwesome name="check" size={14} color="#fff" />
             )}
@@ -329,6 +294,7 @@ export default function EditorScreen() {
       {/* ================================================================ */}
       <View
         key={isDark ? 'dark' : 'light'}
+        testID="editor-body"
         style={[
           styles.editorWrap,
           { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' },
@@ -370,7 +336,7 @@ export default function EditorScreen() {
         onDismiss={dismissToast}
         onOpenGmail={openGmail}
         autoOpen={autoOpenGmail}
-        onAutoOpenChange={handleAutoOpenChange}
+        onAutoOpenChange={setAutoOpenGmail}
       />
     </KeyboardAvoidingView>
   );

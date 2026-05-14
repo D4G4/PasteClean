@@ -1,0 +1,33 @@
+# Copy-for-Gmail handoff: full happy path from typing to the post-copy toast.
+# Unit tests cover the sanitize → clipboard → toast wiring; this flow proves
+# the same path works against the real WebView's getHTML() round-trip.
+appId: com.pasteclean.app
+tags:
+  - smoke
+  - copy
+---
+- launchApp
+
+- runFlow:
+    when:
+      visible:
+        id: "onboarding-page-0"
+    file: 01_onboarding_to_editor.yaml
+
+- tapOn:
+    id: "editor-body"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+- inputText: "Hey team — quick status: shipping by Friday."
+
+- tapOn:
+    id: "copy-button"
+
+# Two affordances confirm the copy succeeded: the in-button "Copied!" chip
+# (auto-clears after 2s) and the handoff toast (sticky until dismissed).
+- assertVisible: "Copied!"
+- assertVisible: "Copied — open Gmail?"
+- assertVisible: "Open Gmail"
+
+- takeScreenshot: copy-success-toast

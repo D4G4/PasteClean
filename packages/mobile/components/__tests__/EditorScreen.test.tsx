@@ -33,12 +33,18 @@ jest.mock('@10play/tentap-editor', () => {
       injectCSS: () => {},
       injectJS: () => {},
       setPlaceholder: () => {},
+      setLink: () => {},
     }),
     useBridgeState: () => ({ isReady: true }),
     DEFAULT_TOOLBAR_ITEMS: [],
     darkEditorTheme: { webview: { backgroundColor: '#1C1C1E' } },
     defaultEditorTheme: { webview: { backgroundColor: '#FFFFFF' } },
     darkEditorCss: '* { background:#1C1C1E; color:white; }',
+    TenTapStartKit: [{ name: 'link' }],
+    LinkBridge: {
+      name: 'link',
+      extendExtension: () => ({ name: 'link' }),
+    },
   };
 });
 

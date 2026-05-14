@@ -1,0 +1,68 @@
+# Link insertion regression: this is the exact bug we patched in
+# hooks/useEditorLinkPatch.ts. Maestro drives the real WebView so this proves
+# the patch behaves correctly on-device, not just in the unit-test fake.
+#
+# Scenario:
+#   1. Type "Hi click here for more"
+#   2. Long-press "here" to bring up the iOS selection handles, then expand
+#      the selection to cover "here"
+#   3. Tap the link icon, type a URL, hit Done
+#   4. After insert, cursor should land AFTER "here"
+#   5. Continue typing " — appreciated"
+#   6. The trailing text MUST NOT be linked. Visually it should be the
+#      default text color, not the link blue/underline.
+#
+# Direct programmatic assertion of "this text is or isn't a link" isn't
+# something Maestro exposes on the WebView's DOM. So we use this flow for:
+#   (a) catching crashes / regressions in the bridge wiring, and
+#   (b) capturing a screenshot a human can eyeball in CI.
+#
+# The unit tests in hooks/__tests__/useEditorLinkPatch.test.tsx prove the
+# logic; this flow proves the wiring.
+appId: com.pasteclean.app
+tags:
+  - regression
+  - link
+---
+- launchApp
+
+- runFlow:
+    when:
+      visible:
+        id: "onboarding-page-0"
+    file: 01_onboarding_to_editor.yaml
+
+- tapOn:
+    id: "editor-body"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+- inputText: "Hi click here for more"
+
+# Select "here" via long-press inside the WebView. Coords are reasonable for
+# the WebView's text region; if the device size changes substantially these
+# may need to retune. We long-press, then iOS shows "Select" / "Select All";
+# Maestro's text matcher taps "Select".
+- longPressOn: "here"
+- runFlow:
+    when:
+      visible: "Select"
+    commands:
+      - tapOn: "Select"
+
+# Open the link UI from the toolbar. Maestro can match by accessibility text.
+- tapOn: "Link"
+- inputText: "https://example.com"
+- tapOn: "Done"
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# Continue typing — should be plain text, not extending the link.
+- inputText: " — appreciated"
+
+# All the typed text is still readable in the accessibility tree.
+- assertVisible: "appreciated"
+
+# Snapshot for a human-visible reviewable artifact.
+- takeScreenshot: link-regression-result
