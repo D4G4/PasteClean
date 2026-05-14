@@ -1,0 +1,351 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditorScreen — dark mode matches snapshot 1`] = `
+<View
+  onLayout={[Function]}
+  style={
+    [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#000000",
+        },
+      ],
+      {
+        "paddingBottom": 0,
+      },
+    ]
+  }
+>
+  <View
+    style={
+      [
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "paddingBottom": 14,
+          "paddingLeft": 18,
+          "paddingRight": 12,
+        },
+        {
+          "backgroundColor": "#FF6B5C",
+          "paddingTop": 12,
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "gap": 10,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "rgba(255,255,255,0.2)",
+            "borderRadius": 8,
+            "height": 32,
+            "justifyContent": "center",
+            "width": 32,
+          }
+        }
+      >
+        <Text />
+      </View>
+      <View
+        style={
+          {
+            "justifyContent": "center",
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "color": "#fff",
+              "fontSize": 18,
+              "fontWeight": "700",
+            }
+          }
+        >
+          PasteClean
+        </Text>
+        <Text
+          style={
+            {
+              "color": "rgba(255,255,255,0.78)",
+              "fontSize": 11,
+              "fontWeight": "500",
+              "letterSpacing": 0.2,
+              "marginTop": 2,
+              "textTransform": "uppercase",
+            }
+          }
+        >
+          New draft
+        </Text>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "gap": 10,
+        }
+      }
+    >
+      <View
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        hitSlop={8}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "rgba(255,255,255,0.18)",
+            "borderRadius": 18,
+            "height": 36,
+            "justifyContent": "center",
+            "opacity": 1,
+            "width": 36,
+          }
+        }
+      >
+        <Text />
+      </View>
+      <View
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        hitSlop={4}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "#fff",
+            "borderRadius": 18,
+            "elevation": 3,
+            "flexDirection": "row",
+            "gap": 6,
+            "height": 36,
+            "opacity": 1,
+            "paddingHorizontal": 16,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 2,
+              "width": 0,
+            },
+            "shadowOpacity": 0.12,
+            "shadowRadius": 8,
+          }
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontSize": 14,
+                "fontWeight": "700",
+                "letterSpacing": -0.1,
+              },
+              {
+                "color": "#FF6B5C",
+              },
+            ]
+          }
+        >
+          Copy
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      [
+        {},
+        {
+          "backgroundColor": "#000000",
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "minHeight": 42,
+            "paddingHorizontal": 18,
+          },
+          {
+            "borderBottomColor": "rgba(84,84,88,0.5)",
+            "borderBottomWidth": 0.5,
+          },
+        ]
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontSize": 13,
+              "fontWeight": "500",
+              "width": 56,
+            },
+            {
+              "color": "rgba(235,235,245,0.55)",
+            },
+          ]
+        }
+      >
+        To
+      </Text>
+      <Text
+        style={
+          [
+            {
+              "flex": 1,
+              "fontSize": 15,
+              "paddingVertical": 10,
+            },
+            {
+              "color": "rgba(235,235,245,0.3)",
+            },
+          ]
+        }
+      >
+        placeholder
+      </Text>
+    </View>
+    <View
+      style={
+        [
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "minHeight": 42,
+            "paddingHorizontal": 18,
+          },
+          {
+            "borderBottomColor": "rgba(84,84,88,0.5)",
+            "borderBottomWidth": 0.5,
+          },
+        ]
+      }
+    >
+      <Text
+        style={
+          [
+            {
+              "fontSize": 13,
+              "fontWeight": "500",
+              "width": 56,
+            },
+            {
+              "color": "rgba(235,235,245,0.55)",
+            },
+          ]
+        }
+      >
+        Subject
+      </Text>
+      <Text
+        style={
+          [
+            {
+              "flex": 1,
+              "fontSize": 15,
+              "paddingVertical": 10,
+            },
+            {
+              "color": "rgba(235,235,245,0.3)",
+            },
+          ]
+        }
+      >
+        placeholder
+      </Text>
+    </View>
+  </View>
+  <View
+    style={
+      [
+        {
+          "flex": 1,
+          "paddingHorizontal": 18,
+          "paddingTop": 16,
+        },
+        {
+          "backgroundColor": "#1C1C1E",
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        {
+          "flex": 1,
+        }
+      }
+      testID="rich-text"
+    />
+  </View>
+</View>
+`;

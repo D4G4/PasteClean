@@ -1,19 +1,17 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import ThemeScreen from '../screens/ThemeScreen';
+import { snapshotOf } from '../test-utils';
 
 describe('ThemeScreen', () => {
   it('matches snapshot — Coral selected', () => {
-    const tree = renderer
-      .create(<ThemeScreen accent="#FF6B5C" setAccent={() => {}} />)
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    expect(
+      snapshotOf(<ThemeScreen accent="#FF6B5C" setAccent={() => {}} />),
+    ).toMatchSnapshot();
   });
 
   it('matches snapshot — Iris selected', () => {
-    const tree = renderer
-      .create(<ThemeScreen accent="#6E55FF" setAccent={() => {}} />)
-      .toJSON();
-    expect(tree).toMatchSnapshot();
+    expect(
+      snapshotOf(<ThemeScreen accent="#6E55FF" setAccent={() => {}} />),
+    ).toMatchSnapshot();
   });
 });

@@ -13,6 +13,7 @@ import {
   Platform,
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useTokens } from './tokens';
 
 const ONB_ACCENT = '#007AFF';
 const mono = Platform.OS === 'ios' ? 'Menlo' : 'monospace';
@@ -74,6 +75,7 @@ const SHEET_HEIGHT = Math.round(SCREEN_HEIGHT * 0.88);
 // the backdrop slides up with the sheet, which looks wrong (the tint only
 // appears where the sheet has reached).
 export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
+  const { dark, t } = useTokens();
   const [mounted, setMounted] = useState(open);
   const backdropAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(SHEET_HEIGHT)).current;
@@ -131,29 +133,52 @@ export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
         <Animated.View
           style={[
             styles.sheet,
-            { transform: [{ translateY: slideAnim }] },
+            {
+              transform: [{ translateY: slideAnim }],
+              backgroundColor: dark ? '#1c1c1e' : '#f2f2f7',
+            },
           ]}>
           <View style={styles.grabberRow}>
-            <View style={styles.grabber} />
+            <View
+              style={[
+                styles.grabber,
+                {
+                  backgroundColor: dark
+                    ? 'rgba(235,235,245,0.25)'
+                    : 'rgba(60,60,67,0.25)',
+                },
+              ]}
+            />
           </View>
           <View style={styles.header}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.title}>How PasteClean works</Text>
-              <Text style={styles.subtitle}>
+              <Text style={[styles.title, { color: t.ink }]}>
+                How PasteClean works
+              </Text>
+              <Text style={[styles.subtitle, { color: t.inkMuted }]}>
                 An 8-step pipeline runs on every copy
               </Text>
             </View>
             <TouchableOpacity
               onPress={onClose}
-              style={styles.closeBtn}
+              style={[
+                styles.closeBtn,
+                {
+                  backgroundColor: dark
+                    ? 'rgba(255,255,255,0.12)'
+                    : 'rgba(60,60,67,0.12)',
+                },
+              ]}
               testID="pipeline-sheet-close">
-              <FontAwesome name="times" size={14} color="#3c3c43" />
+              <FontAwesome name="times" size={14} color={t.ink} />
             </TouchableOpacity>
           </View>
           <ScrollView
             style={styles.scroll}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator>
+            {/* Input/output code chips intentionally stay dark in both
+                themes — they read as terminal/IDE blocks. */}
             <View style={styles.inputChip}>
               <Text style={styles.inputLabel}>INPUT</Text>
               <Text style={styles.inputCode} numberOfLines={1}>
@@ -162,13 +187,32 @@ export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
             </View>
             <View style={{ gap: 10 }}>
               {PIPELINE_STEPS.map((s) => (
-                <View key={s.num} style={styles.step}>
-                  <View style={styles.numBadge}>
+                <View
+                  key={s.num}
+                  style={[
+                    styles.step,
+                    {
+                      backgroundColor: t.surface,
+                      borderColor: t.borderFaint,
+                    },
+                  ]}>
+                  <View
+                    style={[
+                      styles.numBadge,
+                      {
+                        backgroundColor:
+                          ONB_ACCENT + (dark ? '28' : '14'),
+                      },
+                    ]}>
                     <Text style={styles.numBadgeText}>{s.num}</Text>
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={styles.stepLabel}>{s.label}</Text>
-                    <Text style={styles.stepDesc}>{s.desc}</Text>
+                    <Text style={[styles.stepLabel, { color: t.ink }]}>
+                      {s.label}
+                    </Text>
+                    <Text style={[styles.stepDesc, { color: t.inkMuted }]}>
+                      {s.desc}
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -197,7 +241,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   sheet: {
-    backgroundColor: '#f2f2f7',
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
     height: '88%',
@@ -212,7 +255,6 @@ const styles = StyleSheet.create({
     width: 36,
     height: 5,
     borderRadius: 3,
-    backgroundColor: 'rgba(60,60,67,0.25)',
   },
   header: {
     flexDirection: 'row',
@@ -226,19 +268,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#1c1c1e',
     letterSpacing: -0.4,
   },
   subtitle: {
     fontSize: 14,
-    color: 'rgba(60,60,67,0.6)',
     marginTop: 2,
   },
   closeBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: 'rgba(60,60,67,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -275,17 +314,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 12,
-    backgroundColor: '#fff',
     borderRadius: 14,
     padding: 14,
     borderWidth: 0.5,
-    borderColor: 'rgba(60,60,67,0.1)',
   },
   numBadge: {
     width: 28,
     height: 28,
     borderRadius: 7,
-    backgroundColor: ONB_ACCENT + '14',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -298,13 +334,11 @@ const styles = StyleSheet.create({
   stepLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1c1c1e',
     letterSpacing: -0.1,
     marginBottom: 3,
   },
   stepDesc: {
     fontSize: 14,
-    color: 'rgba(60,60,67,0.72)',
     lineHeight: 19,
   },
   outputChip: {

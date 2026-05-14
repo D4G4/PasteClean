@@ -4,20 +4,21 @@ import {
   View,
   Text,
   TouchableOpacity,
-  TextInput,
   Alert,
   Platform,
   KeyboardAvoidingView,
+  Keyboard,
   StatusBar,
   Linking,
 } from 'react-native';
-import { useRouter, usePathname } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getColors } from '@/constants/Colors';
+import { getColors, resolveAccent } from '@/constants/Colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import { GmailHandoffToast } from '@/components/GmailHandoffToast';
 import { sanitizeForGmail } from '@pasteclean/gmail-sanitizer';
@@ -26,6 +27,9 @@ import {
   Toolbar,
   useEditorBridge,
   DEFAULT_TOOLBAR_ITEMS,
+  darkEditorTheme,
+  darkEditorCss,
+  defaultEditorTheme,
 } from '@10play/tentap-editor';
 
 const STORAGE_KEY_AUTO_OPEN = '@pasteclean/auto_open_gmail';
@@ -60,15 +64,36 @@ export default function EditorScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const colors = getColors(isDark);
+  const insets = useSafeAreaInsets();
   const { accent } = useTheme();
+  const a = resolveAccent(accent, isDark);
   const router = useRouter();
 
   const [copied, setCopied] = useState(false);
-  const [toValue] = useState('');
-  const [subjectValue, setSubjectValue] = useState('');
   const [toastVisible, setToastVisible] = useState(false);
   const [autoOpenGmail, setAutoOpenGmail] = useState(false);
-  const pathname = usePathname();
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  // Keyboard listener — drives toolbar visibility. When the keyboard is up
+  // we show the formatting toolbar above it (TenTap's auto-hide via
+  // isFocused doesn't fire reliably for our WebView). When it's down the
+  // floating nav owns the bottom of the screen.
+  React.useEffect(() => {
+    const showEvt =
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvt =
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvt, () =>
+      setKeyboardVisible(true),
+    );
+    const hideSub = Keyboard.addListener(hideEvt, () =>
+      setKeyboardVisible(false),
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   // Load auto-open preference
   React.useEffect(() => {
@@ -93,11 +118,73 @@ export default function EditorScreen() {
     setToastVisible(false);
   }, []);
 
+  // Pick TenTap's prebuilt dark/light theme — this drives the WebView
+  // container + toolbar surface colors. The HTML body inside the WebView is
+  // recolored separately via editor.injectCSS() below.
   const editor = useEditorBridge({
     autofocus: false,
     avoidIosKeyboard: true,
     initialContent: '',
+    theme: isDark ? darkEditorTheme : defaultEditorTheme,
   });
+
+  // Push the theme CSS into the WebView. TenTap's `editorState.isReady`
+  // doesn't flip reliably for us (a known race in useBridgeState), so
+  // instead of gating on it we just retry the injection on a schedule.
+  // Whichever attempt lands after the WebView has booted wins; later
+  // attempts are idempotent thanks to the 'pc-theme' tag replacing itself.
+  React.useEffect(() => {
+    const bg = isDark ? '#1C1C1E' : '#FFFFFF';
+    const fg = isDark ? '#FFFFFF' : '#1C1C1E';
+    // System font, body padding aligned to the chrome (18px), and zeroed
+    // ProseMirror margins so the placeholder/caret start at the same
+    // horizontal position as the "To" / "Subject" labels above instead of
+    // indented by the default <p>/.ProseMirror padding.
+    const fontStack =
+      '-apple-system, "SF Pro Text", BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif';
+    // Horizontal padding is provided by the RN wrapper now (paddingHorizontal:
+    // 18 on editorWrap). CSS keeps margins/padding to 0 so the editor sits
+    // flush inside the wrapper without compounding offsets.
+    const baseCss = `
+      html, body {
+        margin: 0;
+        padding: 12px 0 0;
+        box-sizing: border-box;
+        font-family: ${fontStack};
+        font-size: 16px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+      .ProseMirror {
+        padding: 0;
+        margin: 0;
+        outline: none;
+      }
+      .ProseMirror p {
+        margin: 0 0 0.5em;
+      }
+      .ProseMirror p.is-editor-empty:first-child::before {
+        font-family: ${fontStack};
+        margin: 0;
+        padding: 0;
+        left: 0;
+      }
+    `;
+    const css = isDark ? `${darkEditorCss}\n${baseCss}` : baseCss;
+    const apply = () => {
+      editor.injectCSS(css, 'pc-theme');
+      editor.injectJS(
+        `document.documentElement.style.backgroundColor='${bg}';` +
+          `document.body.style.backgroundColor='${bg}';` +
+          `document.body.style.color='${fg}';`,
+      );
+    };
+    apply();
+    const timers = [100, 400, 900, 1800, 3500].map((ms) =>
+      setTimeout(apply, ms),
+    );
+    return () => timers.forEach(clearTimeout);
+  }, [editor, isDark]);
 
   React.useEffect(() => {
     editor.setPlaceholder('Start writing your email here...');
@@ -154,7 +241,7 @@ export default function EditorScreen() {
       {/* ================================================================ */}
       {/* 1. Branded header                                                */}
       {/* ================================================================ */}
-      <View style={[styles.header, { backgroundColor: accent }]}>
+      <View style={[styles.header, { backgroundColor: a, paddingTop: insets.top + 12 }]}>
         {/* Left: brand mark + title */}
         <View style={styles.headerLeft}>
           <BrandMark />
@@ -190,7 +277,7 @@ export default function EditorScreen() {
             <Text
               style={[
                 styles.copyPillText,
-                { color: copied ? '#fff' : accent },
+                { color: copied ? '#fff' : a },
               ]}>
               {copied ? 'Copied!' : 'Copy'}
             </Text>
@@ -199,10 +286,10 @@ export default function EditorScreen() {
       </View>
 
       {/* ================================================================ */}
-      {/* 2. Compose fields (To / Subject)                                 */}
+      {/* 2. Compose fields (To / Subject) — static placeholders, not       */}
+      {/*    tappable. The editor body is the only typing surface.          */}
       {/* ================================================================ */}
       <View style={[styles.composeFields, { backgroundColor: colors.bg }]}>
-        {/* To row */}
         <View
           style={[
             styles.composeRow,
@@ -211,26 +298,11 @@ export default function EditorScreen() {
           <Text style={[styles.fieldLabel, { color: colors.fieldLabel }]}>
             To
           </Text>
-          <View style={styles.fieldContent}>
-            {toValue ? (
-              <View style={[styles.recipientPill, { backgroundColor: accent }]}>
-                <View style={styles.recipientAvatar}>
-                  <Text style={styles.recipientInitial}>
-                    {toValue.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
-                <Text style={styles.recipientName}>{toValue}</Text>
-              </View>
-            ) : null}
-            <TextInput
-              style={[styles.fieldInput, { color: colors.fg }]}
-              placeholder=""
-              placeholderTextColor={colors.fgFaint}
-            />
-          </View>
+          <Text style={[styles.fieldPlaceholder, { color: colors.fgFaint }]}>
+            placeholder
+          </Text>
         </View>
 
-        {/* Subject row */}
         <View
           style={[
             styles.composeRow,
@@ -239,86 +311,57 @@ export default function EditorScreen() {
           <Text style={[styles.fieldLabel, { color: colors.fieldLabel }]}>
             Subject
           </Text>
-          <TextInput
-            style={[styles.subjectInput, { color: colors.fg }]}
-            placeholder="Subject"
-            placeholderTextColor={colors.fgFaint}
-            value={subjectValue}
-            onChangeText={setSubjectValue}
-          />
+          <Text style={[styles.fieldPlaceholder, { color: colors.fgFaint }]}>
+            placeholder
+          </Text>
         </View>
       </View>
 
       {/* ================================================================ */}
       {/* 3. Rich text editor body                                         */}
+      {/*    Outer wrapper matches the WebView background AND owns the     */}
+      {/*    horizontal indent. Using wrapper padding (not WebView CSS)    */}
+      {/*    means the editor stays correctly inset even before our        */}
+      {/*    injectCSS lands — no cold-start flash from 0 padding to       */}
+      {/*    18 padding. The `key` forces a remount when the system theme  */}
+      {/*    flips — TenTap's WebView reads webview.backgroundColor only   */}
+      {/*    at mount time.                                                */}
       {/* ================================================================ */}
-      <RichText editor={editor} style={styles.richText} />
+      <View
+        key={isDark ? 'dark' : 'light'}
+        style={[
+          styles.editorWrap,
+          { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' },
+        ]}>
+        <RichText editor={editor} style={styles.richText} />
+      </View>
 
       {/* ================================================================ */}
       {/* 4. Formatting toolbar                                            */}
       {/* ================================================================ */}
-      <View
-        style={[
-          styles.toolbarWrap,
-          {
-            backgroundColor: colors.toolBg,
-            borderTopColor: colors.sep,
-          },
-        ]}>
-        <Toolbar editor={editor} items={DEFAULT_TOOLBAR_ITEMS} />
-      </View>
+      {/* Toolbar wrap renders only when the keyboard is up. This way the
+          floating nav owns the bottom while at rest, and the toolbar takes
+          its place above the keyboard during composition. */}
+      {keyboardVisible && (
+        <View
+          style={[
+            styles.toolbarWrap,
+            {
+              backgroundColor: colors.toolBg,
+              borderTopColor: colors.sep,
+            },
+          ]}>
+          <Toolbar
+            editor={editor}
+            items={DEFAULT_TOOLBAR_ITEMS}
+            hidden={false}
+          />
+        </View>
+      )}
 
       {/* ================================================================ */}
-      {/* 5. Floating mini nav (tab bar is hidden on this screen)          */}
-      {/* ================================================================ */}
-      <View
-        style={[
-          styles.floatingNav,
-          {
-            backgroundColor: isDark
-              ? 'rgba(44,44,46,0.85)'
-              : 'rgba(255,255,255,0.85)',
-          },
-        ]}>
-        {([
-          { icon: 'pencil' as const, route: '/' },
-          { icon: 'bookmark' as const, route: '/templates' },
-          { icon: 'cog' as const, route: '/settings' },
-        ]).map(({ icon, route }) => {
-          const isActive = pathname === route || (route === '/' && pathname === '/index');
-          return (
-            <TouchableOpacity
-              key={icon}
-              style={[
-                styles.floatingNavBtn,
-                isActive && {
-                  backgroundColor: isDark
-                    ? 'rgba(255,255,255,0.08)'
-                    : 'rgba(0,0,0,0.04)',
-                },
-              ]}
-              onPress={() => {
-                if (!isActive) router.navigate(route as any);
-              }}
-              activeOpacity={0.6}>
-              <FontAwesome
-                name={icon}
-                size={16}
-                color={
-                  isActive
-                    ? accent
-                    : isDark
-                      ? 'rgba(235,235,245,0.5)'
-                      : 'rgba(60,60,67,0.55)'
-                }
-              />
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* ================================================================ */}
-      {/* 6. Gmail handoff toast                                           */}
+      {/* 5. Gmail handoff toast                                           */}
+      {/*    (Floating nav is rendered at the tabs layout level.)          */}
       {/* ================================================================ */}
       <GmailHandoffToast
         visible={toastVisible}
@@ -336,16 +379,13 @@ export default function EditorScreen() {
 // ---------------------------------------------------------------------------
 // Styles
 // ---------------------------------------------------------------------------
-const HEADER_PADDING_TOP = 56; // status bar clearance
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
   },
 
-  // --- Header ---
+  // --- Header --- (paddingTop is set inline from safe-area insets)
   header: {
-    paddingTop: HEADER_PADDING_TOP,
     paddingBottom: 14,
     paddingLeft: 18,
     paddingRight: 12,
@@ -419,84 +459,36 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
   },
-  fieldContent: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  fieldInput: {
+  fieldPlaceholder: {
     flex: 1,
     fontSize: 15,
     paddingVertical: 10,
   },
-  subjectInput: {
-    flex: 1,
-    fontSize: 16,
-    fontWeight: '600',
-    paddingVertical: 10,
-  },
-
-  // --- Recipient pill ---
-  recipientPill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 14,
-    paddingRight: 10,
-    paddingLeft: 3,
-    paddingVertical: 3,
-    gap: 5,
-  },
-  recipientAvatar: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  recipientInitial: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  recipientName: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: '#fff',
-  },
 
   // --- Editor body ---
+  // Horizontal padding aligns the text with the chrome ("To" / "Subject"
+  // labels at 18pt). Lives on the wrapper, not in the WebView CSS, so the
+  // editor is correctly inset before our CSS injection lands.
+  editorWrap: {
+    flex: 1,
+    paddingHorizontal: 18,
+    paddingTop: 16,
+  },
+  // No paddingHorizontal here: the RichText component paints its own
+  // (default-white) frame onto whatever `style` we pass, so any padding
+  // turns into white strips on the sides in dark mode. Body padding lives
+  // in the WebView's HTML/CSS instead.
   richText: {
     flex: 1,
-    paddingHorizontal: 20,
   },
 
   // --- Toolbar wrapper ---
+  // Explicit height so TenTap's FlatList (flex: 1 + height: 44) has a
+  // defined parent to render into — without it the FlatList collapses to
+  // zero height and the toolbar is invisible.
   toolbarWrap: {
+    height: 44,
     borderTopWidth: 0.5,
   },
 
-  // --- Floating mini nav ---
-  floatingNav: {
-    position: 'absolute',
-    left: 12,
-    bottom: 6,
-    flexDirection: 'row',
-    gap: 4,
-    padding: 4,
-    borderRadius: 22,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
-    shadowRadius: 14,
-    elevation: 6,
-  },
-  floatingNavBtn: {
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
 });

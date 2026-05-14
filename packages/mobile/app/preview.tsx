@@ -117,6 +117,13 @@ export default function PreviewScreen() {
          </div>`
       : '';
 
+  // Preview's body palette flips with the app's color scheme so the
+  // simulated Gmail card matches the app's mode (recipient could see
+  // either; this just keeps the preview consistent with what's around it).
+  const previewBg = dark ? '#1c1c1e' : '#ffffff';
+  const previewFg = dark ? '#e8eaed' : '#202124';
+  const previewMuted = dark ? '#9aa0a6' : '#5f6368';
+  const previewBorder = dark ? 'rgba(255,255,255,0.08)' : 'rgba(60,60,67,0.12)';
   const wrappedHtml = `
     <!DOCTYPE html>
     <html>
@@ -128,8 +135,8 @@ export default function PreviewScreen() {
           font-family: Arial, Helvetica, sans-serif;
           font-size: 14px;
           line-height: 1.5;
-          color: #202124;
-          background-color: #ffffff;
+          color: ${previewFg};
+          background-color: ${previewBg};
           margin: 0;
           padding: 0;
         }
@@ -138,9 +145,9 @@ export default function PreviewScreen() {
     </head>
     <body>
       <!-- Faux Gmail address strip -->
-      <div style="padding:12px 16px 8px;font-family:Arial,sans-serif;font-size:12px;color:#5f6368;border-bottom:1px solid rgba(60,60,67,0.12);">
-        <div style="margin-bottom:3px;"><span style="font-weight:600;">Subject:</span> Your email preview</div>
-        <div><span style="font-weight:600;">To:</span> recipient@gmail.com</div>
+      <div style="padding:12px 16px 8px;font-family:Arial,sans-serif;font-size:12px;color:${previewMuted};border-bottom:1px solid ${previewBorder};">
+        <div style="margin-bottom:3px;"><span style="font-weight:600;color:${previewFg};">Subject:</span> Your email preview</div>
+        <div><span style="font-weight:600;color:${previewFg};">To:</span> recipient@gmail.com</div>
       </div>
       <!-- Body -->
       <div style="padding:14px 16px;">
@@ -302,11 +309,23 @@ export default function PreviewScreen() {
           </View>
         )}
 
-        {/* WebView preview (Gmail-style) */}
-        <View style={styles.webViewOuter}>
+        {/* WebView preview (Gmail-style). Container + WebView follow the
+            app's color scheme so the preview reads correctly against the
+            surrounding dark sheet instead of flashing as a white card. */}
+        <View
+          style={[
+            styles.webViewOuter,
+            {
+              backgroundColor: dark ? '#1c1c1e' : '#ffffff',
+              borderColor: dark ? 'rgba(255,255,255,0.08)' : 'rgba(60,60,67,0.15)',
+            },
+          ]}>
           <WebView
             source={{ html: wrappedHtml }}
-            style={styles.webView}
+            style={[
+              styles.webView,
+              { backgroundColor: dark ? '#1c1c1e' : '#ffffff' },
+            ]}
             scrollEnabled={true}
             originWhitelist={['*']}
           />
@@ -540,20 +559,17 @@ const styles = StyleSheet.create({
     letterSpacing: -0.1,
   },
 
-  // WebView
+  // WebView (bg + border applied inline based on color scheme).
   webViewOuter: {
     flex: 1,
     marginHorizontal: 16,
     marginTop: 12,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#ffffff',
     borderWidth: 0.5,
-    borderColor: 'rgba(60,60,67,0.15)',
   },
   webView: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
 
   // Report chips

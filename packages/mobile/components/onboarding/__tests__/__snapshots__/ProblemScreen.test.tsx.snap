@@ -1,3 +1,1175 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ProblemScreen matches snapshot 1`] = `null`;
+exports[`ProblemScreen matches snapshot 1`] = `
+<View
+  style={
+    [
+      {
+        "backgroundColor": "#fff",
+        "flex": 1,
+      },
+      {
+        "backgroundColor": "#fff",
+      },
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingBottom": 8,
+        "paddingHorizontal": 22,
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "flexDirection": "row",
+          "gap": 12,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "flex": 1,
+            "gap": 6,
+          }
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "color": "rgba(60,60,67,0.55)",
+                "fontSize": 10,
+                "fontWeight": "600",
+                "letterSpacing": 0.4,
+                "paddingLeft": 4,
+                "textTransform": "uppercase",
+              },
+              {
+                "color": "rgba(60,60,67,0.55)",
+              },
+            ]
+          }
+        >
+          You wrote (dark mode)
+        </Text>
+        <View
+          style={
+            [
+              {
+                "elevation": 10,
+                "shadowColor": "#000",
+                "shadowOffset": {
+                  "height": 10,
+                  "width": 0,
+                },
+                "shadowOpacity": 0.22,
+                "shadowRadius": 13,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "borderRadius": 14,
+                  "height": 220,
+                  "overflow": "hidden",
+                  "width": "100%",
+                },
+                {
+                  "backgroundColor": "#202124",
+                  "borderColor": "transparent",
+                  "borderWidth": 0,
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "gap": 6,
+                  "justifyContent": "space-between",
+                  "paddingBottom": 6,
+                  "paddingHorizontal": 10,
+                  "paddingTop": 8,
+                }
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  [
+                    {
+                      "flex": 1,
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.1,
+                    },
+                    {
+                      "color": "#e8eaed",
+                    },
+                  ]
+                }
+              >
+                Q2 launch recap
+              </Text>
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "borderRadius": 7,
+                      "borderWidth": 1,
+                      "height": 14,
+                      "justifyContent": "center",
+                      "width": 14,
+                    },
+                    {
+                      "borderColor": "#9aa0a6",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    {
+                      "color": "#9aa0a6",
+                      "fontSize": 7,
+                    }
+                  }
+                >
+                  ›
+                </Text>
+              </View>
+            </View>
+            <View
+              style={
+                {
+                  "paddingBottom": 6,
+                  "paddingHorizontal": 10,
+                }
+              }
+            >
+              <View
+                style={
+                  [
+                    {
+                      "alignSelf": "flex-start",
+                      "borderRadius": 3,
+                      "borderWidth": 1,
+                      "paddingHorizontal": 4,
+                      "paddingVertical": 1,
+                    },
+                    {
+                      "borderColor": "#5f6368",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 7,
+                        "fontWeight": "500",
+                        "letterSpacing": 0.1,
+                      },
+                      {
+                        "color": "#9aa0a6",
+                      },
+                    ]
+                  }
+                >
+                  Inbox
+                </Text>
+              </View>
+            </View>
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "gap": 7,
+                  "paddingBottom": 8,
+                  "paddingHorizontal": 10,
+                }
+              }
+            >
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "borderRadius": 11,
+                      "height": 22,
+                      "justifyContent": "center",
+                      "width": 22,
+                    },
+                    {
+                      "backgroundColor": "#8ab4f8",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 10,
+                        "fontWeight": "700",
+                      },
+                      {
+                        "color": "#202124",
+                      },
+                    ]
+                  }
+                >
+                  M
+                </Text>
+              </View>
+              <View
+                style={
+                  {
+                    "flex": 1,
+                  }
+                }
+              >
+                <View
+                  style={
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "gap": 4,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontSize": 9.5,
+                          "fontWeight": "600",
+                        },
+                        {
+                          "color": "#e8eaed",
+                        },
+                      ]
+                    }
+                  >
+                    me
+                  </Text>
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontSize": 8,
+                          "fontWeight": "400",
+                        },
+                        {
+                          "color": "#9aa0a6",
+                        },
+                      ]
+                    }
+                  >
+                    9:47 AM
+                  </Text>
+                </View>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 8,
+                      },
+                      {
+                        "color": "#9aa0a6",
+                      },
+                    ]
+                  }
+                >
+                  to Sam ▾
+                </Text>
+              </View>
+              <Text
+                style={
+                  {
+                    "color": "#9aa0a6",
+                    "fontSize": 10,
+                  }
+                }
+              >
+                ←
+              </Text>
+            </View>
+            <View
+              style={
+                {
+                  "flex": 1,
+                  "paddingHorizontal": 10,
+                }
+              }
+            >
+              <View
+                style={
+                  {
+                    "gap": 4,
+                  }
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  Hey team,
+                </Text>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  Quick notes from this morning's sync —
+                </Text>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  •
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#fff",
+                        "fontWeight": "700",
+                      }
+                    }
+                  >
+                    Beta signups:
+                  </Text>
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#34C759",
+                      }
+                    }
+                  >
+                    247
+                  </Text>
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "rgba(255,255,255,0.5)",
+                      }
+                    }
+                  >
+                    (+38)
+                  </Text>
+                </Text>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  •
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#fff",
+                        "fontWeight": "700",
+                      }
+                    }
+                  >
+                    Blocker:
+                  </Text>
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#FF9F0A",
+                      }
+                    }
+                  >
+                    auth on Android
+                  </Text>
+                </Text>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  •
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#fff",
+                        "fontWeight": "700",
+                      }
+                    }
+                  >
+                    Ship date:
+                  </Text>
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#34C759",
+                        "fontWeight": "700",
+                      }
+                    }
+                  >
+                    May 28
+                  </Text>
+                </Text>
+              </View>
+            </View>
+            <View
+              style={
+                {
+                  "flexDirection": "row",
+                  "gap": 5,
+                  "paddingBottom": 6,
+                  "paddingHorizontal": 10,
+                }
+              }
+            >
+              <View
+                style={
+                  [
+                    {
+                      "borderRadius": 14,
+                      "borderWidth": 1,
+                      "paddingHorizontal": 7,
+                      "paddingVertical": 2,
+                    },
+                    {
+                      "borderColor": "#5f6368",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 8.5,
+                        "fontWeight": "500",
+                      },
+                      {
+                        "color": "#9aa0a6",
+                      },
+                    ]
+                  }
+                >
+                  ↶ Reply
+                </Text>
+              </View>
+              <View
+                style={
+                  [
+                    {
+                      "borderRadius": 14,
+                      "borderWidth": 1,
+                      "paddingHorizontal": 7,
+                      "paddingVertical": 2,
+                    },
+                    {
+                      "borderColor": "#5f6368",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 8.5,
+                        "fontWeight": "500",
+                      },
+                      {
+                        "color": "#9aa0a6",
+                      },
+                    ]
+                  }
+                >
+                  ↷ Forward
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+      <View
+        style={
+          {
+            "flex": 1,
+            "gap": 6,
+          }
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "color": "rgba(60,60,67,0.55)",
+                "fontSize": 10,
+                "fontWeight": "600",
+                "letterSpacing": 0.4,
+                "paddingLeft": 4,
+                "textTransform": "uppercase",
+              },
+              {
+                "color": "#FF3B30",
+              },
+            ]
+          }
+        >
+          In Gmail (light)
+        </Text>
+        <View
+          style={
+            [
+              {
+                "elevation": 10,
+                "shadowColor": "#000",
+                "shadowOffset": {
+                  "height": 10,
+                  "width": 0,
+                },
+                "shadowOpacity": 0.22,
+                "shadowRadius": 13,
+              },
+            ]
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "borderRadius": 14,
+                  "height": 220,
+                  "overflow": "hidden",
+                  "width": "100%",
+                },
+                {
+                  "backgroundColor": "#fff",
+                  "borderColor": "rgba(60,60,67,0.18)",
+                  "borderWidth": 0.5,
+                },
+              ]
+            }
+          >
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "gap": 6,
+                  "justifyContent": "space-between",
+                  "paddingBottom": 6,
+                  "paddingHorizontal": 10,
+                  "paddingTop": 8,
+                }
+              }
+            >
+              <Text
+                numberOfLines={1}
+                style={
+                  [
+                    {
+                      "flex": 1,
+                      "fontSize": 11,
+                      "fontWeight": "500",
+                      "letterSpacing": -0.1,
+                    },
+                    {
+                      "color": "#202124",
+                    },
+                  ]
+                }
+              >
+                Q2 launch recap
+              </Text>
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "borderRadius": 7,
+                      "borderWidth": 1,
+                      "height": 14,
+                      "justifyContent": "center",
+                      "width": 14,
+                    },
+                    {
+                      "borderColor": "#5f6368",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    {
+                      "color": "#5f6368",
+                      "fontSize": 7,
+                    }
+                  }
+                >
+                  ›
+                </Text>
+              </View>
+            </View>
+            <View
+              style={
+                {
+                  "paddingBottom": 6,
+                  "paddingHorizontal": 10,
+                }
+              }
+            >
+              <View
+                style={
+                  [
+                    {
+                      "alignSelf": "flex-start",
+                      "borderRadius": 3,
+                      "borderWidth": 1,
+                      "paddingHorizontal": 4,
+                      "paddingVertical": 1,
+                    },
+                    {
+                      "borderColor": "#dadce0",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 7,
+                        "fontWeight": "500",
+                        "letterSpacing": 0.1,
+                      },
+                      {
+                        "color": "#5f6368",
+                      },
+                    ]
+                  }
+                >
+                  Inbox
+                </Text>
+              </View>
+            </View>
+            <View
+              style={
+                {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "gap": 7,
+                  "paddingBottom": 8,
+                  "paddingHorizontal": 10,
+                }
+              }
+            >
+              <View
+                style={
+                  [
+                    {
+                      "alignItems": "center",
+                      "borderRadius": 11,
+                      "height": 22,
+                      "justifyContent": "center",
+                      "width": 22,
+                    },
+                    {
+                      "backgroundColor": "#1a73e8",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 10,
+                        "fontWeight": "700",
+                      },
+                      {
+                        "color": "#fff",
+                      },
+                    ]
+                  }
+                >
+                  M
+                </Text>
+              </View>
+              <View
+                style={
+                  {
+                    "flex": 1,
+                  }
+                }
+              >
+                <View
+                  style={
+                    {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "gap": 4,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontSize": 9.5,
+                          "fontWeight": "600",
+                        },
+                        {
+                          "color": "#202124",
+                        },
+                      ]
+                    }
+                  >
+                    me
+                  </Text>
+                  <Text
+                    style={
+                      [
+                        {
+                          "fontSize": 8,
+                          "fontWeight": "400",
+                        },
+                        {
+                          "color": "#5f6368",
+                        },
+                      ]
+                    }
+                  >
+                    9:47 AM
+                  </Text>
+                </View>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 8,
+                      },
+                      {
+                        "color": "#5f6368",
+                      },
+                    ]
+                  }
+                >
+                  to Sam ▾
+                </Text>
+              </View>
+              <Text
+                style={
+                  {
+                    "color": "#5f6368",
+                    "fontSize": 10,
+                  }
+                }
+              >
+                ←
+              </Text>
+            </View>
+            <View
+              style={
+                {
+                  "flex": 1,
+                  "paddingHorizontal": 10,
+                }
+              }
+            >
+              <View
+                style={
+                  {
+                    "gap": 4,
+                  }
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  Hey team,
+                </Text>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  Quick notes from this morning's sync —
+                </Text>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  •
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#fff",
+                        "fontWeight": "700",
+                      }
+                    }
+                  >
+                    Beta signups:
+                  </Text>
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#34C759",
+                      }
+                    }
+                  >
+                    247
+                  </Text>
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "rgba(255,255,255,0.5)",
+                      }
+                    }
+                  >
+                    (+38)
+                  </Text>
+                </Text>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  •
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#fff",
+                        "fontWeight": "700",
+                      }
+                    }
+                  >
+                    Blocker:
+                  </Text>
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#FF9F0A",
+                      }
+                    }
+                  >
+                    auth on Android
+                  </Text>
+                </Text>
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 9.5,
+                        "lineHeight": 14,
+                      },
+                      {
+                        "color": "rgba(255,255,255,0.92)",
+                      },
+                    ]
+                  }
+                >
+                  •
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#fff",
+                        "fontWeight": "700",
+                      }
+                    }
+                  >
+                    Ship date:
+                  </Text>
+                   
+                  <Text
+                    style={
+                      {
+                        "color": "#34C759",
+                        "fontWeight": "700",
+                      }
+                    }
+                  >
+                    May 28
+                  </Text>
+                </Text>
+              </View>
+            </View>
+            <View
+              style={
+                {
+                  "flexDirection": "row",
+                  "gap": 5,
+                  "paddingBottom": 6,
+                  "paddingHorizontal": 10,
+                }
+              }
+            >
+              <View
+                style={
+                  [
+                    {
+                      "borderRadius": 14,
+                      "borderWidth": 1,
+                      "paddingHorizontal": 7,
+                      "paddingVertical": 2,
+                    },
+                    {
+                      "borderColor": "#dadce0",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 8.5,
+                        "fontWeight": "500",
+                      },
+                      {
+                        "color": "#5f6368",
+                      },
+                    ]
+                  }
+                >
+                  ↶ Reply
+                </Text>
+              </View>
+              <View
+                style={
+                  [
+                    {
+                      "borderRadius": 14,
+                      "borderWidth": 1,
+                      "paddingHorizontal": 7,
+                      "paddingVertical": 2,
+                    },
+                    {
+                      "borderColor": "#dadce0",
+                    },
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    [
+                      {
+                        "fontSize": 8.5,
+                        "fontWeight": "500",
+                      },
+                      {
+                        "color": "#5f6368",
+                      },
+                    ]
+                  }
+                >
+                  ↷ Forward
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      {
+        "flex": 1,
+        "paddingHorizontal": 28,
+        "paddingTop": 24,
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "color": "#1c1c1e",
+            "fontSize": 28,
+            "fontWeight": "700",
+            "letterSpacing": -0.6,
+            "lineHeight": 32,
+            "marginBottom": 10,
+          },
+          {
+            "color": "#1c1c1e",
+          },
+        ]
+      }
+    >
+      It's 2026. Why does this still suck?
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "color": "rgba(60,60,67,0.72)",
+            "fontSize": 15,
+            "letterSpacing": -0.2,
+            "lineHeight": 21,
+          },
+          {
+            "color": "rgba(60,60,67,0.72)",
+          },
+        ]
+      }
+    >
+      You're on your phone. Writing to a
+       
+      <Text
+        style={
+          [
+            {
+              "color": "#1c1c1e",
+              "fontWeight": "700",
+            },
+            {
+              "color": "#1c1c1e",
+            },
+          ]
+        }
+      >
+        recruiter
+      </Text>
+      , an
+       
+      <Text
+        style={
+          [
+            {
+              "color": "#1c1c1e",
+              "fontWeight": "700",
+            },
+            {
+              "color": "#1c1c1e",
+            },
+          ]
+        }
+      >
+        investor
+      </Text>
+      , your
+       
+      <Text
+        style={
+          [
+            {
+              "color": "#1c1c1e",
+              "fontWeight": "700",
+            },
+            {
+              "color": "#1c1c1e",
+            },
+          ]
+        }
+      >
+        VP
+      </Text>
+      . No laptop. No time to redo it. And Gmail mangles every dark-mode paste — white text on white background, colors trashed. Not a great look when stakes are high.
+    </Text>
+  </View>
+</View>
+`;

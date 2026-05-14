@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Animated, Easing } from 'react-native';
+import { useTokens } from '../tokens';
 
 // Two Gmail states crossfading — compose (dark mode) <-> sent (light mode).
 // Same body text on both sides. Compose shows perfectly; sent loses every
@@ -53,39 +54,42 @@ const bodyStyles = StyleSheet.create({
 export default function VanishScreen() {
   // Crossfade: cardOpacity drives the compose card (1 -> 0 -> 1).
   // labelOpacity inverts on the sent label (composing fades out, sent fades in).
+  // Chrome (page bg, title, subtitle) follows the system theme. The Gmail
+  // compose + sent cards stay fixed — they represent real Gmail rendering.
+  const { t } = useTokens();
   const compose = useRef(new Animated.Value(1)).current;
   const sent = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // 3.6s total loop: hold 1.4s, fade 0.4s, hold 1.4s, fade 0.4s.
+    // 6.0s total loop: hold 2.4s, fade 0.6s, hold 2.4s, fade 0.6s.
     const loop = Animated.loop(
       Animated.sequence([
-        Animated.delay(1400),
+        Animated.delay(2400),
         Animated.parallel([
           Animated.timing(compose, {
             toValue: 0,
-            duration: 400,
+            duration: 600,
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
           }),
           Animated.timing(sent, {
             toValue: 1,
-            duration: 400,
+            duration: 600,
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
           }),
         ]),
-        Animated.delay(1400),
+        Animated.delay(2400),
         Animated.parallel([
           Animated.timing(compose, {
             toValue: 1,
-            duration: 400,
+            duration: 600,
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
           }),
           Animated.timing(sent, {
             toValue: 0,
-            duration: 400,
+            duration: 600,
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: true,
           }),
@@ -97,7 +101,7 @@ export default function VanishScreen() {
   }, [compose, sent]);
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { backgroundColor: t.pageBg }]}>
       {/* Art */}
       <View style={styles.artArea}>
         <View style={styles.cardStack}>
@@ -206,8 +210,8 @@ export default function VanishScreen() {
 
       {/* Text */}
       <View style={styles.textArea}>
-        <Text style={styles.title}>Watch it vanish.</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: t.ink }]}>Watch it vanish.</Text>
+        <Text style={[styles.subtitle, { color: t.inkMuted }]}>
           Your email looks perfect while you write. The moment Gmail repaints it
           on a white background, the text you can't see is the text your
           recipient won't read.

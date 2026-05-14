@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useTokens } from '../tokens';
 
 // Single big Gmail-message card showing the *fixed* email. No surrounding
 // app chrome — just the email itself, so the visual contrast with the
@@ -8,12 +9,15 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function FixedScreen() {
   // Fixed-state colors: real Gmail tokens. Headers dark, body dark, muted gray.
+  // The Gmail card itself stays light (it's a Gmail rendering). Only the
+  // page chrome (page bg, title, subtitle) flips with the system theme.
   const headerColor = '#1c1c1e';
   const bodyColor = '#202124';
   const mutedColor = '#5f6368';
+  const { t } = useTokens();
 
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { backgroundColor: t.pageBg }]}>
       {/* Art */}
       <View style={styles.artArea}>
         <View style={styles.card}>
@@ -88,8 +92,8 @@ export default function FixedScreen() {
 
       {/* Text */}
       <View style={styles.textArea}>
-        <Text style={styles.title}>PasteClean fixes it!</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: t.ink }]}>PasteClean fixes it!</Text>
+        <Text style={[styles.subtitle, { color: t.inkMuted }]}>
           Tap Copy and we rewrite the HTML so the same email shows up perfectly
           in Gmail.
         </Text>

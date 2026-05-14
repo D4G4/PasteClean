@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { useTokens } from '../tokens';
 
 interface FlowScreenProps {
   accent: string;
@@ -16,12 +17,19 @@ const STEPS = [
 // Three equal vertical thirds: Text, Art, "How do I work?". Each section
 // uses flex: 1 so the screen is divided evenly regardless of device height.
 export default function FlowScreen({ accent, onPeek }: FlowScreenProps) {
+  const { dark, t } = useTokens();
+  // Slightly higher alpha for the step icon tint in dark mode so it's
+  // still visible against a black page.
+  const stepBg = accent + (dark ? '22' : '14');
+  const triggerBg = dark ? 'rgba(255,255,255,0.06)' : 'rgba(60,60,67,0.06)';
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { backgroundColor: t.pageBg }]}>
       {/* Text — top third */}
       <View style={styles.textArea}>
-        <Text style={styles.title}>Write. Copy. Paste.</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: t.ink }]}>
+          Write. Copy. Paste.
+        </Text>
+        <Text style={[styles.subtitle, { color: t.inkMuted }]}>
           Three taps from idea to inbox. PasteClean handles the messy part so
           you can focus on the words.
         </Text>
@@ -35,10 +43,7 @@ export default function FlowScreen({ accent, onPeek }: FlowScreenProps) {
               <View style={styles.stepItem}>
                 <View style={styles.iconContainer}>
                   <View
-                    style={[
-                      styles.iconRect,
-                      { backgroundColor: accent + '14' },
-                    ]}>
+                    style={[styles.iconRect, { backgroundColor: stepBg }]}>
                     <FontAwesome
                       name={step.icon}
                       size={28}
@@ -53,7 +58,9 @@ export default function FlowScreen({ accent, onPeek }: FlowScreenProps) {
                     <Text style={styles.badgeText}>{step.badge}</Text>
                   </View>
                 </View>
-                <Text style={styles.stepLabel}>{step.label}</Text>
+                <Text style={[styles.stepLabel, { color: t.ink }]}>
+                  {step.label}
+                </Text>
               </View>
 
               {index < STEPS.length - 1 && (
@@ -74,7 +81,7 @@ export default function FlowScreen({ accent, onPeek }: FlowScreenProps) {
       <View style={styles.howArea}>
         {onPeek && (
           <TouchableOpacity
-            style={styles.howTrigger}
+            style={[styles.howTrigger, { backgroundColor: triggerBg }]}
             activeOpacity={0.7}
             onPress={onPeek}
             testID="onboarding-flow-how-trigger">
@@ -84,17 +91,15 @@ export default function FlowScreen({ accent, onPeek }: FlowScreenProps) {
                 <Text style={styles.howTriggerIconText}>?</Text>
               </View>
               <View>
-                <Text style={styles.howTriggerTitle}>How do I work?</Text>
-                <Text style={styles.howTriggerSub}>
+                <Text style={[styles.howTriggerTitle, { color: t.ink }]}>
+                  How do I work?
+                </Text>
+                <Text style={[styles.howTriggerSub, { color: t.inkMuted }]}>
                   Peek under the hood — 8 steps
                 </Text>
               </View>
             </View>
-            <FontAwesome
-              name="chevron-right"
-              size={12}
-              color="rgba(60,60,67,0.4)"
-            />
+            <FontAwesome name="chevron-right" size={12} color={t.inkFaint} />
           </TouchableOpacity>
         )}
       </View>

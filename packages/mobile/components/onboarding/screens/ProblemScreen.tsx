@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import { useTokens } from '../tokens';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -286,14 +287,22 @@ const cardStyles = StyleSheet.create({
 });
 
 export default function ProblemScreen() {
+  // Page chrome flips with the system theme. The Gmail card mocks stay
+  // fixed — they represent real Gmail rendering, not app chrome.
+  const { dark, t } = useTokens();
+  const labelMuted = dark
+    ? 'rgba(235,235,245,0.55)'
+    : 'rgba(60,60,67,0.55)';
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { backgroundColor: t.pageBg }]}>
       {/* Art */}
       <View style={styles.artArea}>
         <View style={styles.cardsRow}>
           {/* Dark-mode card — readable */}
           <View style={styles.cardWrapper}>
-            <Text style={styles.cardLabel}>You wrote (dark mode)</Text>
+            <Text style={[styles.cardLabel, { color: labelMuted }]}>
+              You wrote (dark mode)
+            </Text>
             <GmailCard variant="dark" />
           </View>
 
@@ -309,16 +318,17 @@ export default function ProblemScreen() {
 
       {/* Text */}
       <View style={styles.textArea}>
-        <Text style={styles.title}>
+        <Text style={[styles.title, { color: t.ink }]}>
           It's 2026. Why does this still suck?
         </Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.subtitle, { color: t.inkMuted }]}>
           You're on your phone. Writing to a{' '}
-          <Text style={styles.bold}>recruiter</Text>, an{' '}
-          <Text style={styles.bold}>investor</Text>, your{' '}
-          <Text style={styles.bold}>VP</Text>.No laptop. No time to redo it.
-          And Gmail mangles every dark-mode paste — white text on white
-          background, colors trashed. Not a great look when stakes are high.
+          <Text style={[styles.bold, { color: t.ink }]}>recruiter</Text>, an{' '}
+          <Text style={[styles.bold, { color: t.ink }]}>investor</Text>, your{' '}
+          <Text style={[styles.bold, { color: t.ink }]}>VP</Text>. No laptop. No
+          time to redo it. And Gmail mangles every dark-mode paste — white text
+          on white background, colors trashed. Not a great look when stakes are
+          high.
         </Text>
       </View>
     </View>

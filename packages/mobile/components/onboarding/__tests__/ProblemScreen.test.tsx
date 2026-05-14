@@ -1,10 +1,9 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import ProblemScreen from '../screens/ProblemScreen';
+import { snapshotOf } from '../test-utils';
 
 describe('ProblemScreen', () => {
   it('matches snapshot', () => {
-    const tree = renderer.create(<ProblemScreen />).toJSON();
-    expect(tree).toMatchSnapshot();
+    expect(snapshotOf(<ProblemScreen />)).toMatchSnapshot();
   });
 });

@@ -14,6 +14,8 @@ import FixedScreen from './screens/FixedScreen';
 import FlowScreen from './screens/FlowScreen';
 import ThemeScreen from './screens/ThemeScreen';
 import PipelineSheet from './PipelineSheet';
+import { useTokens } from './tokens';
+import { resolveAccent } from '@/constants/Colors';
 
 const PAGE_COUNT = 5;
 
@@ -29,6 +31,11 @@ export default function OnboardingFlow({
   onDone,
 }: OnboardingFlowProps) {
   const insets = useSafeAreaInsets();
+  const { dark, t } = useTokens();
+  // Resolved accent flips Mono to white in dark mode (etc.) so visuals
+  // stay visible. The picker still receives the raw `accent` ID for
+  // selection matching.
+  const a = resolveAccent(accent, dark);
   const pagerRef = useRef<PagerView>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [peekOpen, setPeekOpen] = useState(false);
@@ -50,7 +57,11 @@ export default function OnboardingFlow({
   const bottomPad = Math.max(44, insets.bottom + 24);
 
   return (
-    <View style={[styles.container, { paddingTop: topPad }]}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: topPad, backgroundColor: t.pageBg },
+      ]}>
       <PagerView
         ref={pagerRef}
         style={styles.pager}
@@ -66,9 +77,11 @@ export default function OnboardingFlow({
           <FixedScreen />
         </View>
         <View key="3" style={styles.page} testID="onboarding-page-3">
-          <FlowScreen accent={accent} onPeek={() => setPeekOpen(true)} />
+          <FlowScreen accent={a} onPeek={() => setPeekOpen(true)} />
         </View>
         <View key="4" style={styles.page} testID="onboarding-page-4">
+          {/* Picker compares against the raw stored id, so pass `accent`,
+              not the resolved value. */}
           <ThemeScreen accent={accent} setAccent={setAccent} />
         </View>
       </PagerView>
@@ -82,8 +95,13 @@ export default function OnboardingFlow({
               style={[
                 styles.dot,
                 i === currentPage
-                  ? { width: 18, backgroundColor: accent }
-                  : { width: 6, backgroundColor: 'rgba(60,60,67,0.22)' },
+                  ? { width: 18, backgroundColor: a }
+                  : {
+                      width: 6,
+                      backgroundColor: dark
+                        ? 'rgba(235,235,245,0.22)'
+                        : 'rgba(60,60,67,0.22)',
+                    },
               ]}
             />
           ))}
@@ -92,7 +110,7 @@ export default function OnboardingFlow({
         <TouchableOpacity
           style={[
             styles.ctaButton,
-            { backgroundColor: accent, shadowColor: accent },
+            { backgroundColor: a, shadowColor: a },
           ]}
           activeOpacity={0.85}
           onPress={goToNext}
@@ -110,7 +128,6 @@ export default function OnboardingFlow({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   pager: {
     flex: 1,

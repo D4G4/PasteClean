@@ -1,3 +1,529 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FixedScreen matches snapshot 1`] = `null`;
+exports[`FixedScreen matches snapshot 1`] = `
+<View
+  style={
+    [
+      {
+        "backgroundColor": "#fff",
+        "flex": 1,
+      },
+      {
+        "backgroundColor": "#fff",
+      },
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "alignItems": "center",
+        "paddingHorizontal": 20,
+        "paddingTop": 56,
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "backgroundColor": "#fff",
+          "borderColor": "rgba(60,60,67,0.18)",
+          "borderRadius": 16,
+          "borderWidth": 0.5,
+          "elevation": 12,
+          "overflow": "hidden",
+          "shadowColor": "#000",
+          "shadowOffset": {
+            "height": 16,
+            "width": 0,
+          },
+          "shadowOpacity": 0.1,
+          "shadowRadius": 36,
+          "width": "100%",
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "gap": 8,
+            "justifyContent": "space-between",
+            "paddingBottom": 6,
+            "paddingHorizontal": 16,
+            "paddingTop": 12,
+          }
+        }
+      >
+        <Text
+          numberOfLines={1}
+          style={
+            {
+              "color": "#202124",
+              "flex": 1,
+              "fontSize": 15,
+              "fontWeight": "500",
+              "letterSpacing": -0.1,
+            }
+          }
+        >
+          Q2 launch recap
+        </Text>
+        <View
+          style={
+            {
+              "borderColor": "#dadce0",
+              "borderRadius": 3,
+              "borderWidth": 1,
+              "paddingHorizontal": 5,
+              "paddingVertical": 1,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#5f6368",
+                "fontSize": 9,
+                "fontWeight": "500",
+                "letterSpacing": 0.1,
+              }
+            }
+          >
+            Inbox
+          </Text>
+        </View>
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "gap": 10,
+            "paddingBottom": 12,
+            "paddingHorizontal": 16,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "#1a73e8",
+              "borderRadius": 15,
+              "height": 30,
+              "justifyContent": "center",
+              "width": 30,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#fff",
+                "fontSize": 13,
+                "fontWeight": "700",
+              }
+            }
+          >
+            M
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "gap": 6,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#202124",
+                  "fontSize": 13,
+                  "fontWeight": "600",
+                }
+              }
+            >
+              me
+            </Text>
+            <Text
+              style={
+                {
+                  "color": "#5f6368",
+                  "fontSize": 11,
+                  "fontWeight": "400",
+                }
+              }
+            >
+              9:47 AM
+            </Text>
+          </View>
+          <Text
+            style={
+              {
+                "color": "#5f6368",
+                "fontSize": 11,
+              }
+            }
+          >
+            to Sam ▾
+          </Text>
+        </View>
+        <Text
+          style={
+            {
+              "color": "#5f6368",
+              "fontSize": 14,
+            }
+          }
+        >
+          ←
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "backgroundColor": "#dadce0",
+            "height": 0.5,
+          }
+        }
+      />
+      <View
+        style={
+          {
+            "gap": 5,
+            "paddingBottom": 12,
+            "paddingHorizontal": 16,
+            "paddingTop": 14,
+            "position": "relative",
+          }
+        }
+      >
+        <Text
+          style={
+            [
+              {
+                "fontSize": 13,
+                "lineHeight": 20,
+              },
+              {
+                "color": "#202124",
+              },
+            ]
+          }
+        >
+          Hi Sam,
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontSize": 13,
+                "lineHeight": 20,
+              },
+              {
+                "color": "#202124",
+              },
+            ]
+          }
+        >
+          Quick recap from this morning's sync —
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontSize": 13,
+                "lineHeight": 20,
+              },
+              {
+                "color": "#202124",
+                "marginTop": 4,
+              },
+            ]
+          }
+        >
+          • 
+          <Text
+            style={
+              {
+                "color": "#1c1c1e",
+                "fontWeight": "700",
+              }
+            }
+          >
+            Beta signups:
+          </Text>
+           
+          <Text
+            style={
+              {
+                "color": "#34C759",
+                "fontWeight": "600",
+              }
+            }
+          >
+            247
+          </Text>
+           
+          <Text
+            style={
+              {
+                "color": "#5f6368",
+              }
+            }
+          >
+            (+38 wk)
+          </Text>
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontSize": 13,
+                "lineHeight": 20,
+              },
+              {
+                "color": "#202124",
+              },
+            ]
+          }
+        >
+          • 
+          <Text
+            style={
+              {
+                "color": "#1c1c1e",
+                "fontWeight": "700",
+              }
+            }
+          >
+            Blocker:
+          </Text>
+           
+          <Text
+            style={
+              {
+                "color": "#FF9F0A",
+                "fontWeight": "600",
+              }
+            }
+          >
+            auth on Android
+          </Text>
+           
+          — 
+          <Text
+            style={
+              {
+                "color": "#5f6368",
+              }
+            }
+          >
+            Maya on it
+          </Text>
+        </Text>
+        <Text
+          style={
+            [
+              {
+                "fontSize": 13,
+                "lineHeight": 20,
+              },
+              {
+                "color": "#202124",
+              },
+            ]
+          }
+        >
+          • 
+          <Text
+            style={
+              {
+                "color": "#1c1c1e",
+                "fontWeight": "700",
+              }
+            }
+          >
+            Ship date:
+          </Text>
+           
+          <Text
+            style={
+              {
+                "color": "#34C759",
+                "fontWeight": "700",
+              }
+            }
+          >
+            May 28
+          </Text>
+           
+          <Text
+            style={
+              {
+                "color": "#5f6368",
+              }
+            }
+          >
+            ✓
+          </Text>
+        </Text>
+        <View
+          style={
+            {
+              "alignItems": "center",
+              "backgroundColor": "#34C759",
+              "borderRadius": 999,
+              "elevation": 6,
+              "flexDirection": "row",
+              "gap": 4,
+              "paddingHorizontal": 9,
+              "paddingVertical": 4,
+              "position": "absolute",
+              "right": 10,
+              "shadowColor": "#34C759",
+              "shadowOffset": {
+                "height": 4,
+                "width": 0,
+              },
+              "shadowOpacity": 0.35,
+              "shadowRadius": 12,
+              "top": 10,
+            }
+          }
+        >
+          <Text />
+          <Text
+            style={
+              {
+                "color": "#fff",
+                "fontSize": 10,
+                "fontWeight": "700",
+                "letterSpacing": 0.2,
+              }
+            }
+          >
+            FIXED
+          </Text>
+        </View>
+      </View>
+      <View
+        style={
+          {
+            "flexDirection": "row",
+            "gap": 6,
+            "paddingBottom": 14,
+            "paddingHorizontal": 16,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "borderColor": "#dadce0",
+              "borderRadius": 18,
+              "borderWidth": 1,
+              "paddingHorizontal": 12,
+              "paddingVertical": 4,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#5f6368",
+                "fontSize": 11,
+                "fontWeight": "500",
+              }
+            }
+          >
+            ↶ Reply
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "borderColor": "#dadce0",
+              "borderRadius": 18,
+              "borderWidth": 1,
+              "paddingHorizontal": 12,
+              "paddingVertical": 4,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#5f6368",
+                "fontSize": 11,
+                "fontWeight": "500",
+              }
+            }
+          >
+            ↷ Forward
+          </Text>
+        </View>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      {
+        "flex": 1,
+        "paddingBottom": 4,
+        "paddingHorizontal": 28,
+        "paddingTop": 28,
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "color": "#1c1c1e",
+            "fontSize": 28,
+            "fontWeight": "700",
+            "letterSpacing": -0.6,
+            "lineHeight": 32,
+            "marginBottom": 10,
+          },
+          {
+            "color": "#1c1c1e",
+          },
+        ]
+      }
+    >
+      PasteClean fixes it!
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "color": "rgba(60,60,67,0.72)",
+            "fontSize": 15,
+            "letterSpacing": -0.2,
+            "lineHeight": 21,
+          },
+          {
+            "color": "rgba(60,60,67,0.72)",
+          },
+        ]
+      }
+    >
+      Tap Copy and we rewrite the HTML so the same email shows up perfectly in Gmail.
+    </Text>
+  </View>
+</View>
+`;

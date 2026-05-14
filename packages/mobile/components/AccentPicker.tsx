@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useColorScheme } from '@/components/useColorScheme';
-import { getColors, ACCENT_OPTIONS } from '@/constants/Colors';
+import { getColors, ACCENT_OPTIONS, resolveAccent, MONO_ID } from '@/constants/Colors';
 
 interface AccentPickerProps {
   selected: string;
@@ -23,6 +23,15 @@ export default function AccentPicker({ selected, onPick }: AccentPickerProps) {
     <View style={styles.list}>
       {ACCENT_OPTIONS.map((opt) => {
         const isSelected = selected === opt.id;
+        // Mono flips to white-ish in dark mode so it's visible against the
+        // dark card. Check copy adapts too.
+        const swatchColor = resolveAccent(opt.id, dark);
+        const isMono = opt.id === MONO_ID;
+        const sub =
+          isMono && dark ? 'Crisp white for dark mode' : opt.sub;
+        // Mono swatch in dark mode is near-white; the check inside it needs
+        // a dark glyph to stay readable.
+        const checkColor = isMono && dark ? '#1c1c1e' : '#fff';
         return (
           <TouchableOpacity
             key={opt.id}
@@ -32,10 +41,10 @@ export default function AccentPicker({ selected, onPick }: AccentPickerProps) {
               styles.button,
               {
                 backgroundColor: dark ? colors.cardBg : '#fff',
-                borderColor: isSelected ? opt.id : 'transparent',
+                borderColor: isSelected ? swatchColor : 'transparent',
               },
               isSelected && {
-                shadowColor: opt.id,
+                shadowColor: swatchColor,
                 shadowOffset: { width: 0, height: 8 },
                 shadowOpacity: 0.2,
                 shadowRadius: 22,
@@ -50,12 +59,14 @@ export default function AccentPicker({ selected, onPick }: AccentPickerProps) {
               },
             ]}>
             {/* Color swatch */}
-            <View style={[styles.swatch, { backgroundColor: opt.id }]} />
+            <View
+              style={[styles.swatch, { backgroundColor: swatchColor }]}
+            />
 
             {/* Name + subtitle */}
             <View style={styles.textColumn}>
               <Text style={[styles.name, { color: colors.fg }]}>{opt.name}</Text>
-              <Text style={[styles.sub, { color: colors.fgMuted }]}>{opt.sub}</Text>
+              <Text style={[styles.sub, { color: colors.fgMuted }]}>{sub}</Text>
             </View>
 
             {/* Checkmark circle */}
@@ -63,11 +74,11 @@ export default function AccentPicker({ selected, onPick }: AccentPickerProps) {
               style={[
                 styles.circle,
                 isSelected
-                  ? { backgroundColor: opt.id, borderColor: opt.id }
+                  ? { backgroundColor: swatchColor, borderColor: swatchColor }
                   : { borderColor: colors.fgMuted },
               ]}>
               {isSelected && (
-                <FontAwesome name="check" size={12} color="#fff" />
+                <FontAwesome name="check" size={12} color={checkColor} />
               )}
             </View>
           </TouchableOpacity>

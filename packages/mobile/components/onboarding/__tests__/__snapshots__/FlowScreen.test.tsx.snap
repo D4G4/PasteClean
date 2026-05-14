@@ -1,7 +1,1643 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FlowScreen matches snapshot — Coral accent (default), with peek trigger 1`] = `null`;
+exports[`FlowScreen matches snapshot — Coral accent (default), with peek trigger 1`] = `
+<View
+  style={
+    [
+      {
+        "backgroundColor": "#fff",
+        "flex": 1,
+        "justifyContent": "space-between",
+      },
+      {
+        "backgroundColor": "#fff",
+      },
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "paddingHorizontal": 28,
+        "paddingVertical": 50,
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "color": "#1c1c1e",
+            "fontSize": 28,
+            "fontWeight": "700",
+            "letterSpacing": -0.6,
+            "lineHeight": 32,
+            "marginBottom": 10,
+          },
+          {
+            "color": "#1c1c1e",
+          },
+        ]
+      }
+    >
+      Write. Copy. Paste.
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "color": "rgba(60,60,67,0.72)",
+            "fontSize": 15,
+            "letterSpacing": -0.2,
+            "lineHeight": 21,
+          },
+          {
+            "color": "rgba(60,60,67,0.72)",
+          },
+        ]
+      }
+    >
+      Three taps from idea to inbox. PasteClean handles the messy part so you can focus on the words.
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "alignItems": "flex-start",
+          "flexDirection": "row",
+          "gap": 4,
+          "justifyContent": "center",
+          "paddingHorizontal": 18,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 4,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 22,
+                  "height": 72,
+                  "justifyContent": "center",
+                  "width": 72,
+                },
+                {
+                  "backgroundColor": "#FF6B5C14",
+                },
+              ]
+            }
+          >
+            <Text />
+          </View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 11,
+                  "elevation": 6,
+                  "height": 22,
+                  "justifyContent": "center",
+                  "position": "absolute",
+                  "right": -6,
+                  "shadowOffset": {
+                    "height": 4,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.32,
+                  "shadowRadius": 10,
+                  "top": -6,
+                  "width": 22,
+                },
+                {
+                  "backgroundColor": "#FF6B5C",
+                  "shadowColor": "#FF6B5C",
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#fff",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              1
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            [
+              {
+                "color": "#1c1c1e",
+                "fontSize": 12,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+                "lineHeight": 16,
+                "maxWidth": 96,
+                "textAlign": "center",
+              },
+              {
+                "color": "#1c1c1e",
+              },
+            ]
+          }
+        >
+          Write & style
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "paddingHorizontal": 2,
+            "paddingTop": 24,
+          }
+        }
+      >
+        <Text />
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 4,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 22,
+                  "height": 72,
+                  "justifyContent": "center",
+                  "width": 72,
+                },
+                {
+                  "backgroundColor": "#FF6B5C14",
+                },
+              ]
+            }
+          >
+            <Text />
+          </View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 11,
+                  "elevation": 6,
+                  "height": 22,
+                  "justifyContent": "center",
+                  "position": "absolute",
+                  "right": -6,
+                  "shadowOffset": {
+                    "height": 4,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.32,
+                  "shadowRadius": 10,
+                  "top": -6,
+                  "width": 22,
+                },
+                {
+                  "backgroundColor": "#FF6B5C",
+                  "shadowColor": "#FF6B5C",
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#fff",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              2
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            [
+              {
+                "color": "#1c1c1e",
+                "fontSize": 12,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+                "lineHeight": 16,
+                "maxWidth": 96,
+                "textAlign": "center",
+              },
+              {
+                "color": "#1c1c1e",
+              },
+            ]
+          }
+        >
+          Tap Copy
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "paddingHorizontal": 2,
+            "paddingTop": 24,
+          }
+        }
+      >
+        <Text />
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 4,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 22,
+                  "height": 72,
+                  "justifyContent": "center",
+                  "width": 72,
+                },
+                {
+                  "backgroundColor": "#FF6B5C14",
+                },
+              ]
+            }
+          >
+            <Text />
+          </View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 11,
+                  "elevation": 6,
+                  "height": 22,
+                  "justifyContent": "center",
+                  "position": "absolute",
+                  "right": -6,
+                  "shadowOffset": {
+                    "height": 4,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.32,
+                  "shadowRadius": 10,
+                  "top": -6,
+                  "width": 22,
+                },
+                {
+                  "backgroundColor": "#FF6B5C",
+                  "shadowColor": "#FF6B5C",
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#fff",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              3
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            [
+              {
+                "color": "#1c1c1e",
+                "fontSize": 12,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+                "lineHeight": 16,
+                "maxWidth": 96,
+                "textAlign": "center",
+              },
+              {
+                "color": "#1c1c1e",
+              },
+            ]
+          }
+        >
+          Paste & send
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      {
+        "paddingHorizontal": 24,
+        "paddingVertical": 50,
+      }
+    }
+  >
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "alignItems": "center",
+          "backgroundColor": "rgba(60,60,67,0.06)",
+          "borderRadius": 12,
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "opacity": 1,
+          "padding": 12,
+          "paddingHorizontal": 14,
+        }
+      }
+      testID="onboarding-flow-how-trigger"
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "gap": 8,
+          }
+        }
+      >
+        <View
+          style={
+            [
+              {
+                "alignItems": "center",
+                "borderRadius": 11,
+                "height": 22,
+                "justifyContent": "center",
+                "width": 22,
+              },
+              {
+                "backgroundColor": "#FF6B5C",
+              },
+            ]
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#fff",
+                "fontSize": 12,
+                "fontWeight": "700",
+              }
+            }
+          >
+            ?
+          </Text>
+        </View>
+        <View>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1c1c1e",
+                  "fontSize": 14,
+                  "fontWeight": "600",
+                  "letterSpacing": -0.2,
+                },
+                {
+                  "color": "#1c1c1e",
+                },
+              ]
+            }
+          >
+            How do I work?
+          </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "rgba(60,60,67,0.6)",
+                  "fontSize": 11.5,
+                },
+                {
+                  "color": "rgba(60,60,67,0.72)",
+                },
+              ]
+            }
+          >
+            Peek under the hood — 8 steps
+          </Text>
+        </View>
+      </View>
+      <Text />
+    </View>
+  </View>
+</View>
+`;
 
-exports[`FlowScreen matches snapshot — Coral accent, no peek trigger 1`] = `null`;
+exports[`FlowScreen matches snapshot — Coral accent, no peek trigger 1`] = `
+<View
+  style={
+    [
+      {
+        "backgroundColor": "#fff",
+        "flex": 1,
+        "justifyContent": "space-between",
+      },
+      {
+        "backgroundColor": "#fff",
+      },
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "paddingHorizontal": 28,
+        "paddingVertical": 50,
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "color": "#1c1c1e",
+            "fontSize": 28,
+            "fontWeight": "700",
+            "letterSpacing": -0.6,
+            "lineHeight": 32,
+            "marginBottom": 10,
+          },
+          {
+            "color": "#1c1c1e",
+          },
+        ]
+      }
+    >
+      Write. Copy. Paste.
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "color": "rgba(60,60,67,0.72)",
+            "fontSize": 15,
+            "letterSpacing": -0.2,
+            "lineHeight": 21,
+          },
+          {
+            "color": "rgba(60,60,67,0.72)",
+          },
+        ]
+      }
+    >
+      Three taps from idea to inbox. PasteClean handles the messy part so you can focus on the words.
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "alignItems": "flex-start",
+          "flexDirection": "row",
+          "gap": 4,
+          "justifyContent": "center",
+          "paddingHorizontal": 18,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 4,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 22,
+                  "height": 72,
+                  "justifyContent": "center",
+                  "width": 72,
+                },
+                {
+                  "backgroundColor": "#FF6B5C14",
+                },
+              ]
+            }
+          >
+            <Text
+              allowFontScaling={false}
+              selectable={false}
+              style={
+                [
+                  {
+                    "color": "#FF6B5C",
+                    "fontSize": 28,
+                  },
+                  undefined,
+                  {
+                    "fontFamily": "FontAwesome",
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                  },
+                  {},
+                ]
+              }
+            >
+              
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 11,
+                  "elevation": 6,
+                  "height": 22,
+                  "justifyContent": "center",
+                  "position": "absolute",
+                  "right": -6,
+                  "shadowOffset": {
+                    "height": 4,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.32,
+                  "shadowRadius": 10,
+                  "top": -6,
+                  "width": 22,
+                },
+                {
+                  "backgroundColor": "#FF6B5C",
+                  "shadowColor": "#FF6B5C",
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#fff",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              1
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            [
+              {
+                "color": "#1c1c1e",
+                "fontSize": 12,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+                "lineHeight": 16,
+                "maxWidth": 96,
+                "textAlign": "center",
+              },
+              {
+                "color": "#1c1c1e",
+              },
+            ]
+          }
+        >
+          Write & style
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "paddingHorizontal": 2,
+            "paddingTop": 24,
+          }
+        }
+      >
+        <Text
+          allowFontScaling={false}
+          selectable={false}
+          style={
+            [
+              {
+                "color": "#FF6B5C",
+                "fontSize": 18,
+              },
+              undefined,
+              {
+                "fontFamily": "FontAwesome",
+                "fontStyle": "normal",
+                "fontWeight": "normal",
+              },
+              {},
+            ]
+          }
+        >
+          
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 4,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 22,
+                  "height": 72,
+                  "justifyContent": "center",
+                  "width": 72,
+                },
+                {
+                  "backgroundColor": "#FF6B5C14",
+                },
+              ]
+            }
+          >
+            <Text
+              allowFontScaling={false}
+              selectable={false}
+              style={
+                [
+                  {
+                    "color": "#FF6B5C",
+                    "fontSize": 28,
+                  },
+                  undefined,
+                  {
+                    "fontFamily": "FontAwesome",
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                  },
+                  {},
+                ]
+              }
+            >
+              
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 11,
+                  "elevation": 6,
+                  "height": 22,
+                  "justifyContent": "center",
+                  "position": "absolute",
+                  "right": -6,
+                  "shadowOffset": {
+                    "height": 4,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.32,
+                  "shadowRadius": 10,
+                  "top": -6,
+                  "width": 22,
+                },
+                {
+                  "backgroundColor": "#FF6B5C",
+                  "shadowColor": "#FF6B5C",
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#fff",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              2
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            [
+              {
+                "color": "#1c1c1e",
+                "fontSize": 12,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+                "lineHeight": 16,
+                "maxWidth": 96,
+                "textAlign": "center",
+              },
+              {
+                "color": "#1c1c1e",
+              },
+            ]
+          }
+        >
+          Tap Copy
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "paddingHorizontal": 2,
+            "paddingTop": 24,
+          }
+        }
+      >
+        <Text
+          allowFontScaling={false}
+          selectable={false}
+          style={
+            [
+              {
+                "color": "#FF6B5C",
+                "fontSize": 18,
+              },
+              undefined,
+              {
+                "fontFamily": "FontAwesome",
+                "fontStyle": "normal",
+                "fontWeight": "normal",
+              },
+              {},
+            ]
+          }
+        >
+          
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 4,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 22,
+                  "height": 72,
+                  "justifyContent": "center",
+                  "width": 72,
+                },
+                {
+                  "backgroundColor": "#FF6B5C14",
+                },
+              ]
+            }
+          >
+            <Text
+              allowFontScaling={false}
+              selectable={false}
+              style={
+                [
+                  {
+                    "color": "#FF6B5C",
+                    "fontSize": 28,
+                  },
+                  undefined,
+                  {
+                    "fontFamily": "FontAwesome",
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                  },
+                  {},
+                ]
+              }
+            >
+              
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 11,
+                  "elevation": 6,
+                  "height": 22,
+                  "justifyContent": "center",
+                  "position": "absolute",
+                  "right": -6,
+                  "shadowOffset": {
+                    "height": 4,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.32,
+                  "shadowRadius": 10,
+                  "top": -6,
+                  "width": 22,
+                },
+                {
+                  "backgroundColor": "#FF6B5C",
+                  "shadowColor": "#FF6B5C",
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#fff",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              3
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            [
+              {
+                "color": "#1c1c1e",
+                "fontSize": 12,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+                "lineHeight": 16,
+                "maxWidth": 96,
+                "textAlign": "center",
+              },
+              {
+                "color": "#1c1c1e",
+              },
+            ]
+          }
+        >
+          Paste & send
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      {
+        "paddingHorizontal": 24,
+        "paddingVertical": 50,
+      }
+    }
+  />
+</View>
+`;
 
-exports[`FlowScreen matches snapshot — Iris accent, with peek trigger 1`] = `null`;
+exports[`FlowScreen matches snapshot — Iris accent, with peek trigger 1`] = `
+<View
+  style={
+    [
+      {
+        "backgroundColor": "#fff",
+        "flex": 1,
+        "justifyContent": "space-between",
+      },
+      {
+        "backgroundColor": "#fff",
+      },
+    ]
+  }
+>
+  <View
+    style={
+      {
+        "paddingHorizontal": 28,
+        "paddingVertical": 50,
+      }
+    }
+  >
+    <Text
+      style={
+        [
+          {
+            "color": "#1c1c1e",
+            "fontSize": 28,
+            "fontWeight": "700",
+            "letterSpacing": -0.6,
+            "lineHeight": 32,
+            "marginBottom": 10,
+          },
+          {
+            "color": "#1c1c1e",
+          },
+        ]
+      }
+    >
+      Write. Copy. Paste.
+    </Text>
+    <Text
+      style={
+        [
+          {
+            "color": "rgba(60,60,67,0.72)",
+            "fontSize": 15,
+            "letterSpacing": -0.2,
+            "lineHeight": 21,
+          },
+          {
+            "color": "rgba(60,60,67,0.72)",
+          },
+        ]
+      }
+    >
+      Three taps from idea to inbox. PasteClean handles the messy part so you can focus on the words.
+    </Text>
+  </View>
+  <View
+    style={
+      {
+        "alignItems": "center",
+      }
+    }
+  >
+    <View
+      style={
+        {
+          "alignItems": "flex-start",
+          "flexDirection": "row",
+          "gap": 4,
+          "justifyContent": "center",
+          "paddingHorizontal": 18,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 4,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 22,
+                  "height": 72,
+                  "justifyContent": "center",
+                  "width": 72,
+                },
+                {
+                  "backgroundColor": "#6E55FF14",
+                },
+              ]
+            }
+          >
+            <Text
+              allowFontScaling={false}
+              selectable={false}
+              style={
+                [
+                  {
+                    "color": "#6E55FF",
+                    "fontSize": 28,
+                  },
+                  undefined,
+                  {
+                    "fontFamily": "FontAwesome",
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                  },
+                  {},
+                ]
+              }
+            >
+              
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 11,
+                  "elevation": 6,
+                  "height": 22,
+                  "justifyContent": "center",
+                  "position": "absolute",
+                  "right": -6,
+                  "shadowOffset": {
+                    "height": 4,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.32,
+                  "shadowRadius": 10,
+                  "top": -6,
+                  "width": 22,
+                },
+                {
+                  "backgroundColor": "#6E55FF",
+                  "shadowColor": "#6E55FF",
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#fff",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              1
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            [
+              {
+                "color": "#1c1c1e",
+                "fontSize": 12,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+                "lineHeight": 16,
+                "maxWidth": 96,
+                "textAlign": "center",
+              },
+              {
+                "color": "#1c1c1e",
+              },
+            ]
+          }
+        >
+          Write & style
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "paddingHorizontal": 2,
+            "paddingTop": 24,
+          }
+        }
+      >
+        <Text
+          allowFontScaling={false}
+          selectable={false}
+          style={
+            [
+              {
+                "color": "#6E55FF",
+                "fontSize": 18,
+              },
+              undefined,
+              {
+                "fontFamily": "FontAwesome",
+                "fontStyle": "normal",
+                "fontWeight": "normal",
+              },
+              {},
+            ]
+          }
+        >
+          
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 4,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 22,
+                  "height": 72,
+                  "justifyContent": "center",
+                  "width": 72,
+                },
+                {
+                  "backgroundColor": "#6E55FF14",
+                },
+              ]
+            }
+          >
+            <Text
+              allowFontScaling={false}
+              selectable={false}
+              style={
+                [
+                  {
+                    "color": "#6E55FF",
+                    "fontSize": 28,
+                  },
+                  undefined,
+                  {
+                    "fontFamily": "FontAwesome",
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                  },
+                  {},
+                ]
+              }
+            >
+              
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 11,
+                  "elevation": 6,
+                  "height": 22,
+                  "justifyContent": "center",
+                  "position": "absolute",
+                  "right": -6,
+                  "shadowOffset": {
+                    "height": 4,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.32,
+                  "shadowRadius": 10,
+                  "top": -6,
+                  "width": 22,
+                },
+                {
+                  "backgroundColor": "#6E55FF",
+                  "shadowColor": "#6E55FF",
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#fff",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              2
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            [
+              {
+                "color": "#1c1c1e",
+                "fontSize": 12,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+                "lineHeight": 16,
+                "maxWidth": 96,
+                "textAlign": "center",
+              },
+              {
+                "color": "#1c1c1e",
+              },
+            ]
+          }
+        >
+          Tap Copy
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "paddingHorizontal": 2,
+            "paddingTop": 24,
+          }
+        }
+      >
+        <Text
+          allowFontScaling={false}
+          selectable={false}
+          style={
+            [
+              {
+                "color": "#6E55FF",
+                "fontSize": 18,
+              },
+              undefined,
+              {
+                "fontFamily": "FontAwesome",
+                "fontStyle": "normal",
+                "fontWeight": "normal",
+              },
+              {},
+            ]
+          }
+        >
+          
+        </Text>
+      </View>
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flex": 1,
+            "gap": 4,
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 22,
+                  "height": 72,
+                  "justifyContent": "center",
+                  "width": 72,
+                },
+                {
+                  "backgroundColor": "#6E55FF14",
+                },
+              ]
+            }
+          >
+            <Text
+              allowFontScaling={false}
+              selectable={false}
+              style={
+                [
+                  {
+                    "color": "#6E55FF",
+                    "fontSize": 28,
+                  },
+                  undefined,
+                  {
+                    "fontFamily": "FontAwesome",
+                    "fontStyle": "normal",
+                    "fontWeight": "normal",
+                  },
+                  {},
+                ]
+              }
+            >
+              
+            </Text>
+          </View>
+          <View
+            style={
+              [
+                {
+                  "alignItems": "center",
+                  "borderRadius": 11,
+                  "elevation": 6,
+                  "height": 22,
+                  "justifyContent": "center",
+                  "position": "absolute",
+                  "right": -6,
+                  "shadowOffset": {
+                    "height": 4,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.32,
+                  "shadowRadius": 10,
+                  "top": -6,
+                  "width": 22,
+                },
+                {
+                  "backgroundColor": "#6E55FF",
+                  "shadowColor": "#6E55FF",
+                },
+              ]
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#fff",
+                  "fontSize": 12,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              3
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            [
+              {
+                "color": "#1c1c1e",
+                "fontSize": 12,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+                "lineHeight": 16,
+                "maxWidth": 96,
+                "textAlign": "center",
+              },
+              {
+                "color": "#1c1c1e",
+              },
+            ]
+          }
+        >
+          Paste & send
+        </Text>
+      </View>
+    </View>
+  </View>
+  <View
+    style={
+      {
+        "paddingHorizontal": 24,
+        "paddingVertical": 50,
+      }
+    }
+  >
+    <View
+      accessibilityState={
+        {
+          "busy": undefined,
+          "checked": undefined,
+          "disabled": undefined,
+          "expanded": undefined,
+          "selected": undefined,
+        }
+      }
+      accessibilityValue={
+        {
+          "max": undefined,
+          "min": undefined,
+          "now": undefined,
+          "text": undefined,
+        }
+      }
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        {
+          "alignItems": "center",
+          "backgroundColor": "rgba(60,60,67,0.06)",
+          "borderRadius": 12,
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "opacity": 1,
+          "padding": 12,
+          "paddingHorizontal": 14,
+        }
+      }
+      testID="onboarding-flow-how-trigger"
+    >
+      <View
+        style={
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "gap": 8,
+          }
+        }
+      >
+        <View
+          style={
+            [
+              {
+                "alignItems": "center",
+                "borderRadius": 11,
+                "height": 22,
+                "justifyContent": "center",
+                "width": 22,
+              },
+              {
+                "backgroundColor": "#6E55FF",
+              },
+            ]
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#fff",
+                "fontSize": 12,
+                "fontWeight": "700",
+              }
+            }
+          >
+            ?
+          </Text>
+        </View>
+        <View>
+          <Text
+            style={
+              [
+                {
+                  "color": "#1c1c1e",
+                  "fontSize": 14,
+                  "fontWeight": "600",
+                  "letterSpacing": -0.2,
+                },
+                {
+                  "color": "#1c1c1e",
+                },
+              ]
+            }
+          >
+            How do I work?
+          </Text>
+          <Text
+            style={
+              [
+                {
+                  "color": "rgba(60,60,67,0.6)",
+                  "fontSize": 11.5,
+                },
+                {
+                  "color": "rgba(60,60,67,0.72)",
+                },
+              ]
+            }
+          >
+            Peek under the hood — 8 steps
+          </Text>
+        </View>
+      </View>
+      <Text
+        allowFontScaling={false}
+        selectable={false}
+        style={
+          [
+            {
+              "color": "rgba(60,60,67,0.5)",
+              "fontSize": 12,
+            },
+            undefined,
+            {
+              "fontFamily": "FontAwesome",
+              "fontStyle": "normal",
+              "fontWeight": "normal",
+            },
+            {},
+          ]
+        }
+      >
+        
+      </Text>
+    </View>
+  </View>
+</View>
+`;

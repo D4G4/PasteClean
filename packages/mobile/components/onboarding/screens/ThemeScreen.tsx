@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Dimensions, ScrollView } from 'react-native';
 import AccentPicker from '@/components/AccentPicker';
+import { useTokens } from '../tokens';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -10,15 +11,17 @@ interface ThemeScreenProps {
 }
 
 // Design handoff: Title 28px, subtitle 14px, padding 8px 28px.
-// AccentPicker rows are in a scrollable area below.
+// AccentPicker rows are in a scrollable area below. AccentPicker already
+// reads the system color scheme via getColors(dark), so it recolors itself.
 
 export default function ThemeScreen({ accent, setAccent }: ThemeScreenProps) {
+  const { t } = useTokens();
   return (
-    <View style={styles.page}>
+    <View style={[styles.page, { backgroundColor: t.pageBg }]}>
       {/* Text */}
       <View style={styles.textArea}>
-        <Text style={styles.title}>Pick a vibe.</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: t.ink }]}>Pick a vibe.</Text>
+        <Text style={[styles.subtitle, { color: t.inkMuted }]}>
           Choose an accent for your header and buttons. You can change it
           anytime in Settings.
         </Text>
@@ -38,7 +41,6 @@ export default function ThemeScreen({ accent, setAccent }: ThemeScreenProps) {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   textArea: {
     paddingHorizontal: 28,

@@ -1,10 +1,9 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import FixedScreen from '../screens/FixedScreen';
+import { snapshotOf } from '../test-utils';
 
 describe('FixedScreen', () => {
   it('matches snapshot', () => {
-    const tree = renderer.create(<FixedScreen />).toJSON();
-    expect(tree).toMatchSnapshot();
+    expect(snapshotOf(<FixedScreen />)).toMatchSnapshot();
   });
 });

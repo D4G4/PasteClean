@@ -29,3 +29,48 @@ jest.mock('react-native-safe-area-context', () => {
 jest.mock('@react-native-async-storage/async-storage', () =>
   require('@react-native-async-storage/async-storage/jest/async-storage-mock'),
 );
+
+// Animations: the real Easing.bezier path crashes under jest-expo. Stub the
+// Animated API so .start() resolves immediately and tests never actually run
+// the loop — we snapshot the static initial render.
+jest.mock('react-native/Libraries/Animated/Easing', () => {
+  const id = (v) => v;
+  const wrap = () => id;
+  return {
+    __esModule: true,
+    default: {
+      step0: id,
+      step1: id,
+      linear: id,
+      ease: id,
+      quad: id,
+      cubic: id,
+      sin: id,
+      circle: id,
+      exp: id,
+      bounce: id,
+      bezier: wrap,
+      bezierFn: wrap,
+      poly: wrap,
+      elastic: wrap,
+      back: wrap,
+      in: wrap,
+      out: wrap,
+      inOut: wrap,
+    },
+  };
+});
+
+// Replace Animated.timing/loop/parallel/sequence/delay with no-op chainables.
+// We still want Animated.Value + Animated.View to work (so opacity / transform
+// props render), but the actual animation drivers are skipped.
+jest.mock(
+  'react-native/Libraries/Animated/animations/TimingAnimation',
+  () => {
+    return class TimingAnimation {
+      start() {}
+      stop() {}
+    };
+  },
+);
+

@@ -1,15 +1,29 @@
 // Design tokens extracted from Claude Design handoff.
 // Font: system default (-apple-system / SF Pro on iOS, Roboto on Android)
 
+export const MONO_ID = '#1c1c1e';
+// In dark mode, Mono flips to white-ish so the accent stays visible against
+// the black page background. The stored ID stays the same (we resolve at
+// render time via resolveAccent).
+export const MONO_DARK = '#f5f5f7';
+
 export const ACCENT_OPTIONS = [
   { id: '#6E55FF', name: 'Iris',    sub: 'A confident violet' },
   { id: '#007AFF', name: 'Classic', sub: 'iOS system blue' },
   { id: '#FF6B5C', name: 'Coral',   sub: 'Warm & energetic' },
   { id: '#00B894', name: 'Mint',    sub: 'Fresh & clean' },
-  { id: '#1c1c1e', name: 'Mono',    sub: 'No-nonsense black' },
+  { id: MONO_ID,   name: 'Mono',    sub: 'Adapts to your theme' },
 ] as const;
 
 export const DEFAULT_ACCENT = '#FF6B5C';
+
+// Effective accent color to render with. Right now only Mono changes — but
+// keeping this as a helper means future theme-aware accents (e.g. an "auto"
+// swatch) can plug in here without touching every consumer.
+export function resolveAccent(id: string, dark: boolean): string {
+  if (id === MONO_ID && dark) return MONO_DARK;
+  return id;
+}
 
 export function getColors(dark: boolean) {
   if (dark) {
