@@ -15,7 +15,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pasteclean.app"
+      "bundleIdentifier": "com.pasteclean.app",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
