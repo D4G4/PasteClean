@@ -44,6 +44,16 @@ export interface LinkPatchOptions {
  * bridge runs unsetLink() at the (now empty) selection, which clears the
  * stored `link` mark. The next character typed produces plain text.
  */
+// Toggle via env or hard-set during debugging. Logs are prefixed so they're
+// trivially greppable in Metro: `link-patch`.
+const LOG_ENABLED = true;
+const log = (...args: unknown[]) => {
+  if (LOG_ENABLED) {
+    // eslint-disable-next-line no-console
+    console.log('[link-patch]', ...args);
+  }
+};
+
 export function useEditorLinkPatch(
   editor: LinkPatchEditor | null | undefined,
   { applyDelayMs = 100 }: LinkPatchOptions = {},
@@ -51,33 +61,63 @@ export function useEditorLinkPatch(
   const lastRangeRef = useRef<LinkPatchSelection | null>(null);
 
   useEffect(() => {
-    if (!editor?._subscribeToEditorStateUpdate) return;
+    if (!editor?._subscribeToEditorStateUpdate) {
+      log('skip subscribe — editor missing _subscribeToEditorStateUpdate');
+      return;
+    }
+    log('subscribed to editor state updates');
     return editor._subscribeToEditorStateUpdate((state) => {
       const sel = state?.selection;
       if (sel && sel.from !== sel.to) {
         lastRangeRef.current = { from: sel.from, to: sel.to };
+        log('observed non-empty selection', sel.from, '..', sel.to);
       }
     });
   }, [editor]);
 
   useEffect(() => {
-    if (!editor) return;
+    if (!editor) {
+      log('skip wrap — editor is null');
+      return;
+    }
+    log('wrapping editor.setLink (apply delay =', applyDelayMs, 'ms)');
     const original = editor.setLink.bind(editor);
     editor.setLink = (link) => {
+      log('setLink called with', JSON.stringify(link));
       if (!link) {
+        log('  → pass-through (empty payload)');
         original(link);
         return;
       }
       const fresh = editor.getEditorState()?.selection;
+      log('  fresh selection:', fresh);
+      log('  last remembered range:', lastRangeRef.current);
       const range =
         fresh && fresh.from !== fresh.to
           ? { from: fresh.from, to: fresh.to }
           : lastRangeRef.current;
+      log('  using range:', range);
       original(link);
-      if (!range) return;
+      if (!range) {
+        log('  → no range available, skipping cursor/stored-mark cleanup');
+        return;
+      }
       setTimeout(() => {
+        log('  cleanup firing: setSelection(', range.to, ',', range.to, ')');
         editor.setSelection(range.to, range.to);
-        original('');
+        // NOTE: we used to also call original("") here to clear stored marks
+        // via TenTap's unsetLink path. That call relies on inclusive:false
+        // making position `range.to` NOT part of the link mark — otherwise
+        // extendMarkRange('link') inside the unset-link bridge handler
+        // expands the selection back over the entire link and unsetLink
+        // strips it. On-device logs proved that's exactly what was happening:
+        // the link got inserted, then immediately removed.
+        // Moving the cursor past the link, on its own, is enough — ProseMirror
+        // resets stored marks based on the new cursor position. If subsequent
+        // typing still inherits the link, the real problem is that
+        // inclusive:false isn't being applied to the mark, and we need a
+        // different strategy than poking the link bridge.
+        log('  cleanup done');
       }, applyDelayMs);
     };
   }, [editor, applyDelayMs]);

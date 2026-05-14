@@ -366,6 +366,45 @@ describe('sanitizeForGmail', () => {
       expect(result).toContain('this article</a>');
     });
 
+    it('accepts www.* URLs and prepends http://', () => {
+      const result = sanitizeForGmail('See [the site](www.example.com) for details');
+      expect(result).toContain('<a href="http://www.example.com"');
+      expect(result).toContain('the site</a>');
+    });
+
+    it('accepts bare domains (example.com) and prepends http://', () => {
+      const result = sanitizeForGmail('Check [the docs](example.com) please');
+      expect(result).toContain('<a href="http://example.com"');
+      expect(result).toContain('the docs</a>');
+    });
+
+    it('accepts bare domains with paths and queries', () => {
+      const result = sanitizeForGmail(
+        'See [docs](example.com/path?q=1) for more',
+      );
+      expect(result).toContain('<a href="http://example.com/path?q=1"');
+      expect(result).toContain('docs</a>');
+    });
+
+    it('preserves an explicit https:// URL verbatim (no double-prefix)', () => {
+      const result = sanitizeForGmail('[link](https://example.com/x)');
+      expect(result).toContain('<a href="https://example.com/x"');
+      expect(result).not.toContain('http://https://');
+    });
+
+    it('does not convert [text](non-url) — prevents false positives on plain text inside parens', () => {
+      const result = sanitizeForGmail('See [Step 1](click here) below');
+      expect(result).not.toContain('<a href');
+      expect(result).toContain('[Step 1]');
+    });
+
+    it('does not convert mailto: or javascript: pseudo-URLs', () => {
+      const mailto = sanitizeForGmail('[email me](mailto:foo@bar.com)');
+      expect(mailto).not.toContain('<a href="mailto:');
+      const js = sanitizeForGmail('[click](javascript:alert(1))');
+      expect(js).not.toContain('<a href="javascript:');
+    });
+
     it('converts **bold** to <strong>', () => {
       const result = sanitizeForGmail('This is **very important** text');
       expect(result).toContain('<strong>very important</strong>');

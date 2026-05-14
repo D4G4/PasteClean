@@ -87,7 +87,7 @@ describe('useEditorLinkPatch', () => {
     jest.useRealTimers();
   });
 
-  it('after setLink(url) with a non-empty selection, moves the cursor to the end of the link and clears stored marks', () => {
+  it('after setLink(url) with a non-empty selection, moves the cursor to the end of the link', () => {
     const editor = makeFakeEditor({ from: 5, to: 10 });
     mount(editor);
 
@@ -112,12 +112,14 @@ describe('useEditorLinkPatch', () => {
       jest.advanceTimersByTime(1);
     });
 
-    // After 100ms: cursor moves to the END of the link, then setLink('') is
-    // invoked so the WebView's link bridge runs unsetLink() at the empty
-    // selection — clearing the stored 'link' mark.
+    // After 100ms: cursor moves to the END of the link. We used to also fire
+    // setLink('') here to clear stored marks via the unsetLink path, but that
+    // destroyed the link we'd just inserted (TenTap's unsetLink handler runs
+    // extendMarkRange first, which expanded the selection back over the link
+    // when inclusive wasn't truly false at runtime). We rely on the inclusive
+    // override + cursor reposition alone now.
     expect(editor.setSelection).toHaveBeenCalledWith(10, 10);
-    expect(editor.originalSetLink).toHaveBeenCalledTimes(2);
-    expect(editor.originalSetLink).toHaveBeenNthCalledWith(2, '');
+    expect(editor.originalSetLink).toHaveBeenCalledTimes(1);
   });
 
   it('setLink("") is a pass-through with no cleanup follow-up', () => {
@@ -161,11 +163,9 @@ describe('useEditorLinkPatch', () => {
     const editor = makeFakeEditor({ from: 3, to: 7 });
     mount(editor);
 
-    // Observe the user's selection.
     act(() => {
       editor.__pushState({ selection: { from: 3, to: 7 } });
     });
-    // Editor blurs; selection collapses.
     act(() => {
       editor.__pushState({ selection: { from: 7, to: 7 } });
     });
@@ -178,7 +178,7 @@ describe('useEditorLinkPatch', () => {
     });
 
     expect(editor.setSelection).toHaveBeenCalledWith(7, 7);
-    expect(editor.originalSetLink).toHaveBeenNthCalledWith(2, '');
+    expect(editor.originalSetLink).toHaveBeenCalledTimes(1);
   });
 
   it('no follow-up if there has never been a non-empty selection (defensive guard)', () => {
@@ -219,7 +219,7 @@ describe('useEditorLinkPatch', () => {
     expect(editor.setSelection).toHaveBeenCalledWith(10, 10);
   });
 
-  it('forwards setLink calls in order: original payload, then empty payload after the delay', () => {
+  it('does not re-invoke setLink during the cleanup (regression: setLink("") was unsetting the link)', () => {
     const editor = makeFakeEditor({ from: 2, to: 6 });
     mount(editor);
 
@@ -230,13 +230,12 @@ describe('useEditorLinkPatch', () => {
       jest.advanceTimersByTime(100);
     });
 
-    expect(editor.originalSetLink.mock.calls).toEqual([
-      ['https://x.test'],
-      [''],
-    ]);
-    // setSelection must happen between the two setLink calls — verified by
-    // checking that setSelection was called once and setLink twice in the
-    // expected payload order above.
+    // Only the user's original setLink('https://x.test') should reach the
+    // underlying bridge. The cleanup must not call setLink('') — TenTap's
+    // unsetLink path destroys the link we just inserted (extendMarkRange
+    // expands the selection back over it when inclusive isn't truly false).
+    expect(editor.originalSetLink.mock.calls).toEqual([['https://x.test']]);
     expect(editor.setSelection).toHaveBeenCalledTimes(1);
+    expect(editor.setSelection).toHaveBeenCalledWith(6, 6);
   });
 });

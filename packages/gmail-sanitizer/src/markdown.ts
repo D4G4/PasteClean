@@ -131,9 +131,23 @@ function processInlineElements(input: string): string {
   let result = input;
 
   // Links: [text](url) → <a href="url">text</a>
+  //
+  // url matches three forms (in priority order):
+  //   1. http://… or https://… — used verbatim as href
+  //   2. www.example.com[/path] — prepended with http://
+  //   3. bare domain like example.com[/path] — prepended with http://
+  //
+  // The bare-domain branch requires a "name.tld" shape where the TLD is
+  // 2+ letters. That avoids false positives like [Step 1](click here):
+  // "click here" has no dot+TLD so it's left alone. URLs without a recognized
+  // shape are not converted — the literal markdown is preserved instead of
+  // producing a broken link.
   result = result.replace(
-    /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
-    '<a href="$2">$1</a>',
+    /\[([^\]]+)\]\((https?:\/\/[^\s)]+|www\.[^\s)]+|[a-z0-9][a-z0-9-]*\.[a-z]{2,}[^\s)]*)\)/gi,
+    (_match: string, text: string, url: string) => {
+      const href = /^https?:\/\//i.test(url) ? url : `http://${url}`;
+      return `<a href="${href}">${text}</a>`;
+    },
   );
 
   // Bold: **text** → <strong>text</strong>
