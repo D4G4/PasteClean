@@ -147,15 +147,16 @@ const HEADING_SIZES: Record<string, string> = {
 };
 
 export function convertHeadingsToParagraphs($: CheerioAPI): void {
+  // Keep heading tags (<h1>–<h6>) instead of converting to <p>. Gmail's
+  // compose preserves native heading elements when pasted via public.html,
+  // but strips inline font-size from <p> tags. We still add inline font-size
+  // + font-weight as a fallback for email clients that reset heading styles.
   for (const [tag, size] of Object.entries(HEADING_SIZES)) {
     $(tag).each(function () {
       const el = $(this);
       const existingStyle = el.attr('style') || '';
       const newStyle = `font-size: ${size}; font-weight: bold${existingStyle ? '; ' + existingStyle : ''}`;
       el.attr('style', newStyle);
-
-      // Replace the tag name: <h1> → <p>
-      (this as any).tagName = 'p';
     });
   }
 }

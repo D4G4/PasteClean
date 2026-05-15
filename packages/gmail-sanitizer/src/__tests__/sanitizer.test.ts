@@ -283,25 +283,24 @@ describe('sanitizeForGmail', () => {
     });
   });
 
-  describe('heading to paragraph conversion', () => {
-    it('converts <h1> to <p> with font-size: 22px and font-weight: bold', () => {
+  describe('heading styling', () => {
+    it('keeps <h1> tag and adds inline font-size: 22px and font-weight: bold', () => {
       const result = sanitizeForGmail('<h1>Big Title</h1>');
-      expect(result).not.toContain('<h1');
-      expect(result).toContain('<p');
+      expect(result).toContain('<h1');
       expect(result).toContain('font-size: 22px');
       expect(result).toContain('font-weight: bold');
       expect(result).toContain('Big Title');
     });
 
-    it('converts <h2> to <p> with font-size: 18px', () => {
+    it('keeps <h2> tag and adds inline font-size: 18px', () => {
       const result = sanitizeForGmail('<h2>Subtitle</h2>');
-      expect(result).not.toContain('<h2');
+      expect(result).toContain('<h2');
       expect(result).toContain('font-size: 18px');
     });
 
-    it('converts <h3> to <p> with font-size: 16px', () => {
+    it('keeps <h3> tag and adds inline font-size: 16px', () => {
       const result = sanitizeForGmail('<h3>Section</h3>');
-      expect(result).not.toContain('<h3');
+      expect(result).toContain('<h3');
       expect(result).toContain('font-size: 16px');
     });
 

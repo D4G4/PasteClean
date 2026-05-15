@@ -347,5 +347,22 @@ exports[`EditorScreen — dark mode matches snapshot 1`] = `
       testID="rich-text"
     />
   </View>
+  <View
+    onLayout={[Function]}
+    pointerEvents="box-none"
+    style={
+      [
+        {
+          "bottom": 0,
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+        },
+        {
+          "paddingBottom": 0,
+        },
+      ]
+    }
+  />
 </View>
 `;

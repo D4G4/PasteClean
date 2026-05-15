@@ -71,7 +71,7 @@ export default function OnboardingFlow({
           <ProblemScreen />
         </View>
         <View key="1" style={styles.page} testID="onboarding-page-1">
-          <VanishScreen />
+          <VanishScreen active={currentPage === 1} />
         </View>
         <View key="2" style={styles.page} testID="onboarding-page-2">
           <FixedScreen />

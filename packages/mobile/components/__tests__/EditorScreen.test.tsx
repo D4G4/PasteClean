@@ -34,6 +34,7 @@ jest.mock('@10play/tentap-editor', () => {
       injectJS: () => {},
       setPlaceholder: () => {},
       setLink: () => {},
+      blur: () => {},
     }),
     useBridgeState: () => ({ isReady: true }),
     DEFAULT_TOOLBAR_ITEMS: [],

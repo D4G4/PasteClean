@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WebView } from 'react-native-webview';
-import * as Clipboard from 'expo-clipboard';
+import { copyHtmlToClipboard } from '@/native/html-clipboard';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -225,7 +225,8 @@ export default function PreviewScreen() {
 
   const handleCopy = useCallback(async () => {
     try {
-      await Clipboard.setStringAsync(sanitized);
+      const plainText = sanitized.replace(/<[^>]*>/g, '').trim();
+      await copyHtmlToClipboard(sanitized, plainText);
       if (Platform.OS !== 'web') {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }

@@ -234,7 +234,10 @@ export default function EditorScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={copyForGmail}
+            onPress={() => {
+              editor.blur();
+              copyForGmail();
+            }}
             style={[
               styles.copyPill,
               {
@@ -319,20 +322,22 @@ export default function EditorScreen() {
       {/* ================================================================ */}
       {/* 4. Formatting toolbar                                            */}
       {/* ================================================================ */}
-      {/* Per TenTap's canonical pattern: only the toolbar lives in a
-          KeyboardAvoidingView, positioned absolutely at the bottom. The
-          editor body stays in normal flow so TenTap's internal
-          avoidIosKeyboard handler can keep the cursor visible without
-          fighting an outer KAV that resizes the WebView's parent (which
-          was the cause of the "Enter scrolls content off-screen" bug).
-          The Toolbar is a horizontal FlatList; we pair it with a fixed
-          keyboard-dismiss button on the right so users always have a
-          one-tap exit, even when the formatting buttons scroll. */}
-      {keyboardVisible && (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={styles.toolbarKav}
-          pointerEvents="box-none">
+      {/* The KeyboardAvoidingView is ALWAYS mounted, even when the keyboard
+          is down. Reason: KAV's UIKeyboardWillShow listener attaches at
+          mount. If we mount KAV conditionally on keyboardVisible, KAV
+          mounts AFTER the keyboard's show event has fired — its listener
+          never sees it — and KAV sits at bottom:0 with no inset, hiding
+          the toolbar behind the keyboard (the exact regression we kept
+          hitting). Always-mounted KAV → listener always live → correct
+          inset every time.
+
+          The toolbar's *contents* still render conditionally so the
+          floating nav owns the bottom when the keyboard's down. */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={styles.toolbarKav}
+        pointerEvents="box-none">
+        {keyboardVisible && (
           <View
             style={[
               styles.toolbarWrap,
@@ -349,7 +354,13 @@ export default function EditorScreen() {
               />
             </View>
             <TouchableOpacity
-              onPress={Keyboard.dismiss}
+              onPress={() => {
+                // Keyboard.dismiss() doesn't work here because the keyboard
+                // is owned by TenTap's WebView, not a native TextInput.
+                // editor.blur() sends a blur command to TipTap inside the
+                // WebView, which releases focus and dismisses the keyboard.
+                editor.blur();
+              }}
               style={[
                 styles.toolbarDismiss,
                 { borderLeftColor: colors.sep },
@@ -364,8 +375,8 @@ export default function EditorScreen() {
               />
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      )}
+        )}
+      </KeyboardAvoidingView>
 
       {/* ================================================================ */}
       {/* 5. Gmail handoff toast                                           */}

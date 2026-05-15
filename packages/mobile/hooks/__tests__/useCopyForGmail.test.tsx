@@ -19,15 +19,15 @@ import { Alert, Linking, Platform } from 'react-native';
 // Module mocks. These have to be set up before importing the hook because the
 // hook closes over the live module references.
 // ---------------------------------------------------------------------------
-const mockSetStringAsync = jest.fn().mockResolvedValue(undefined);
+const mockCopyHtml = jest.fn().mockResolvedValue(undefined);
 const mockNotificationAsync = jest.fn();
 const mockGetItem = jest.fn().mockResolvedValue(null);
 const mockSetItem = jest.fn().mockResolvedValue(undefined);
 const mockSanitize = jest.fn((html: string) => `<sanitized>${html}</sanitized>`);
 
-jest.mock('expo-clipboard', () => ({
-  setStringAsync: (s: string, opts?: unknown) => mockSetStringAsync(s, opts),
-  StringFormat: { PLAIN_TEXT: 'plainText', HTML: 'html' },
+jest.mock('@/native/html-clipboard', () => ({
+  copyHtmlToClipboard: (html: string, plain: string) =>
+    mockCopyHtml(html, plain),
 }));
 jest.mock('expo-haptics', () => ({
   notificationAsync: (...args: unknown[]) => mockNotificationAsync(...args),
@@ -128,7 +128,7 @@ describe('useCopyForGmail', () => {
         'Nothing to copy',
         'Write something first!',
       );
-      expect(mockSetStringAsync).not.toHaveBeenCalled();
+      expect(mockCopyHtml).not.toHaveBeenCalled();
       expect(mockSanitize).not.toHaveBeenCalled();
       expect(handle().copied).toBe(false);
       expect(handle().toastVisible).toBe(false);
@@ -146,12 +146,9 @@ describe('useCopyForGmail', () => {
       await handle().copyForGmail();
     });
     expect(mockSanitize).toHaveBeenCalledWith('<p>Hello <b>world</b></p>');
-    // Must include inputFormat: 'html' so Gmail's compose surface renders
-    // the markup instead of pasting it as literal text. This is THE bug from
-    // first TestFlight smoke test — paste produced raw "<p style=..." text.
-    expect(mockSetStringAsync).toHaveBeenCalledWith(
+    expect(mockCopyHtml).toHaveBeenCalledWith(
       '<sanitized><p>Hello <b>world</b></p></sanitized>',
-      { inputFormat: 'html' },
+      'Hello world',
     );
     expect(handle().copied).toBe(true);
   });
@@ -300,11 +297,11 @@ describe('useCopyForGmail', () => {
     expect(consoleErrorSpy).toHaveBeenCalled();
     expect(handle().copied).toBe(false);
     expect(handle().toastVisible).toBe(false);
-    expect(mockSetStringAsync).not.toHaveBeenCalled();
+    expect(mockCopyHtml).not.toHaveBeenCalled();
   });
 
   it('surfaces a thrown clipboard error as a user-facing Alert', async () => {
-    mockSetStringAsync.mockRejectedValueOnce(new Error('clipboard fail'));
+    mockCopyHtml.mockRejectedValueOnce(new Error('clipboard fail'));
     const { handle } = await mountHook(async () => '<p>hi</p>');
     await act(async () => {
       await handle().copyForGmail();

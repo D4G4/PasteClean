@@ -47,6 +47,12 @@ jest.mock('react-native-webview', () => {
   return { __esModule: true, default: WebView, WebView };
 });
 
+// html-clipboard: native module not available in Jest. The wrapper's try/catch
+// handles this at runtime, but the import still needs to resolve.
+jest.mock('@/native/html-clipboard', () => ({
+  copyHtmlToClipboard: jest.fn().mockResolvedValue(undefined),
+}));
+
 // Animations: the real Easing.bezier path crashes under jest-expo. Stub the
 // Animated API so .start() resolves immediately and tests never actually run
 // the loop — we snapshot the static initial render.

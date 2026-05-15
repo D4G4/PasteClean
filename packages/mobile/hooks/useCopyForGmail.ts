@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Linking, Platform } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { sanitizeForGmail } from '@pasteclean/gmail-sanitizer';
+import { copyHtmlToClipboard } from '@/native/html-clipboard';
 
 export const STORAGE_KEY_AUTO_OPEN = '@pasteclean/auto_open_gmail';
 
@@ -91,12 +91,8 @@ export function useCopyForGmail(
         return;
       }
       const sanitized = sanitizeForGmail(html);
-      // CRITICAL: write to the clipboard as HTML, not plain text. Without
-      // inputFormat:'html', Gmail's contenteditable receives the literal
-      // markup ("<p style=...>") as text instead of rendering the styles.
-      await Clipboard.setStringAsync(sanitized, {
-        inputFormat: Clipboard.StringFormat.HTML,
-      });
+      const plainText = sanitized.replace(/<[^>]*>/g, '').trim();
+      await copyHtmlToClipboard(sanitized, plainText);
 
       if (Platform.OS !== 'web') {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

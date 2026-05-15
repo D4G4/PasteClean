@@ -51,7 +51,7 @@ const bodyStyles = StyleSheet.create({
   },
 });
 
-export default function VanishScreen() {
+export default function VanishScreen({ active = false }: { active?: boolean }) {
   // Crossfade: cardOpacity drives the compose card (1 -> 0 -> 1).
   // labelOpacity inverts on the sent label (composing fades out, sent fades in).
   // Chrome (page bg, title, subtitle) follows the system theme. The Gmail
@@ -61,6 +61,17 @@ export default function VanishScreen() {
   const sent = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    // Only run the crossfade loop when this page is visible. The user should
+    // first see the "composing" state (compose=1, sent=0), then after the
+    // initial hold the animation crossfades to "sent in Gmail". Stopping
+    // when inactive resets to the compose state so re-entering always starts
+    // from "composing".
+    if (!active) {
+      compose.setValue(1);
+      sent.setValue(0);
+      return;
+    }
+
     // 6.0s total loop: hold 2.4s, fade 0.6s, hold 2.4s, fade 0.6s.
     const loop = Animated.loop(
       Animated.sequence([
@@ -98,7 +109,7 @@ export default function VanishScreen() {
     );
     loop.start();
     return () => loop.stop();
-  }, [compose, sent]);
+  }, [active, compose, sent]);
 
   return (
     <View style={[styles.page, { backgroundColor: t.pageBg }]}>
