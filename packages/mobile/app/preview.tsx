@@ -161,6 +161,13 @@ export default function PreviewScreen() {
         [style*="color: rgb(0,0,0)"] {
           color: #e8eaed !important;
         }
+        [style*="color: #555555"],
+        [style*="color:#555555"] {
+          color: #9aa0a6 !important;
+        }
+        blockquote {
+          background-color: transparent !important;
+        }
         a { color: #8ab4f8 !important; }
       `
       : '';

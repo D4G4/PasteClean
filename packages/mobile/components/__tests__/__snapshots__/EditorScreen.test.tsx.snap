@@ -88,20 +88,6 @@ exports[`EditorScreen — dark mode matches snapshot 1`] = `
       <View
         style={
           {
-            "alignItems": "center",
-            "backgroundColor": "rgba(255,255,255,0.2)",
-            "borderRadius": 8,
-            "height": 32,
-            "justifyContent": "center",
-            "width": 32,
-          }
-        }
-      >
-        <Text />
-      </View>
-      <View
-        style={
-          {
             "justifyContent": "center",
           }
         }

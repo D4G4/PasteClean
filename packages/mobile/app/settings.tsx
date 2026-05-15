@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -11,6 +11,7 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { getColors } from '@/constants/Colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import AccentPicker from '@/components/AccentPicker';
+import PipelineSheet from '@/components/onboarding/PipelineSheet';
 
 // ---------------------------------------------------------------------------
 // Settings row
@@ -20,7 +21,6 @@ function SettingsRow({
   detail,
   showChevron = false,
   isLast = false,
-  colorCircle,
   onPress,
   fg,
   fgMuted,
@@ -31,7 +31,6 @@ function SettingsRow({
   detail?: string;
   showChevron?: boolean;
   isLast?: boolean;
-  colorCircle?: string;
   onPress?: () => void;
   fg: string;
   fgMuted: string;
@@ -49,19 +48,10 @@ function SettingsRow({
         {detail != null && (
           <Text style={[styles.rowDetail, { color: fgMuted }]}>{detail}</Text>
         )}
-        {colorCircle != null && (
-          <View
-            style={[
-              styles.colorCircle,
-              { backgroundColor: colorCircle },
-            ]}
-          />
-        )}
         {showChevron && (
           <FontAwesome name="chevron-right" size={13} color={fgFaint} />
         )}
       </View>
-      {/* Bottom border (left-aligned at 16px, not full width) */}
       {!isLast && (
         <View style={[styles.rowBorder, { backgroundColor: sep }]} />
       )}
@@ -70,35 +60,21 @@ function SettingsRow({
 }
 
 // ---------------------------------------------------------------------------
-// Settings screen
+// Settings screen — native header provided by the root Stack
 // ---------------------------------------------------------------------------
 export default function SettingsScreen() {
   const colorScheme = useColorScheme();
   const dark = colorScheme === 'dark';
   const colors = getColors(dark);
   const { accent, setAccent } = useTheme();
+  const [pipelineOpen, setPipelineOpen] = useState(false);
 
   return (
     <View style={[styles.container, { backgroundColor: dark ? '#000' : '#f2f2f7' }]}>
-      {/* Header */}
-      <View
-        style={[
-          styles.header,
-          {
-            backgroundColor: dark
-              ? 'rgba(0,0,0,0.85)'
-              : 'rgba(242,242,247,0.85)',
-          },
-        ]}>
-        <Text style={[styles.headerTitle, { color: colors.fg }]}>
-          Settings
-        </Text>
-      </View>
-
-      {/* Body */}
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
+        contentInsetAdjustmentBehavior="automatic"
         showsVerticalScrollIndicator={false}>
         {/* ---- Appearance ---- */}
         <Text style={[styles.sectionHeader, { color: colors.fgMuted }]}>
@@ -106,85 +82,24 @@ export default function SettingsScreen() {
         </Text>
         <AccentPicker selected={accent} onPick={setAccent} />
 
-        {/* ---- Defaults ---- */}
-        <Text style={[styles.sectionHeader, { color: colors.fgMuted }]}>
-          DEFAULTS
-        </Text>
-        <View style={[styles.section, { backgroundColor: colors.cardBg }]}>
-          <SettingsRow
-            title="Default Font Size"
-            detail="15px"
-            showChevron
-            fg={colors.fg}
-            fgMuted={colors.fgMuted}
-            fgFaint={colors.fgFaint}
-            sep={colors.sep}
-          />
-          <SettingsRow
-            title="Default Text Color"
-            colorCircle={colors.fg}
-            showChevron
-            isLast
-            fg={colors.fg}
-            fgMuted={colors.fgMuted}
-            fgFaint={colors.fgFaint}
-            sep={colors.sep}
-          />
-        </View>
-
         {/* ---- About ---- */}
         <Text style={[styles.sectionHeader, { color: colors.fgMuted }]}>
           ABOUT
         </Text>
         <View style={[styles.section, { backgroundColor: colors.cardBg }]}>
           <SettingsRow
-            title="Version"
-            detail="1.0.0"
-            fg={colors.fg}
-            fgMuted={colors.fgMuted}
-            fgFaint={colors.fgFaint}
-            sep={colors.sep}
-          />
-          <SettingsRow
             title="How It Works"
             showChevron
+            onPress={() => setPipelineOpen(true)}
+            fg={colors.fg}
+            fgMuted={colors.fgMuted}
+            fgFaint={colors.fgFaint}
+            sep={colors.sep}
+          />
+          <SettingsRow
+            title="Version"
+            detail="1.0.0"
             isLast
-            onPress={() => {}}
-            fg={colors.fg}
-            fgMuted={colors.fgMuted}
-            fgFaint={colors.fgFaint}
-            sep={colors.sep}
-          />
-        </View>
-
-        {/* ---- Support ---- */}
-        <Text style={[styles.sectionHeader, { color: colors.fgMuted }]}>
-          SUPPORT
-        </Text>
-        <View style={[styles.section, { backgroundColor: colors.cardBg }]}>
-          <SettingsRow
-            title="Send Feedback"
-            showChevron
-            onPress={() => {}}
-            fg={colors.fg}
-            fgMuted={colors.fgMuted}
-            fgFaint={colors.fgFaint}
-            sep={colors.sep}
-          />
-          <SettingsRow
-            title="Rate PasteClean"
-            showChevron
-            onPress={() => {}}
-            fg={colors.fg}
-            fgMuted={colors.fgMuted}
-            fgFaint={colors.fgFaint}
-            sep={colors.sep}
-          />
-          <SettingsRow
-            title="Privacy Policy"
-            showChevron
-            isLast
-            onPress={() => {}}
             fg={colors.fg}
             fgMuted={colors.fgMuted}
             fgFaint={colors.fgFaint}
@@ -199,6 +114,8 @@ export default function SettingsScreen() {
           white-on-white.
         </Text>
       </ScrollView>
+
+      <PipelineSheet open={pipelineOpen} onClose={() => setPipelineOpen(false)} />
     </View>
   );
 }
@@ -210,33 +127,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-
-  // Header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    paddingTop: 56,
-    paddingBottom: 6,
-    paddingLeft: 20,
-    paddingRight: 12,
-  },
-  headerTitle: {
-    fontSize: 34,
-    fontWeight: '700',
-    letterSpacing: 0.36,
-  },
-
-  // Scroll body
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingTop: 12,
     paddingBottom: 100,
   },
-
-  // Section
   sectionHeader: {
     fontSize: 13,
     fontWeight: '600',
@@ -251,8 +147,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     overflow: 'hidden',
   },
-
-  // Row
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -273,12 +167,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginRight: 6,
   },
-  colorCircle: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    marginRight: 6,
-  },
   rowBorder: {
     position: 'absolute',
     bottom: 0,
@@ -286,8 +174,6 @@ const styles = StyleSheet.create({
     right: 0,
     height: 0.5,
   },
-
-  // Footer
   footer: {
     fontSize: 13,
     textAlign: 'center',

@@ -78,6 +78,14 @@ function RootContent() {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          headerLargeTitle: true,
+          headerBackTitle: 'Back',
+        }}
+      />
+      <Stack.Screen
         name="preview"
         options={{
           presentation: 'transparentModal',

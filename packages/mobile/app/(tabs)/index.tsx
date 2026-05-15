@@ -223,7 +223,6 @@ export default function EditorScreen() {
             accessibilityLabel="Settings">
             <FontAwesome name="cog" size={18} color="#fff" />
           </TouchableOpacity>
-          <BrandMark />
           <View style={styles.headerTitleGroup}>
             <Text style={styles.headerTitle}>PasteClean</Text>
             <Text style={styles.headerSubtitle}>New draft</Text>
