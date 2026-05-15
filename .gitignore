@@ -3,6 +3,12 @@ dist/
 .expo/
 ios/
 android/
+# Xcode archive output — produced by `xcodebuild archive`, contains the .app
+# bundle, dSYMs (one was 76MB), and compiled frameworks. Never commit.
+build/
+*.xcarchive/
+*.ipa
+*.dSYM/
 *.tsbuildinfo
 .turbo/
 *.log
