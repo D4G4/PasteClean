@@ -26,7 +26,8 @@ const mockSetItem = jest.fn().mockResolvedValue(undefined);
 const mockSanitize = jest.fn((html: string) => `<sanitized>${html}</sanitized>`);
 
 jest.mock('expo-clipboard', () => ({
-  setStringAsync: (s: string) => mockSetStringAsync(s),
+  setStringAsync: (s: string, opts?: unknown) => mockSetStringAsync(s, opts),
+  StringFormat: { PLAIN_TEXT: 'plainText', HTML: 'html' },
 }));
 jest.mock('expo-haptics', () => ({
   notificationAsync: (...args: unknown[]) => mockNotificationAsync(...args),
@@ -145,8 +146,12 @@ describe('useCopyForGmail', () => {
       await handle().copyForGmail();
     });
     expect(mockSanitize).toHaveBeenCalledWith('<p>Hello <b>world</b></p>');
+    // Must include inputFormat: 'html' so Gmail's compose surface renders
+    // the markup instead of pasting it as literal text. This is THE bug from
+    // first TestFlight smoke test — paste produced raw "<p style=..." text.
     expect(mockSetStringAsync).toHaveBeenCalledWith(
       '<sanitized><p>Hello <b>world</b></p></sanitized>',
+      { inputFormat: 'html' },
     );
     expect(handle().copied).toBe(true);
   });

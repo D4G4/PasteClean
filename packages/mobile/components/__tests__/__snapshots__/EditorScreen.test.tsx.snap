@@ -2,19 +2,13 @@
 
 exports[`EditorScreen — dark mode matches snapshot 1`] = `
 <View
-  onLayout={[Function]}
   style={
     [
-      [
-        {
-          "flex": 1,
-        },
-        {
-          "backgroundColor": "#000000",
-        },
-      ],
       {
-        "paddingBottom": 0,
+        "flex": 1,
+      },
+      {
+        "backgroundColor": "#000000",
       },
     ]
   }
@@ -338,6 +332,7 @@ exports[`EditorScreen — dark mode matches snapshot 1`] = `
         },
         {
           "backgroundColor": "#1C1C1E",
+          "paddingBottom": 0,
         },
       ]
     }

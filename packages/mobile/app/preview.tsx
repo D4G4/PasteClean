@@ -57,7 +57,16 @@ export default function PreviewScreen() {
   const c = getColors(dark);
   const { accent } = useTheme();
 
-  const [showOriginal, setShowOriginal] = useState(false);
+  // Three-way preview:
+  //   'light'    — sanitized HTML on white bg (Gmail's default light theme)
+  //   'dark'     — sanitized HTML on dark bg, with the sanitizer's hardcoded
+  //                color:#000000 inverted to an off-white via injected CSS,
+  //                approximating how Gmail's smart dark mode adapts author
+  //                colors so the recipient can still read the message.
+  //   'original' — raw editor HTML, chrome matches the app theme.
+  type PreviewMode = 'light' | 'dark' | 'original';
+  const [previewMode, setPreviewMode] = useState<PreviewMode>('light');
+  const showOriginal = previewMode === 'original';
   const [copied, setCopied] = useState(false);
   const [toastVisible, setToastVisible] = useState(false);
   const [autoOpenGmail, setAutoOpenGmail] = useState(false);
@@ -117,13 +126,44 @@ export default function PreviewScreen() {
          </div>`
       : '';
 
-  // Preview's body palette flips with the app's color scheme so the
-  // simulated Gmail card matches the app's mode (recipient could see
-  // either; this just keeps the preview consistent with what's around it).
-  const previewBg = dark ? '#1c1c1e' : '#ffffff';
-  const previewFg = dark ? '#e8eaed' : '#202124';
-  const previewMuted = dark ? '#9aa0a6' : '#5f6368';
-  const previewBorder = dark ? 'rgba(255,255,255,0.08)' : 'rgba(60,60,67,0.12)';
+  // Palette per preview mode:
+  //   light    — Gmail's white card
+  //   dark     — Gmail's dark theme card (~#1f1f1f)
+  //   original — raw editor content, chrome matches the app theme
+  const useDarkChrome =
+    previewMode === 'dark' || (previewMode === 'original' && dark);
+  const previewBg = useDarkChrome
+    ? previewMode === 'dark'
+      ? '#1f1f1f'
+      : '#1c1c1e'
+    : '#ffffff';
+  const previewFg = useDarkChrome ? '#e8eaed' : '#202124';
+  const previewMuted = useDarkChrome ? '#9aa0a6' : '#5f6368';
+  const previewBorder = useDarkChrome
+    ? 'rgba(255,255,255,0.08)'
+    : 'rgba(60,60,67,0.12)';
+
+  // Gmail's smart dark mode adapts author-specified text colors so they
+  // stay legible against the dark surface. Our sanitizer hardcodes
+  // color:#000000 (black) on every <p> for Gmail-safety on light mode —
+  // but on dark mode that black is invisible. We approximate Gmail's
+  // adaptation by overriding any explicit black to off-white in dark mode
+  // preview ONLY. Accent colors (orange, green, etc.) read fine on dark
+  // already so we leave them alone. Links shift to Gmail's dark-link blue.
+  const darkModeOverrideCss =
+    previewMode === 'dark'
+      ? `
+        [style*="color: #000000"],
+        [style*="color:#000000"],
+        [style*="color: #000"],
+        [style*="color:#000"],
+        [style*="color: rgb(0, 0, 0)"],
+        [style*="color: rgb(0,0,0)"] {
+          color: #e8eaed !important;
+        }
+        a { color: #8ab4f8 !important; }
+      `
+      : '';
   const wrappedHtml = `
     <!DOCTYPE html>
     <html>
@@ -141,6 +181,7 @@ export default function PreviewScreen() {
           padding: 0;
         }
         img { max-width: 100%; height: auto; }
+        ${darkModeOverrideCss}
       </style>
     </head>
     <body>
@@ -255,32 +296,49 @@ export default function PreviewScreen() {
           <TouchableOpacity
             style={[
               styles.toggleButton,
-              !showOriginal && { backgroundColor: accent },
+              previewMode === 'light' && { backgroundColor: accent },
             ]}
-            onPress={() => setShowOriginal(false)}
+            onPress={() => setPreviewMode('light')}
             activeOpacity={0.7}
           >
             <Text
               style={[
                 styles.toggleText,
-                { color: !showOriginal ? '#FFFFFF' : c.fgMuted },
+                { color: previewMode === 'light' ? '#FFFFFF' : c.fgMuted },
               ]}
             >
-              Gmail Safe
+              Gmail Light
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.toggleButton,
-              showOriginal && { backgroundColor: '#FFCC00' },
+              previewMode === 'dark' && { backgroundColor: '#1c1c1e' },
             ]}
-            onPress={() => setShowOriginal(true)}
+            onPress={() => setPreviewMode('dark')}
             activeOpacity={0.7}
           >
             <Text
               style={[
                 styles.toggleText,
-                { color: showOriginal ? '#1c1c1e' : c.fgMuted },
+                { color: previewMode === 'dark' ? '#FFFFFF' : c.fgMuted },
+              ]}
+            >
+              Gmail Dark
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.toggleButton,
+              previewMode === 'original' && { backgroundColor: '#FFCC00' },
+            ]}
+            onPress={() => setPreviewMode('original')}
+            activeOpacity={0.7}
+          >
+            <Text
+              style={[
+                styles.toggleText,
+                { color: previewMode === 'original' ? '#1c1c1e' : c.fgMuted },
               ]}
             >
               Original

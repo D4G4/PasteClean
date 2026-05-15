@@ -16,7 +16,11 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pasteclean.app",
-      "buildNumber": "1"
+      "buildNumber": "2",
+      "appleTeamId": "6V6FZW3FFN",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {

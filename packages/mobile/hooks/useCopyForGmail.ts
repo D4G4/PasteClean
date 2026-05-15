@@ -91,7 +91,12 @@ export function useCopyForGmail(
         return;
       }
       const sanitized = sanitizeForGmail(html);
-      await Clipboard.setStringAsync(sanitized);
+      // CRITICAL: write to the clipboard as HTML, not plain text. Without
+      // inputFormat:'html', Gmail's contenteditable receives the literal
+      // markup ("<p style=...>") as text instead of rendering the styles.
+      await Clipboard.setStringAsync(sanitized, {
+        inputFormat: Clipboard.StringFormat.HTML,
+      });
 
       if (Platform.OS !== 'web') {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

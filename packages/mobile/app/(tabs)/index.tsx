@@ -103,6 +103,13 @@ export default function EditorScreen() {
   // recolored separately via editor.injectCSS() below.
   const editor = useEditorBridge({
     autofocus: false,
+    // MUST stay true. This is TenTap's internal handling of the WebView's
+    // viewport/caret when the iOS keyboard appears. The layout below keeps
+    // RichText in normal flow (NOT inside a KeyboardAvoidingView) — only
+    // the Toolbar is wrapped in KAV and absolutely positioned. With that
+    // layout, this internal handling is the right way to keep the cursor
+    // in view without "double-compensation scroll on Enter" (the bug where
+    // pressing Return scrolls earlier content off screen).
     avoidIosKeyboard: true,
     initialContent: '',
     bridgeExtensions,
@@ -141,7 +148,12 @@ export default function EditorScreen() {
     const baseCss = `
       html, body {
         margin: 0;
-        padding: 12px 0 0;
+        /* Bottom padding gives the document scroll room past the cursor.
+           When the user types the last line of a long email with the
+           keyboard up, this lets them scroll the cursor up to a comfortable
+           mid-screen position instead of being pinned to the bottom edge.
+           50vh = half the viewport, matching Bear / Notion / Apple Mail. */
+        padding: 12px 0 50vh;
         box-sizing: border-box;
         font-family: ${fontStack};
         font-size: 16px;
@@ -193,10 +205,7 @@ export default function EditorScreen() {
   }, [editor, router]);
 
   return (
-    <KeyboardAvoidingView
-      style={[styles.root, { backgroundColor: colors.bg }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={0}>
+    <View style={[styles.root, { backgroundColor: colors.bg }]}>
       <StatusBar barStyle="light-content" />
 
       {/* ================================================================ */}
@@ -297,7 +306,12 @@ export default function EditorScreen() {
         testID="editor-body"
         style={[
           styles.editorWrap,
-          { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' },
+          {
+            backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+            // Reserve room at the bottom for the floating toolbar so the
+            // editor's last lines aren't covered when the keyboard is up.
+            paddingBottom: keyboardVisible ? TOOLBAR_HEIGHT : 0,
+          },
         ]}>
         <RichText editor={editor} style={styles.richText} />
       </View>
@@ -305,24 +319,52 @@ export default function EditorScreen() {
       {/* ================================================================ */}
       {/* 4. Formatting toolbar                                            */}
       {/* ================================================================ */}
-      {/* Toolbar wrap renders only when the keyboard is up. This way the
-          floating nav owns the bottom while at rest, and the toolbar takes
-          its place above the keyboard during composition. */}
+      {/* Per TenTap's canonical pattern: only the toolbar lives in a
+          KeyboardAvoidingView, positioned absolutely at the bottom. The
+          editor body stays in normal flow so TenTap's internal
+          avoidIosKeyboard handler can keep the cursor visible without
+          fighting an outer KAV that resizes the WebView's parent (which
+          was the cause of the "Enter scrolls content off-screen" bug).
+          The Toolbar is a horizontal FlatList; we pair it with a fixed
+          keyboard-dismiss button on the right so users always have a
+          one-tap exit, even when the formatting buttons scroll. */}
       {keyboardVisible && (
-        <View
-          style={[
-            styles.toolbarWrap,
-            {
-              backgroundColor: colors.toolBg,
-              borderTopColor: colors.sep,
-            },
-          ]}>
-          <Toolbar
-            editor={editor}
-            items={DEFAULT_TOOLBAR_ITEMS}
-            hidden={false}
-          />
-        </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.toolbarKav}
+          pointerEvents="box-none">
+          <View
+            style={[
+              styles.toolbarWrap,
+              {
+                backgroundColor: colors.toolBg,
+                borderTopColor: colors.sep,
+              },
+            ]}>
+            <View style={styles.toolbarScrollable}>
+              <Toolbar
+                editor={editor}
+                items={DEFAULT_TOOLBAR_ITEMS}
+                hidden={false}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={Keyboard.dismiss}
+              style={[
+                styles.toolbarDismiss,
+                { borderLeftColor: colors.sep },
+              ]}
+              testID="toolbar-dismiss-keyboard"
+              accessibilityLabel="Hide keyboard"
+              activeOpacity={0.6}>
+              <FontAwesome
+                name="chevron-down"
+                size={14}
+                color={colors.fgMuted}
+              />
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
       )}
 
       {/* ================================================================ */}
@@ -338,9 +380,11 @@ export default function EditorScreen() {
         autoOpen={autoOpenGmail}
         onAutoOpenChange={setAutoOpenGmail}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 }
+
+const TOOLBAR_HEIGHT = 44;
 
 // ---------------------------------------------------------------------------
 // Styles
@@ -449,12 +493,33 @@ const styles = StyleSheet.create({
   },
 
   // --- Toolbar wrapper ---
+  // KAV positioned absolutely at the bottom — this is what lifts the bar
+  // above the keyboard. pointerEvents="box-none" on the KAV lets taps
+  // outside the toolbar fall through to whatever's underneath.
+  toolbarKav: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  // Horizontal row: [scrollable formatting buttons] [fixed dismiss button].
   // Explicit height so TenTap's FlatList (flex: 1 + height: 44) has a
-  // defined parent to render into — without it the FlatList collapses to
-  // zero height and the toolbar is invisible.
+  // defined parent — without it the FlatList collapses to zero height.
   toolbarWrap: {
-    height: 44,
+    height: TOOLBAR_HEIGHT,
     borderTopWidth: 0.5,
+    flexDirection: 'row',
+    alignItems: 'stretch',
+  },
+  toolbarScrollable: {
+    flex: 1,
+    minWidth: 0,
+  },
+  toolbarDismiss: {
+    width: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderLeftWidth: 0.5,
   },
 
 });
