@@ -212,8 +212,17 @@ export default function EditorScreen() {
       {/* 1. Branded header                                                */}
       {/* ================================================================ */}
       <View style={[styles.header, { backgroundColor: a, paddingTop: insets.top + 12 }]}>
-        {/* Left: brand mark + title */}
+        {/* Left: settings + brand mark + title */}
         <View style={styles.headerLeft}>
+          <TouchableOpacity
+            onPress={() => router.navigate('/settings' as never)}
+            style={styles.settingsBtn}
+            hitSlop={8}
+            activeOpacity={0.7}
+            testID="settings-button"
+            accessibilityLabel="Settings">
+            <FontAwesome name="cog" size={18} color="#fff" />
+          </TouchableOpacity>
           <BrandMark />
           <View style={styles.headerTitleGroup}>
             <Text style={styles.headerTitle}>PasteClean</Text>
@@ -439,6 +448,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
+  },
+  settingsBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   previewBtn: {
     width: 36,

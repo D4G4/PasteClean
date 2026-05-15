@@ -41,6 +41,51 @@ exports[`EditorScreen — dark mode matches snapshot 1`] = `
       }
     >
       <View
+        accessibilityLabel="Settings"
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        hitSlop={8}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "rgba(255,255,255,0.18)",
+            "borderRadius": 18,
+            "height": 36,
+            "justifyContent": "center",
+            "opacity": 1,
+            "width": 36,
+          }
+        }
+        testID="settings-button"
+      >
+        <Text />
+      </View>
+      <View
         style={
           {
             "alignItems": "center",
