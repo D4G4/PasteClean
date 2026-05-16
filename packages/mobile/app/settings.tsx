@@ -100,7 +100,7 @@ export default function SettingsScreen() {
           <SettingsRow
             title="Send Feedback"
             showChevron
-            onPress={() => Linking.openURL('mailto:dakshg18@gmail.com?subject=PasteClean%20Feedback')}
+            onPress={() => Linking.openURL('https://github.com/D4G4/PasteClean/issues/new?template=feedback.md&labels=feedback')}
             fg={colors.fg}
             fgMuted={colors.fgMuted}
             fgFaint={colors.fgFaint}
