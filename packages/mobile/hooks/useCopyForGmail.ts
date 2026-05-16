@@ -74,7 +74,7 @@ export function useCopyForGmail(
     setToastVisible(false);
     // Try the Gmail iOS app first; fall back to the web compose URL if the
     // app isn't installed or the scheme isn't whitelisted in LSApplicationQueriesSchemes.
-    Linking.openURL('googlegmail://co').catch(() => {
+    Linking.openURL('googlegmail://').catch(() => {
       Linking.openURL('https://mail.google.com/mail/u/0/#drafts');
     });
   }, []);
