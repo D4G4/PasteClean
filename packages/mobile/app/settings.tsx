@@ -5,6 +5,7 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -91,6 +92,15 @@ export default function SettingsScreen() {
             title="How It Works"
             showChevron
             onPress={() => setPipelineOpen(true)}
+            fg={colors.fg}
+            fgMuted={colors.fgMuted}
+            fgFaint={colors.fgFaint}
+            sep={colors.sep}
+          />
+          <SettingsRow
+            title="Send Feedback"
+            showChevron
+            onPress={() => Linking.openURL('mailto:dakshg18@gmail.com?subject=PasteClean%20Feedback')}
             fg={colors.fg}
             fgMuted={colors.fgMuted}
             fgFaint={colors.fgFaint}
