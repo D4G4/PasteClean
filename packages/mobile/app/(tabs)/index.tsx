@@ -134,7 +134,7 @@ export default function EditorScreen() {
   // Whichever attempt lands after the WebView has booted wins; later
   // attempts are idempotent thanks to the 'pc-theme' tag replacing itself.
   React.useEffect(() => {
-    const bg = isDark ? '#1C1C1E' : '#FFFFFF';
+    const bg = isDark ? '#000000' : '#FFFFFF';
     const fg = isDark ? '#FFFFFF' : '#1C1C1E';
     // System font, body padding aligned to the chrome (18px), and zeroed
     // ProseMirror margins so the placeholder/caret start at the same
@@ -157,6 +157,7 @@ export default function EditorScreen() {
         box-sizing: border-box;
         font-family: ${fontStack};
         font-size: 16px;
+        font-weight: 500;
         line-height: 1.5;
         -webkit-font-smoothing: antialiased;
       }
@@ -318,13 +319,13 @@ export default function EditorScreen() {
         style={[
           styles.editorWrap,
           {
-            backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+            backgroundColor: isDark ? '#000000' : '#FFFFFF',
             // Reserve room at the bottom for the floating toolbar so the
             // editor's last lines aren't covered when the keyboard is up.
             paddingBottom: keyboardVisible ? TOOLBAR_HEIGHT : 0,
           },
         ]}>
-        <RichText editor={editor} style={styles.richText} />
+        <RichText editor={editor} style={[styles.richText, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} />
       </View>
 
       {/* ================================================================ */}

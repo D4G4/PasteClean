@@ -72,10 +72,11 @@ export function useCopyForGmail(
 
   const openGmail = useCallback(() => {
     setToastVisible(false);
-    // Try the Gmail iOS app first; fall back to the web compose URL if the
-    // app isn't installed or the scheme isn't whitelisted in LSApplicationQueriesSchemes.
+    // Just bring Gmail to the foreground — no specific path so the user
+    // lands wherever they left off (e.g. mid-compose). Falls back to Gmail
+    // web if the app isn't installed.
     Linking.openURL('googlegmail://').catch(() => {
-      Linking.openURL('https://mail.google.com/mail/u/0/#drafts');
+      Linking.openURL('https://mail.google.com/mail/');
     });
   }, []);
 
