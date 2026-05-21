@@ -40,6 +40,13 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "65024b6a-885b-4957-8fde-a9cc5dd4a5e0"
+      }
+    },
+    "owner": "daksh-gargas"
   }
 }

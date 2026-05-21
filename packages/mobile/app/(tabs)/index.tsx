@@ -24,7 +24,6 @@ import {
   useEditorBridge,
   DEFAULT_TOOLBAR_ITEMS,
   darkEditorTheme,
-  darkEditorCss,
   defaultEditorTheme,
   LinkBridge,
   TenTapStartKit,
@@ -113,7 +112,12 @@ export default function EditorScreen() {
     avoidIosKeyboard: true,
     initialContent: '',
     bridgeExtensions,
-    theme: isDark ? darkEditorTheme : defaultEditorTheme,
+    theme: isDark
+      ? {
+          ...darkEditorTheme,
+          webview: { backgroundColor: '#000000' },
+        }
+      : defaultEditorTheme,
   });
 
   useEditorLinkPatch(editor);
@@ -176,7 +180,22 @@ export default function EditorScreen() {
         left: 0;
       }
     `;
-    const css = isDark ? `${darkEditorCss}\n${baseCss}` : baseCss;
+    // Custom dark CSS instead of TenTap's darkEditorCss (which hardcodes
+    // #1C1C1E). We use true black (#000000) to match the page background.
+    const darkCss = `
+      * {
+        background-color: #000000;
+        color: white;
+      }
+      blockquote {
+        border-left: 3px solid #babaca;
+        padding-left: 1rem;
+      }
+      .highlight-background {
+        background-color: #474749;
+      }
+    `;
+    const css = isDark ? `${darkCss}\n${baseCss}` : baseCss;
     const apply = () => {
       editor.injectCSS(css, 'pc-theme');
       editor.injectJS(

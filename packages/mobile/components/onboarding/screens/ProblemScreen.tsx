@@ -1,50 +1,44 @@
-import React from 'react';
-import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { StyleSheet, View, Text, Animated, Easing } from 'react-native';
 import { useTokens } from '../tokens';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
-// Side-by-side Gmail mockups: dark mode (readable) vs light mode (invisible text)
-// Matches the design handoff ProblemArt component.
-
-function EmailBody({
+// Email body shared by both compose and sent cards — white text that's
+// readable on dark but invisible on white.
+function VanishBody({
   headerColor,
   bodyColor,
   mutedColor,
-  accentGreen,
-  accentOrange,
 }: {
   headerColor: string;
   bodyColor: string;
   mutedColor: string;
-  accentGreen: string;
-  accentOrange: string;
 }) {
   return (
     <View style={bodyStyles.container}>
-      <Text style={[bodyStyles.text, { color: bodyColor }]}>Hey team,</Text>
-      <Text style={[bodyStyles.text, { color: bodyColor }]}>
-        Quick notes from this morning's sync —
+      <Text style={[bodyStyles.line, { color: bodyColor }]}>Hi Sam,</Text>
+      <Text style={[bodyStyles.line, { color: bodyColor }]}>
+        Quick recap from this morning's sync —
       </Text>
-      <Text style={[bodyStyles.text, { color: bodyColor }]}>
+      <Text style={[bodyStyles.line, { color: bodyColor, marginTop: 3 }]}>
         •{' '}
         <Text style={{ fontWeight: '700', color: headerColor }}>
           Beta signups:
         </Text>{' '}
-        <Text style={{ color: accentGreen }}>247</Text>{' '}
-        <Text style={{ color: mutedColor }}>(+38)</Text>
+        <Text style={{ color: '#34C759', fontWeight: '600' }}>247</Text>
       </Text>
-      <Text style={[bodyStyles.text, { color: bodyColor }]}>
+      <Text style={[bodyStyles.line, { color: bodyColor }]}>
         •{' '}
         <Text style={{ fontWeight: '700', color: headerColor }}>Blocker:</Text>{' '}
-        <Text style={{ color: accentOrange }}>auth on Android</Text>
+        <Text style={{ color: '#FF9F0A', fontWeight: '600' }}>
+          auth on Android
+        </Text>
       </Text>
-      <Text style={[bodyStyles.text, { color: bodyColor }]}>
+      <Text style={[bodyStyles.line, { color: bodyColor }]}>
         •{' '}
         <Text style={{ fontWeight: '700', color: headerColor }}>
           Ship date:
         </Text>{' '}
-        <Text style={{ color: accentGreen, fontWeight: '700' }}>May 28</Text>
+        <Text style={{ color: '#34C759', fontWeight: '700' }}>May 28</Text>
       </Text>
     </View>
   );
@@ -54,338 +48,457 @@ const bodyStyles = StyleSheet.create({
   container: {
     gap: 4,
   },
-  text: {
-    fontSize: 9.5,
-    lineHeight: 14,
-  },
-  footer: {
-    fontSize: 9,
-    marginTop: 3,
+  line: {
+    fontSize: 12,
+    lineHeight: 18,
   },
 });
 
-function GmailCard({ variant }: { variant: 'dark' | 'light' }) {
-  const isDark = variant === 'dark';
-  const subjectColor = isDark ? '#e8eaed' : '#202124';
-  const chevronColor = isDark ? '#9aa0a6' : '#5f6368';
-  const chipBorderColor = isDark ? '#5f6368' : '#dadce0';
-  const chipTextColor = isDark ? '#9aa0a6' : '#5f6368';
-  const avatarBg = isDark ? '#8ab4f8' : '#1a73e8';
-  const avatarTextColor = isDark ? '#202124' : '#fff';
-  const senderColor = isDark ? '#e8eaed' : '#202124';
-  const metaColor = isDark ? '#9aa0a6' : '#5f6368';
-  const replyBorderColor = isDark ? '#5f6368' : '#dadce0';
-  const replyTextColor = isDark ? '#9aa0a6' : '#5f6368';
-  const cardBg = isDark ? '#202124' : '#fff';
+export default function ProblemScreen({
+  active = false,
+}: {
+  active?: boolean;
+}) {
+  const { t } = useTokens();
+  const compose = useRef(new Animated.Value(1)).current;
+  const sent = useRef(new Animated.Value(0)).current;
 
-  // Both cards use white text for the email body — visible on dark, invisible on white
-  // On the dark card the green/orange accents show through; on light they're also white
-  const emailHeaderColor = '#fff';
-  const emailBodyColor = 'rgba(255,255,255,0.92)';
-  const emailMutedColor = 'rgba(255,255,255,0.5)';
-  // Accent colors show through on BOTH cards — green/orange values are visible
-  // even on the white card, demonstrating the "partial breakage" problem
-  const emailGreen = '#34C759';
-  const emailOrange = '#FF9F0A';
+  useEffect(() => {
+    if (!active) {
+      compose.setValue(1);
+      sent.setValue(0);
+      return;
+    }
 
-  return (
-    <View style={[cardStyles.cardOuter]}>
-      <View
-        style={[
-          cardStyles.card,
-          {
-            backgroundColor: cardBg,
-            borderWidth: isDark ? 0 : 0.5,
-            borderColor: isDark ? 'transparent' : 'rgba(60,60,67,0.18)',
-          },
-        ]}>
-        {/* Subject row */}
-        <View style={cardStyles.subjectRow}>
-          <Text
-            style={[cardStyles.subjectText, { color: subjectColor }]}
-            numberOfLines={1}>
-            Q2 launch recap
-          </Text>
-          <View style={[cardStyles.chevronCircle, { borderColor: chevronColor }]}>
-            <Text style={{ color: chevronColor, fontSize: 7 }}>›</Text>
-          </View>
-        </View>
+    // 6.0s total loop: hold 2.4s, fade 0.6s, hold 2.4s, fade 0.6s.
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(2400),
+        Animated.parallel([
+          Animated.timing(compose, {
+            toValue: 0,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(sent, {
+            toValue: 1,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ]),
+        Animated.delay(2400),
+        Animated.parallel([
+          Animated.timing(compose, {
+            toValue: 1,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(sent, {
+            toValue: 0,
+            duration: 600,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ]),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [active, compose, sent]);
 
-        {/* Inbox chip */}
-        <View style={cardStyles.chipRow}>
-          <View style={[cardStyles.inboxChip, { borderColor: chipBorderColor }]}>
-            <Text style={[cardStyles.chipText, { color: chipTextColor }]}>
-              Inbox
-            </Text>
-          </View>
-        </View>
-
-        {/* Sender row */}
-        <View style={cardStyles.senderRow}>
-          <View style={[cardStyles.avatar, { backgroundColor: avatarBg }]}>
-            <Text style={[cardStyles.avatarText, { color: avatarTextColor }]}>
-              M
-            </Text>
-          </View>
-          <View style={cardStyles.senderInfo}>
-            <View style={cardStyles.senderNameRow}>
-              <Text style={[cardStyles.senderName, { color: senderColor }]}>
-                me
-              </Text>
-              <Text style={[cardStyles.senderTime, { color: metaColor }]}>
-                9:47 AM
-              </Text>
-            </View>
-            <Text style={[cardStyles.senderTo, { color: metaColor }]}>
-              to Sam ▾
-            </Text>
-          </View>
-          <Text style={{ color: isDark ? '#9aa0a6' : '#5f6368', fontSize: 10 }}>←</Text>
-        </View>
-
-        {/* Body */}
-        <View style={cardStyles.bodyArea}>
-          <EmailBody
-            headerColor={emailHeaderColor}
-            bodyColor={emailBodyColor}
-            mutedColor={emailMutedColor}
-            accentGreen={emailGreen}
-            accentOrange={emailOrange}
-          />
-        </View>
-
-        {/* Reply / Forward */}
-        <View style={cardStyles.replyRow}>
-          <View style={[cardStyles.replyChip, { borderColor: replyBorderColor }]}>
-            <Text style={[cardStyles.replyText, { color: replyTextColor }]}>
-              ↶ Reply
-            </Text>
-          </View>
-          <View style={[cardStyles.replyChip, { borderColor: replyBorderColor }]}>
-            <Text style={[cardStyles.replyText, { color: replyTextColor }]}>
-              ↷ Forward
-            </Text>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
-}
-
-const cardStyles = StyleSheet.create({
-  // Outer wrapper for shadow (iOS needs overflow:visible for shadows but
-  // the card itself needs overflow:hidden for borderRadius clipping)
-  cardOuter: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.22,
-    shadowRadius: 13,
-    elevation: 10,
-  },
-  card: {
-    width: '100%',
-    height: 220,
-    borderRadius: 14,
-    overflow: 'hidden',
-  },
-  subjectRow: {
-    paddingTop: 8,
-    paddingHorizontal: 10,
-    paddingBottom: 6,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 6,
-  },
-  subjectText: {
-    fontSize: 11,
-    fontWeight: '500',
-    letterSpacing: -0.1,
-    flex: 1,
-  },
-  chevronCircle: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  chipRow: {
-    paddingHorizontal: 10,
-    paddingBottom: 6,
-  },
-  inboxChip: {
-    alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderRadius: 3,
-    paddingHorizontal: 4,
-    paddingVertical: 1,
-  },
-  chipText: {
-    fontSize: 7,
-    fontWeight: '500',
-    letterSpacing: 0.1,
-  },
-  senderRow: {
-    paddingHorizontal: 10,
-    paddingBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 7,
-  },
-  avatar: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  senderInfo: {
-    flex: 1,
-  },
-  senderNameRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  senderName: {
-    fontSize: 9.5,
-    fontWeight: '600',
-  },
-  senderTime: {
-    fontSize: 8,
-    fontWeight: '400',
-  },
-  senderTo: {
-    fontSize: 8,
-  },
-  bodyArea: {
-    paddingHorizontal: 10,
-    flex: 1,
-  },
-  replyRow: {
-    flexDirection: 'row',
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingBottom: 6,
-  },
-  replyChip: {
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-  },
-  replyText: {
-    fontSize: 8.5,
-    fontWeight: '500',
-  },
-});
-
-export default function ProblemScreen() {
-  // Page chrome flips with the system theme. The Gmail card mocks stay
-  // fixed — they represent real Gmail rendering, not app chrome.
-  const { dark, t } = useTokens();
-  const labelMuted = dark
-    ? 'rgba(235,235,245,0.55)'
-    : 'rgba(60,60,67,0.55)';
   return (
     <View style={[styles.page, { backgroundColor: t.pageBg }]}>
-      {/* Art */}
+      {/* Art — animated crossfade between compose (dark) and sent (light) */}
       <View style={styles.artArea}>
-        <View style={styles.cardsRow}>
-          {/* Dark-mode card — readable */}
-          <View style={styles.cardWrapper}>
-            <Text style={[styles.cardLabel, { color: labelMuted }]}>
-              You wrote (dark mode)
-            </Text>
-            <GmailCard variant="dark" />
-          </View>
+        <View style={styles.cardStack}>
+          {/* DARK COMPOSE state */}
+          <Animated.View
+            style={[styles.cardLayer, styles.composeCard, { opacity: compose }]}
+            testID="onboarding-problem-compose">
+            <View style={styles.composeHeader}>
+              <Text style={styles.composeTitle}>New message</Text>
+            </View>
+            <View style={styles.composeRowSep}>
+              <Text style={styles.composeFieldLabel}>
+                To{' '}
+                <Text style={styles.composeFieldValue}>sam@company.com</Text>
+              </Text>
+            </View>
+            <View style={styles.composeRowSep}>
+              <Text style={styles.composeSubject}>Q2 launch recap</Text>
+            </View>
+            <View style={styles.composeBody}>
+              <VanishBody
+                headerColor="#fff"
+                bodyColor="rgba(255,255,255,0.92)"
+                mutedColor="rgba(255,255,255,0.5)"
+              />
+            </View>
+            <View style={styles.composeSendBar}>
+              <View style={styles.sendBtn}>
+                <Text style={styles.sendBtnText}>Send</Text>
+              </View>
+            </View>
+          </Animated.View>
 
-          {/* Gmail light card — text invisible */}
-          <View style={styles.cardWrapper}>
-            <Text style={[styles.cardLabel, styles.gmailLabel]}>
-              In Gmail (light)
-            </Text>
-            <GmailCard variant="light" />
-          </View>
+          {/* LIGHT SENT state */}
+          <Animated.View
+            style={[styles.cardLayer, styles.sentCard, { opacity: sent }]}
+            testID="onboarding-problem-sent">
+            <View style={styles.sentSubjectRow}>
+              <Text style={styles.sentSubject}>Q2 launch recap</Text>
+              <View style={styles.inboxChip}>
+                <Text style={styles.inboxChipText}>Inbox</Text>
+              </View>
+            </View>
+            <View style={styles.sentSenderRow}>
+              <View style={styles.sentAvatar}>
+                <Text style={styles.sentAvatarText}>M</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.sentName}>
+                  me <Text style={styles.sentMeta}>9:47 AM</Text>
+                </Text>
+                <Text style={styles.sentMeta}>to Sam ▾</Text>
+              </View>
+            </View>
+            <View style={styles.sentDivider} />
+            <View style={styles.sentBody}>
+              <VanishBody
+                headerColor="#fff"
+                bodyColor="rgba(255,255,255,0.92)"
+                mutedColor="rgba(255,255,255,0.5)"
+              />
+              <View style={styles.redPillWrap} pointerEvents="none">
+                <View style={styles.redPill}>
+                  <Text style={styles.redPillText}>
+                    where did everything go?
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.replyChipsRow}>
+              <View style={styles.replyChip}>
+                <Text style={styles.replyChipText}>↶ Reply</Text>
+              </View>
+              <View style={styles.replyChip}>
+                <Text style={styles.replyChipText}>↷ Forward</Text>
+              </View>
+            </View>
+          </Animated.View>
+        </View>
+
+        {/* Stage label — crossfades with the cards */}
+        <View style={styles.stageLabelRow}>
+          <Animated.View
+            style={[styles.stageLabel, { opacity: compose }]}
+            pointerEvents="none">
+            <View style={styles.stageLabelDot} />
+            <Text style={styles.stageLabelTextCompose}>COMPOSING</Text>
+          </Animated.View>
+          <Animated.View
+            style={[styles.stageLabel, { opacity: sent }]}
+            pointerEvents="none">
+            <View style={[styles.stageLabelDot, styles.stageLabelDotSent]} />
+            <Text style={styles.stageLabelTextSent}>SENT · IN GMAIL</Text>
+          </Animated.View>
         </View>
       </View>
 
-      {/* Text */}
+      {/* Text — from ProblemScreen */}
       <View style={styles.textArea}>
         <Text style={[styles.title, { color: t.ink }]}>
           It's 2026. Why does this still suck?
         </Text>
         <Text style={[styles.subtitle, { color: t.inkMuted }]}>
-          You're on your phone. Writing to a{' '}
-          <Text style={[styles.bold, { color: t.ink }]}>recruiter</Text>, an{' '}
-          <Text style={[styles.bold, { color: t.ink }]}>investor</Text>, your{' '}
-          <Text style={[styles.bold, { color: t.ink }]}>VP</Text>. No laptop. No
-          time to redo it. And Gmail mangles every dark-mode paste — white text
-          on white background, colors trashed. Not a great look when stakes are
-          high.
+          Your email looks perfect while you write. The moment Gmail repaints
+          it on a white background, the text you can't see is the text your
+          recipient won't read.
         </Text>
       </View>
     </View>
   );
 }
 
+const CARD_HEIGHT = 250;
+
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: '#fff',
   },
+
   artArea: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 22,
-    paddingBottom: 8,
+    paddingHorizontal: 36,
+    paddingTop: 56,
+    paddingBottom: 0,
+    alignItems: 'center',
   },
-  cardsRow: {
+  cardStack: {
+    width: '100%',
+    height: CARD_HEIGHT,
+    position: 'relative',
+  },
+  cardLayer: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 14,
+    overflow: 'hidden',
+  },
+  composeCard: {
+    backgroundColor: '#202124',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.28,
+    shadowRadius: 40,
+    elevation: 16,
+  },
+  sentCard: {
+    backgroundColor: '#fff',
+    borderWidth: 0.5,
+    borderColor: 'rgba(60,60,67,0.18)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 18 },
+    shadowOpacity: 0.38,
+    shadowRadius: 32,
+    elevation: 24,
+  },
+
+  // Compose internals
+  composeHeader: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#3c4043',
     flexDirection: 'row',
-    gap: 12,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  cardWrapper: {
+  composeTitle: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#e8eaed',
+    letterSpacing: -0.1,
+  },
+  composeRowSep: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#3c4043',
+  },
+  composeFieldLabel: {
+    fontSize: 10,
+    color: '#9aa0a6',
+  },
+  composeFieldValue: {
+    color: '#e8eaed',
+  },
+  composeSubject: {
+    fontSize: 11,
+    color: '#e8eaed',
+    fontWeight: '500',
+  },
+  composeBody: {
     flex: 1,
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 6,
+    overflow: 'hidden',
+  },
+  composeSendBar: {
+    paddingHorizontal: 12,
+    paddingTop: 6,
+    paddingBottom: 8,
+    borderTopWidth: 0.5,
+    borderTopColor: '#3c4043',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sendBtn: {
+    backgroundColor: '#8ab4f8',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 99,
+  },
+  sendBtnText: {
+    color: '#202124',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+
+  // Sent internals
+  sentSubjectRow: {
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  sentSubject: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#202124',
+  },
+  inboxChip: {
+    borderWidth: 1,
+    borderColor: '#dadce0',
+    borderRadius: 3,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+  },
+  inboxChipText: {
+    fontSize: 8,
+    fontWeight: '500',
+    color: '#5f6368',
+  },
+  sentSenderRow: {
+    paddingHorizontal: 12,
+    paddingBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  sentAvatar: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#1a73e8',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sentAvatarText: {
+    color: '#fff',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  sentName: {
+    fontSize: 10,
+    color: '#202124',
+    fontWeight: '600',
+  },
+  sentMeta: {
+    fontSize: 9,
+    color: '#5f6368',
+    fontWeight: '400',
+  },
+  sentDivider: {
+    height: 0.5,
+    backgroundColor: '#dadce0',
+  },
+  sentBody: {
+    flex: 1,
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 6,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  redPillWrap: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  redPill: {
+    paddingHorizontal: 11,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#FF3B30',
+    shadowColor: '#FF3B30',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.35,
+    shadowRadius: 18,
+    elevation: 8,
+  },
+  redPillText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: -0.1,
+  },
+  replyChipsRow: {
+    paddingHorizontal: 12,
+    paddingTop: 4,
+    paddingBottom: 10,
+    flexDirection: 'row',
+    gap: 5,
+  },
+  replyChip: {
+    borderWidth: 1,
+    borderColor: '#dadce0',
+    borderRadius: 14,
+    paddingHorizontal: 9,
+    paddingVertical: 3,
+  },
+  replyChipText: {
+    fontSize: 9.5,
+    color: '#5f6368',
+    fontWeight: '500',
+  },
+
+  // Stage label
+  stageLabelRow: {
+    height: 20,
+    alignSelf: 'stretch',
+    marginTop: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  stageLabel: {
+    position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
   },
-  cardLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
-    color: 'rgba(60,60,67,0.55)',
-    paddingLeft: 4,
+  stageLabelDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#8ab4f8',
+    shadowColor: '#8ab4f8',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 8,
+    elevation: 0,
   },
-  gmailLabel: {
+  stageLabelDotSent: {
+    backgroundColor: '#FF3B30',
+    shadowOpacity: 0,
+  },
+  stageLabelTextCompose: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.8,
+    color: '#8ab4f8',
+  },
+  stageLabelTextSent: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.8,
     color: '#FF3B30',
   },
+
+  // Text zone
   textArea: {
     flex: 1,
     paddingHorizontal: 28,
-    paddingTop: 24,
+    paddingTop: 28,
+    paddingBottom: 4,
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
     letterSpacing: -0.6,
-    color: '#1c1c1e',
     lineHeight: 32,
     marginBottom: 10,
   },
   subtitle: {
     fontSize: 15,
-    color: 'rgba(60,60,67,0.72)',
     lineHeight: 21,
     letterSpacing: -0.2,
   },
   bold: {
     fontWeight: '700',
-    color: '#1c1c1e',
   },
 });

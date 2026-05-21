@@ -9,7 +9,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PagerView from 'react-native-pager-view';
 
 import ProblemScreen from './screens/ProblemScreen';
-import VanishScreen from './screens/VanishScreen';
 import FixedScreen from './screens/FixedScreen';
 import FlowScreen from './screens/FlowScreen';
 import ThemeScreen from './screens/ThemeScreen';
@@ -17,7 +16,7 @@ import PipelineSheet from './PipelineSheet';
 import { useTokens } from './tokens';
 import { resolveAccent } from '@/constants/Colors';
 
-const PAGE_COUNT = 5;
+const PAGE_COUNT = 4;
 
 interface OnboardingFlowProps {
   accent: string;
@@ -68,18 +67,15 @@ export default function OnboardingFlow({
         initialPage={0}
         onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)}>
         <View key="0" style={styles.page} testID="onboarding-page-0">
-          <ProblemScreen />
+          <ProblemScreen active={currentPage === 0} />
         </View>
         <View key="1" style={styles.page} testID="onboarding-page-1">
-          <VanishScreen active={currentPage === 1} />
-        </View>
-        <View key="2" style={styles.page} testID="onboarding-page-2">
           <FixedScreen />
         </View>
-        <View key="3" style={styles.page} testID="onboarding-page-3">
+        <View key="2" style={styles.page} testID="onboarding-page-2">
           <FlowScreen accent={a} onPeek={() => setPeekOpen(true)} />
         </View>
-        <View key="4" style={styles.page} testID="onboarding-page-4">
+        <View key="3" style={styles.page} testID="onboarding-page-3">
           {/* Picker compares against the raw stored id, so pass `accent`,
               not the resolved value. */}
           <ThemeScreen accent={accent} setAccent={setAccent} />
