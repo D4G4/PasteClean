@@ -1,18 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native';
 import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Pressable,
-  Modal,
-  ScrollView,
-  Animated,
-  Dimensions,
-  Easing,
-  PanResponder,
-  Platform,
-} from 'react-native';
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+  type BottomSheetBackdropProps,
+} from '@gorhom/bottom-sheet';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTokens } from './tokens';
 
@@ -67,266 +60,161 @@ interface PipelineSheetProps {
   onClose: () => void;
 }
 
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SHEET_HEIGHT = Math.round(SCREEN_HEIGHT * 0.88);
+// Single snap point at 88% — matches the previous Modal-based implementation
+// so the visual footprint is unchanged. Computed once; `snapPoints` is an
+// array because gorhom supports multi-stop sheets (e.g. ['25%', '88%']).
+const SNAP_POINTS = ['88%'];
 
-// Modal uses animationType="none" so we can drive the backdrop fade and the
-// sheet slide independently: the dim tint fades in over the whole screen,
-// while the sheet slides up from the bottom. With Modal's built-in "slide"
-// the backdrop slides up with the sheet, which looks wrong (the tint only
-// appears where the sheet has reached).
+/**
+ * Backdrop that fades in from 0 → 0.4 opacity as the sheet opens, fades
+ * back out as it closes. Tap-to-dismiss is handled by gorhom via
+ * pressBehavior="close".
+ */
+function renderBackdrop(props: BottomSheetBackdropProps) {
+  return (
+    <BottomSheetBackdrop
+      {...props}
+      opacity={0.4}
+      appearsOnIndex={0}
+      disappearsOnIndex={-1}
+      pressBehavior="close"
+    />
+  );
+}
+
+// Bottom sheet implemented with @gorhom/bottom-sheet. Gestures run on the
+// UI thread via react-native-gesture-handler + reanimated worklets, so the
+// sheet tracks the finger 1:1 without the JS-bridge lag the previous
+// PanResponder + Animated.setValue implementation had.
+//
+// Callers keep the same { open, onClose } interface; we translate the
+// declarative `open` boolean into imperative present()/dismiss() calls on
+// the modal ref.
 export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
   const { dark, t } = useTokens();
-  const [mounted, setMounted] = useState(open);
-  const backdropAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(SHEET_HEIGHT)).current;
+  const sheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     if (open) {
-      setMounted(true);
-      Animated.parallel([
-        Animated.timing(backdropAnim, {
-          toValue: 1,
-          duration: 220,
-          easing: Easing.out(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 280,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }),
-      ]).start();
+      sheetRef.current?.present();
     } else {
-      Animated.parallel([
-        Animated.timing(backdropAnim, {
-          toValue: 0,
-          duration: 180,
-          easing: Easing.in(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: SHEET_HEIGHT,
-          duration: 220,
-          easing: Easing.in(Easing.cubic),
-          useNativeDriver: true,
-        }),
-      ]).start(({ finished }) => {
-        if (finished) setMounted(false);
-      });
+      sheetRef.current?.dismiss();
     }
-  }, [open, backdropAnim, slideAnim]);
+  }, [open]);
 
-  // Drag-to-dismiss on the grabber + header area. We only claim the gesture
-  // on downward movement past a small slop so vertical scroll inside the
-  // sheet body still works — the responder is only attached to the top
-  // strip, but the slop guard is a defensive belt-and-braces.
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onMoveShouldSetPanResponder: (_e, g) => g.dy > 4 && g.dy > Math.abs(g.dx),
-        onPanResponderMove: (_e, g) => {
-          if (g.dy > 0) {
-            slideAnim.setValue(g.dy);
-            // Fade the backdrop proportionally so the dismiss feels
-            // physical — release halfway and the backdrop is already
-            // half-faded.
-            backdropAnim.setValue(
-              Math.max(0, 1 - g.dy / SHEET_HEIGHT),
-            );
-          }
-        },
-        onPanResponderRelease: (_e, g) => {
-          const shouldDismiss = g.dy > SHEET_HEIGHT * 0.25 || g.vy > 0.6;
-          if (shouldDismiss) {
-            onClose();
-          } else {
-            // Snap back to fully open.
-            Animated.parallel([
-              Animated.spring(slideAnim, {
-                toValue: 0,
-                useNativeDriver: true,
-                tension: 80,
-                friction: 12,
-              }),
-              Animated.spring(backdropAnim, {
-                toValue: 1,
-                useNativeDriver: true,
-                tension: 80,
-                friction: 12,
-              }),
-            ]).start();
-          }
-        },
-        onPanResponderTerminate: () => {
-          // Another responder (e.g. ScrollView) won the gesture — snap back.
-          Animated.parallel([
-            Animated.spring(slideAnim, {
-              toValue: 0,
-              useNativeDriver: true,
-            }),
-            Animated.spring(backdropAnim, {
-              toValue: 1,
-              useNativeDriver: true,
-            }),
-          ]).start();
-        },
-      }),
-    [slideAnim, backdropAnim, onClose],
+  // gorhom fires onDismiss when the sheet has fully closed — whether the
+  // user swiped, tapped the backdrop, or the parent set open=false. We
+  // forward to the parent's onClose so its open state stays in sync.
+  const handleDismiss = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
+  const backgroundStyle = useMemo(
+    () => ({ backgroundColor: dark ? '#1c1c1e' : '#f2f2f7' }),
+    [dark],
+  );
+  const handleStyle = useMemo(
+    () => ({
+      backgroundColor: dark
+        ? 'rgba(235,235,245,0.25)'
+        : 'rgba(60,60,67,0.25)',
+    }),
+    [dark],
   );
 
   return (
-    <Modal
-      visible={mounted}
-      animationType="none"
-      transparent
-      onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <Animated.View
-          style={[styles.backdrop, { opacity: backdropAnim }]}
-          pointerEvents={open ? 'auto' : 'none'}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
-        </Animated.View>
-
-        <Animated.View
+    <BottomSheetModal
+      ref={sheetRef}
+      snapPoints={SNAP_POINTS}
+      enablePanDownToClose
+      onDismiss={handleDismiss}
+      backdropComponent={renderBackdrop}
+      backgroundStyle={backgroundStyle}
+      handleIndicatorStyle={handleStyle}>
+      <View style={styles.header}>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.title, { color: t.ink }]}>
+            How PasteClean works
+          </Text>
+          <Text style={[styles.subtitle, { color: t.inkMuted }]}>
+            An 8-step pipeline runs on every copy
+          </Text>
+        </View>
+        <TouchableOpacity
+          onPress={() => sheetRef.current?.dismiss()}
           style={[
-            styles.sheet,
+            styles.closeBtn,
             {
-              transform: [{ translateY: slideAnim }],
-              backgroundColor: dark ? '#1c1c1e' : '#f2f2f7',
+              backgroundColor: dark
+                ? 'rgba(255,255,255,0.12)'
+                : 'rgba(60,60,67,0.12)',
             },
-          ]}>
-          {/* Drag-to-dismiss strip: grabber + header. The strip claims
-              vertical pans, so a downward swipe anywhere on this top
-              area closes the sheet. The ScrollView below keeps its own
-              scroll gesture independent. */}
-          <View {...panResponder.panHandlers}>
-            <View style={styles.grabberRow}>
+          ]}
+          testID="pipeline-sheet-close">
+          <FontAwesome name="times" size={14} color={t.ink} />
+        </TouchableOpacity>
+      </View>
+      <BottomSheetScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}>
+        {/* Input/output code chips intentionally stay dark in both themes —
+            they read as terminal/IDE blocks. */}
+        <View style={styles.inputChip}>
+          <Text style={styles.inputLabel}>INPUT</Text>
+          <Text style={styles.inputCode} numberOfLines={1}>
+            {'<style>.x{color:#fff}</style>…'}
+          </Text>
+        </View>
+        <View style={{ gap: 10 }}>
+          {PIPELINE_STEPS.map((s) => (
+            <View
+              key={s.num}
+              style={[
+                styles.step,
+                {
+                  backgroundColor: t.surface,
+                  borderColor: t.borderFaint,
+                },
+              ]}>
               <View
                 style={[
-                  styles.grabber,
+                  styles.numBadge,
                   {
-                    backgroundColor: dark
-                      ? 'rgba(235,235,245,0.25)'
-                      : 'rgba(60,60,67,0.25)',
+                    backgroundColor:
+                      ONB_ACCENT + (dark ? '28' : '14'),
                   },
-                ]}
-              />
+                ]}>
+                <Text style={styles.numBadgeText}>{s.num}</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.stepLabel, { color: t.ink }]}>
+                  {s.label}
+                </Text>
+                <Text style={[styles.stepDesc, { color: t.inkMuted }]}>
+                  {s.desc}
+                </Text>
+              </View>
             </View>
-            <View style={styles.header}>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.title, { color: t.ink }]}>
-                How PasteClean works
-              </Text>
-              <Text style={[styles.subtitle, { color: t.inkMuted }]}>
-                An 8-step pipeline runs on every copy
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={onClose}
-              style={[
-                styles.closeBtn,
-                {
-                  backgroundColor: dark
-                    ? 'rgba(255,255,255,0.12)'
-                    : 'rgba(60,60,67,0.12)',
-                },
-              ]}
-              testID="pipeline-sheet-close">
-              <FontAwesome name="times" size={14} color={t.ink} />
-            </TouchableOpacity>
-            </View>
-          </View>
-          <ScrollView
-            style={styles.scroll}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator>
-            {/* Input/output code chips intentionally stay dark in both
-                themes — they read as terminal/IDE blocks. */}
-            <View style={styles.inputChip}>
-              <Text style={styles.inputLabel}>INPUT</Text>
-              <Text style={styles.inputCode} numberOfLines={1}>
-                {'<style>.x{color:#fff}</style>…'}
-              </Text>
-            </View>
-            <View style={{ gap: 10 }}>
-              {PIPELINE_STEPS.map((s) => (
-                <View
-                  key={s.num}
-                  style={[
-                    styles.step,
-                    {
-                      backgroundColor: t.surface,
-                      borderColor: t.borderFaint,
-                    },
-                  ]}>
-                  <View
-                    style={[
-                      styles.numBadge,
-                      {
-                        backgroundColor:
-                          ONB_ACCENT + (dark ? '28' : '14'),
-                      },
-                    ]}>
-                    <Text style={styles.numBadgeText}>{s.num}</Text>
-                  </View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={[styles.stepLabel, { color: t.ink }]}>
-                      {s.label}
-                    </Text>
-                    <Text style={[styles.stepDesc, { color: t.inkMuted }]}>
-                      {s.desc}
-                    </Text>
-                  </View>
-                </View>
-              ))}
-            </View>
-            <View style={styles.outputChip}>
-              <Text style={styles.outputLabel}>OUTPUT</Text>
-              <Text style={styles.outputCode} numberOfLines={1}>
-                {'<p style="color:#000">…</p>'}
-              </Text>
-            </View>
-          </ScrollView>
-        </Animated.View>
-      </View>
-    </Modal>
+          ))}
+        </View>
+        <View style={styles.outputChip}>
+          <Text style={styles.outputLabel}>OUTPUT</Text>
+          <Text style={styles.outputCode} numberOfLines={1}>
+            {'<p style="color:#000">…</p>'}
+          </Text>
+        </View>
+      </BottomSheetScrollView>
+    </BottomSheetModal>
   );
 }
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  // Dim layer — covers the whole screen and fades independently of the sheet.
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-  },
-  sheet: {
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
-    height: '88%',
-    overflow: 'hidden',
-  },
-  grabberRow: {
-    alignItems: 'center',
-    paddingTop: 10,
-    paddingBottom: 4,
-  },
-  grabber: {
-    width: 36,
-    height: 5,
-    borderRadius: 3,
-  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 22,
-    paddingTop: 10,
+    paddingTop: 6,
     paddingBottom: 12,
     gap: 12,
   },
