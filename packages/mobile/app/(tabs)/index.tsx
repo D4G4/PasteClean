@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -75,6 +75,12 @@ export default function EditorScreen() {
   const router = useRouter();
 
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  // editorReady gates the RichText opacity. We flip it true only after the
+  // WebView's document has loaded AND we've had a chance to inject our CSS.
+  // Until then the WebView is invisible — the user never sees the brief
+  // window where the placeholder is rendered in TenTap's default font and
+  // then reflows into our system font.
+  const [editorReady, setEditorReady] = useState(false);
 
   // Keyboard listener — drives toolbar visibility. When the keyboard is up
   // we show the formatting toolbar above it (TenTap's auto-hide via
@@ -132,14 +138,9 @@ export default function EditorScreen() {
     dismissToast,
   } = useCopyForGmail(editor);
 
-  // Push the theme CSS into the WebView. TenTap's `editorState.isReady`
-  // doesn't flip reliably for us (a known race in useBridgeState), so
-  // instead of gating on it we just retry the injection on a schedule.
-  // Whichever attempt lands after the WebView has booted wins; later
-  // attempts are idempotent thanks to the 'pc-theme' tag replacing itself.
-  React.useEffect(() => {
-    const bg = isDark ? '#000000' : '#FFFFFF';
-    const fg = isDark ? '#FFFFFF' : '#1C1C1E';
+  // CSS the WebView gets — recomputed when the theme flips so a runtime
+  // dark/light switch can re-inject without rebuilding the editor.
+  const themeCss = useMemo(() => {
     // System font, body padding aligned to the chrome (18px), and zeroed
     // ProseMirror margins so the placeholder/caret start at the same
     // horizontal position as the "To" / "Subject" labels above instead of
@@ -195,25 +196,51 @@ export default function EditorScreen() {
         background-color: #474749;
       }
     `;
-    const css = isDark ? `${darkCss}\n${baseCss}` : baseCss;
-    const apply = () => {
-      editor.injectCSS(css, 'pc-theme');
-      editor.injectJS(
-        `document.documentElement.style.backgroundColor='${bg}';` +
-          `document.body.style.backgroundColor='${bg}';` +
-          `document.body.style.color='${fg}';`,
-      );
-    };
-    apply();
-    const timers = [100, 400, 900, 1800, 3500].map((ms) =>
-      setTimeout(apply, ms),
-    );
-    return () => timers.forEach(clearTimeout);
-  }, [editor, isDark]);
+    return isDark ? `${darkCss}\n${baseCss}` : baseCss;
+  }, [isDark]);
 
+  const applyTheme = useCallback(() => {
+    const bg = isDark ? '#000000' : '#FFFFFF';
+    const fg = isDark ? '#FFFFFF' : '#1C1C1E';
+    editor.injectCSS(themeCss, 'pc-theme');
+    editor.injectJS(
+      `document.documentElement.style.backgroundColor='${bg}';` +
+        `document.body.style.backgroundColor='${bg}';` +
+        `document.body.style.color='${fg}';`,
+    );
+  }, [editor, themeCss, isDark]);
+
+  // Theme flip after the editor is already up: re-inject so the live
+  // WebView reflects the new colors. Cold-start injection lives in
+  // handleWebViewLoad — we only re-run here when the WebView is already
+  // loaded, which is what editorReady gates on.
   React.useEffect(() => {
+    if (editorReady) {
+      applyTheme();
+    }
+  }, [editorReady, applyTheme]);
+
+  // Fires once the WebView's document has finished loading. This is the
+  // earliest reliable moment to inject CSS — the previous approach (timer
+  // schedule at 100/400/900/1800/3500ms) caused a visible "default font →
+  // system font" reflow of the placeholder on cold start because the first
+  // few timers fired before the WebView was ready.
+  const handleWebViewLoad = useCallback(() => {
+    applyTheme();
     editor.setPlaceholder('Start writing your email here...');
-  }, [editor]);
+    // 120ms paint-settle window: long enough for the injectCSS round-trip
+    // to land and the browser to lay out, short enough to feel instant.
+    // RichText stays at opacity:0 until this fires.
+    const reveal = setTimeout(() => setEditorReady(true), 120);
+    return () => clearTimeout(reveal);
+  }, [applyTheme, editor]);
+
+  // Safety net: if onLoad never fires for some reason (it should, every
+  // time), reveal the editor anyway after 2s so it's never stuck invisible.
+  React.useEffect(() => {
+    const t = setTimeout(() => setEditorReady(true), 2000);
+    return () => clearTimeout(t);
+  }, []);
 
   // --- Navigate to preview ------------------------------------------------
   const handlePreview = useCallback(async () => {
@@ -344,7 +371,17 @@ export default function EditorScreen() {
             paddingBottom: keyboardVisible ? TOOLBAR_HEIGHT : 0,
           },
         ]}>
-        <RichText editor={editor} style={[styles.richText, { backgroundColor: isDark ? '#000000' : '#FFFFFF' }]} />
+        <RichText
+          editor={editor}
+          onLoad={handleWebViewLoad}
+          style={[
+            styles.richText,
+            {
+              backgroundColor: isDark ? '#000000' : '#FFFFFF',
+              opacity: editorReady ? 1 : 0,
+            },
+          ]}
+        />
       </View>
 
       {/* ================================================================ */}
