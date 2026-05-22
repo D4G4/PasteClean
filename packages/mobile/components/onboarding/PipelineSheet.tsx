@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -10,6 +10,7 @@ import {
   Animated,
   Dimensions,
   Easing,
+  PanResponder,
   Platform,
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -117,6 +118,64 @@ export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
     }
   }, [open, backdropAnim, slideAnim]);
 
+  // Drag-to-dismiss on the grabber + header area. We only claim the gesture
+  // on downward movement past a small slop so vertical scroll inside the
+  // sheet body still works — the responder is only attached to the top
+  // strip, but the slop guard is a defensive belt-and-braces.
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: (_e, g) => g.dy > 4 && g.dy > Math.abs(g.dx),
+        onPanResponderMove: (_e, g) => {
+          if (g.dy > 0) {
+            slideAnim.setValue(g.dy);
+            // Fade the backdrop proportionally so the dismiss feels
+            // physical — release halfway and the backdrop is already
+            // half-faded.
+            backdropAnim.setValue(
+              Math.max(0, 1 - g.dy / SHEET_HEIGHT),
+            );
+          }
+        },
+        onPanResponderRelease: (_e, g) => {
+          const shouldDismiss = g.dy > SHEET_HEIGHT * 0.25 || g.vy > 0.6;
+          if (shouldDismiss) {
+            onClose();
+          } else {
+            // Snap back to fully open.
+            Animated.parallel([
+              Animated.spring(slideAnim, {
+                toValue: 0,
+                useNativeDriver: true,
+                tension: 80,
+                friction: 12,
+              }),
+              Animated.spring(backdropAnim, {
+                toValue: 1,
+                useNativeDriver: true,
+                tension: 80,
+                friction: 12,
+              }),
+            ]).start();
+          }
+        },
+        onPanResponderTerminate: () => {
+          // Another responder (e.g. ScrollView) won the gesture — snap back.
+          Animated.parallel([
+            Animated.spring(slideAnim, {
+              toValue: 0,
+              useNativeDriver: true,
+            }),
+            Animated.spring(backdropAnim, {
+              toValue: 1,
+              useNativeDriver: true,
+            }),
+          ]).start();
+        },
+      }),
+    [slideAnim, backdropAnim, onClose],
+  );
+
   return (
     <Modal
       visible={mounted}
@@ -138,19 +197,24 @@ export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
               backgroundColor: dark ? '#1c1c1e' : '#f2f2f7',
             },
           ]}>
-          <View style={styles.grabberRow}>
-            <View
-              style={[
-                styles.grabber,
-                {
-                  backgroundColor: dark
-                    ? 'rgba(235,235,245,0.25)'
-                    : 'rgba(60,60,67,0.25)',
-                },
-              ]}
-            />
-          </View>
-          <View style={styles.header}>
+          {/* Drag-to-dismiss strip: grabber + header. The strip claims
+              vertical pans, so a downward swipe anywhere on this top
+              area closes the sheet. The ScrollView below keeps its own
+              scroll gesture independent. */}
+          <View {...panResponder.panHandlers}>
+            <View style={styles.grabberRow}>
+              <View
+                style={[
+                  styles.grabber,
+                  {
+                    backgroundColor: dark
+                      ? 'rgba(235,235,245,0.25)'
+                      : 'rgba(60,60,67,0.25)',
+                  },
+                ]}
+              />
+            </View>
+            <View style={styles.header}>
             <View style={{ flex: 1 }}>
               <Text style={[styles.title, { color: t.ink }]}>
                 How PasteClean works
@@ -172,6 +236,7 @@ export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
               testID="pipeline-sheet-close">
               <FontAwesome name="times" size={14} color={t.ink} />
             </TouchableOpacity>
+            </View>
           </View>
           <ScrollView
             style={styles.scroll}

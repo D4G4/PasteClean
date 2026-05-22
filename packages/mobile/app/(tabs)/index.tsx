@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -81,6 +81,12 @@ export default function EditorScreen() {
   // window where the placeholder is rendered in TenTap's default font and
   // then reflows into our system font.
   const [editorReady, setEditorReady] = useState(false);
+  // didAutoFocus is a one-shot latch — we want the keyboard to pop up
+  // automatically on cold launch, but NOT every time the user comes back
+  // from settings/preview (the screen stays mounted in the tab nav, so
+  // re-running focus on every editorReady-driven re-render would re-open
+  // the keyboard mid-navigation).
+  const didAutoFocus = useRef(false);
 
   // Keyboard listener — drives toolbar visibility. When the keyboard is up
   // we show the formatting toolbar above it (TenTap's auto-hide via
@@ -183,9 +189,20 @@ export default function EditorScreen() {
     `;
     // Custom dark CSS instead of TenTap's darkEditorCss (which hardcodes
     // #1C1C1E). We use true black (#000000) to match the page background.
+    //
+    // Body owns the background; child elements inherit transparent so
+    // WebKit's selection highlight has somewhere to render. A blanket
+    // `* { background: #000 }` (the previous rule) forced every span/p
+    // to paint its own black layer ON TOP of the selection highlight,
+    // making double-tap-to-select look broken (selection happened but
+    // wasn't visible).
     const darkCss = `
-      * {
+      html, body {
         background-color: #000000;
+        color: white;
+      }
+      ::selection {
+        background-color: rgba(0, 122, 255, 0.45);
         color: white;
       }
       blockquote {
@@ -231,7 +248,17 @@ export default function EditorScreen() {
     // 120ms paint-settle window: long enough for the injectCSS round-trip
     // to land and the browser to lay out, short enough to feel instant.
     // RichText stays at opacity:0 until this fires.
-    const reveal = setTimeout(() => setEditorReady(true), 120);
+    const reveal = setTimeout(() => {
+      setEditorReady(true);
+      // Open the keyboard the moment the editor becomes visible. Gated by
+      // didAutoFocus so reloads / theme-flip re-runs of this callback
+      // (handleWebViewLoad has applyTheme in its deps) don't repeatedly
+      // yank focus while the user is doing something else.
+      if (!didAutoFocus.current) {
+        didAutoFocus.current = true;
+        editor.focus();
+      }
+    }, 120);
     return () => clearTimeout(reveal);
   }, [applyTheme, editor]);
 
