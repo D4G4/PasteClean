@@ -36,6 +36,7 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-# generated native folders
-/ios
-/android
+# Native iOS/Android source IS tracked (bare workflow with hand-edited
+# native modules — see ios/PasteClean/HtmlClipboardModule.swift). The
+# per-machine and build-output noise inside ios/ is handled by the
+# nested ios/.gitignore (build/, Pods/, .xcode.env.local, xcuserdata, …).
