@@ -6,8 +6,29 @@ import {
   BottomSheetScrollView,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
+import { FullWindowOverlay } from 'react-native-screens';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTokens } from './tokens';
+
+// react-native-screens renders each Stack.Screen as a native
+// UIViewController. gorhom's BottomSheetModal portals to its provider —
+// but on iOS, that portal target ends up BEHIND the screen's view
+// controller, so the sheet appears not to open at all when invoked from
+// a screen route (which is exactly what Settings → "How It Works" does).
+//
+// FullWindowOverlay wraps the sheet in an iOS UIWindow-level overlay that
+// sits above the entire navigation stack — the documented workaround for
+// gorhom issue #832, which the gorhom type defs themselves point at.
+//
+// Android doesn't have this layering bug; FullWindowOverlay is iOS-only,
+// so the renderContainer function is a no-op there (returns the children
+// directly, no wrapper).
+const renderContainer =
+  Platform.OS === 'ios'
+    ? ({ children }: React.PropsWithChildren) => (
+        <FullWindowOverlay>{children as React.ReactElement}</FullWindowOverlay>
+      )
+    : undefined;
 
 const ONB_ACCENT = '#007AFF';
 const mono = Platform.OS === 'ios' ? 'Menlo' : 'monospace';
@@ -130,7 +151,8 @@ export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
       onDismiss={handleDismiss}
       backdropComponent={renderBackdrop}
       backgroundStyle={backgroundStyle}
-      handleIndicatorStyle={handleStyle}>
+      handleIndicatorStyle={handleStyle}
+      containerComponent={renderContainer}>
       <View style={styles.header}>
         <View style={{ flex: 1 }}>
           <Text style={[styles.title, { color: t.ink }]}>

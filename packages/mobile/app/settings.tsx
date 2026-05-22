@@ -108,7 +108,7 @@ export default function SettingsScreen() {
           />
           <SettingsRow
             title="Version"
-            detail="1.1.3"
+            detail="1.1.4"
             isLast
             fg={colors.fg}
             fgMuted={colors.fgMuted}
