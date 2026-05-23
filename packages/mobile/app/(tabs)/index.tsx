@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -26,18 +26,34 @@ import {
   darkEditorTheme,
   defaultEditorTheme,
   LinkBridge,
+  PlaceholderBridge,
   TenTapStartKit,
 } from '@10play/tentap-editor';
 
 const STORAGE_KEY_AUTO_OPEN = '@pasteclean/auto_open_gmail';
 
-// TipTap's link mark defaults to `inclusive: true`, which means after Insert
-// the cursor sits inside the mark and any text typed afterwards inherits the
-// link. Override to `inclusive: false` so the link ends at the inserted text
-// and subsequent typing is plain.
-const bridgeExtensions = TenTapStartKit.map((ext) =>
-  ext.name === 'link' ? LinkBridge.extendExtension({ inclusive: false }) : ext,
-);
+// Two extension customisations baked in at construction time:
+//   1. Link mark: default is `inclusive: true`, which traps the cursor inside
+//      the link after Insert so subsequent typing inherits the underline.
+//      We flip to `inclusive: false` so the link ends at the inserted text.
+//   2. Placeholder: default is "Write something …". Configuring it here
+//      (rather than via editor.setPlaceholder() after mount) ensures the
+//      string is set before the WebView's first paint, instead of relying
+//      on an async bridge message that races the WebView's JS bootstrap.
+const bridgeExtensions = TenTapStartKit.map((ext) => {
+  if (ext.name === 'link') {
+    return LinkBridge.extendExtension({ inclusive: false });
+  }
+  if (ext.name === 'placeholder') {
+    // configureExtension → TipTap's .configure(); extendExtension →
+    // TipTap's .extend(). For setting options like the placeholder
+    // string, configure is the right method.
+    return PlaceholderBridge.configureExtension({
+      placeholder: 'Start writing your email here...',
+    });
+  }
+  return ext;
+});
 
 // ---------------------------------------------------------------------------
 // BrandMark: 32x32 rounded-rect icon (clipboard + check, approximated with
@@ -81,12 +97,6 @@ export default function EditorScreen() {
   // window where the placeholder is rendered in TenTap's default font and
   // then reflows into our system font.
   const [editorReady, setEditorReady] = useState(false);
-  // didAutoFocus is a one-shot latch — we want the keyboard to pop up
-  // automatically on cold launch, but NOT every time the user comes back
-  // from settings/preview (the screen stays mounted in the tab nav, so
-  // re-running focus on every editorReady-driven re-render would re-open
-  // the keyboard mid-navigation).
-  const didAutoFocus = useRef(false);
 
   // Keyboard listener — drives toolbar visibility. When the keyboard is up
   // we show the formatting toolbar above it (TenTap's auto-hide via
@@ -113,7 +123,13 @@ export default function EditorScreen() {
   // container + toolbar surface colors. The HTML body inside the WebView is
   // recolored separately via editor.injectCSS() below.
   const editor = useEditorBridge({
-    autofocus: false,
+    // autofocus:true makes TenTap focus the editor when the WebView's JS
+    // signals EditorReady (the bridge handles this internally via the
+    // CoreEditorActionType.EditorReady message handler). This is the
+    // right hook for "open keyboard on cold launch" — manual editor.focus()
+    // calls from onLoad fire too early; the bridge isn't ready yet and
+    // the focus command is silently dropped.
+    autofocus: true,
     // MUST stay true. This is TenTap's internal handling of the WebView's
     // viewport/caret when the iOS keyboard appears. The layout below keeps
     // RichText in normal flow (NOT inside a KeyboardAvoidingView) — only
@@ -244,23 +260,18 @@ export default function EditorScreen() {
   // few timers fired before the WebView was ready.
   const handleWebViewLoad = useCallback(() => {
     applyTheme();
-    editor.setPlaceholder('Start writing your email here...');
+    // Placeholder is configured at bridge construction time (see
+    // bridgeExtensions above) so it's in the WebView's first paint —
+    // no async setPlaceholder() call needed here. Focus is driven by
+    // TenTap's autofocus flag, which listens for EditorReady from the
+    // WebView side.
+    //
     // 120ms paint-settle window: long enough for the injectCSS round-trip
     // to land and the browser to lay out, short enough to feel instant.
     // RichText stays at opacity:0 until this fires.
-    const reveal = setTimeout(() => {
-      setEditorReady(true);
-      // Open the keyboard the moment the editor becomes visible. Gated by
-      // didAutoFocus so reloads / theme-flip re-runs of this callback
-      // (handleWebViewLoad has applyTheme in its deps) don't repeatedly
-      // yank focus while the user is doing something else.
-      if (!didAutoFocus.current) {
-        didAutoFocus.current = true;
-        editor.focus();
-      }
-    }, 120);
+    const reveal = setTimeout(() => setEditorReady(true), 120);
     return () => clearTimeout(reveal);
-  }, [applyTheme, editor]);
+  }, [applyTheme]);
 
   // Safety net: if onLoad never fires for some reason (it should, every
   // time), reveal the editor anyway after 2s so it's never stuck invisible.

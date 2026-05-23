@@ -1,4 +1,4 @@
-# Skip through the 5-screen onboarding so subsequent flows start from the
+# Skip through the 4-screen onboarding so subsequent flows start from the
 # editor. Each tap on the CTA advances one page; the final tap dismisses
 # onboarding and lands us on the (tabs) layout with the editor visible.
 appId: com.pasteclean.app
@@ -12,9 +12,9 @@ tags:
 - assertVisible:
     id: "onboarding-page-0"
 
-# Walk through all 5 onboarding pages by tapping the primary CTA each time.
+# Walk through all 4 onboarding pages by tapping the primary CTA each time.
 - repeat:
-    times: 5
+    times: 4
     commands:
       - tapOn:
           id: "onboarding-cta"

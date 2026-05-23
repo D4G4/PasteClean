@@ -5,5 +5,7 @@ executionOrder:
     - 01_onboarding_to_editor.yaml
     - 02_typing_basic.yaml
     - 03_formatting_bold.yaml
-    - 04_link_regression.yaml
+    # 04_link_regression.yaml — excluded; covered by unit tests, see file header
     - 05_copy_to_gmail.yaml
+    - 06_toolbar_visibility.yaml
+    - 07_pipeline_sheet.yaml

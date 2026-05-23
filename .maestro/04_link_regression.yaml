@@ -2,6 +2,15 @@
 # hooks/useEditorLinkPatch.ts. Maestro drives the real WebView so this proves
 # the patch behaves correctly on-device, not just in the unit-test fake.
 #
+# NOTE: this flow is excluded from the CI executionOrder (see config.yaml)
+# because TipTap renders text content as one accessibility node, so
+# substring long-press needs hand-tuned point coordinates AND the iOS
+# selection menu / formatting toolbar aren't reliably surfaced through
+# the accessibility tree on every device size. The unit tests at
+# hooks/__tests__/useEditorLinkPatch.test.tsx cover the patch's logic;
+# this flow is kept around for human-driven verification when changing
+# the link plumbing.
+#
 # Scenario:
 #   1. Type "Hi click here for more"
 #   2. Long-press "here" to bring up the iOS selection handles, then expand
@@ -39,11 +48,15 @@ tags:
 
 - inputText: "Hi click here for more"
 
-# Select "here" via long-press inside the WebView. Coords are reasonable for
-# the WebView's text region; if the device size changes substantially these
-# may need to retune. We long-press, then iOS shows "Select" / "Select All";
-# Maestro's text matcher taps "Select".
-- longPressOn: "here"
+# Select "here" via long-press inside the WebView. TipTap renders the whole
+# line as a single accessibility node ("The Hi click here for more"), so we
+# can't long-press by substring text — we use a coordinate inside the
+# "here" word region. iPhone 17 sim @ 393pt width puts the WebView at
+# x: 18..384, first line ~y=247. Tuned for the iOS keyboard predictive bar
+# inserting "The " prefix when Maestro types key-by-key; word positions
+# shift accordingly. If device size changes, retune.
+- longPressOn:
+    point: "42%,29%"
 - runFlow:
     when:
       visible: "Select"
@@ -62,7 +75,7 @@ tags:
 - inputText: " — appreciated"
 
 # All the typed text is still readable in the accessibility tree.
-- assertVisible: "appreciated"
+- assertVisible: ".*appreciated.*"
 
 # Snapshot for a human-visible reviewable artifact.
 - takeScreenshot: link-regression-result

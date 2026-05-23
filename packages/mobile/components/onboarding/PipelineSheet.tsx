@@ -1,79 +1,26 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Platform } from 'react-native';
-import {
+import BottomSheet, {
   BottomSheetBackdrop,
-  BottomSheetModal,
   BottomSheetScrollView,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
-import { FullWindowOverlay } from 'react-native-screens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTokens } from './tokens';
-
-// react-native-screens renders each Stack.Screen as a native
-// UIViewController. gorhom's BottomSheetModal portals to its provider —
-// but on iOS, that portal target ends up BEHIND the screen's view
-// controller, so the sheet appears not to open at all when invoked from
-// a screen route (which is exactly what Settings → "How It Works" does).
-//
-// FullWindowOverlay wraps the sheet in an iOS UIWindow-level overlay that
-// sits above the entire navigation stack — the documented workaround for
-// gorhom issue #832, which the gorhom type defs themselves point at.
-//
-// Android doesn't have this layering bug; FullWindowOverlay is iOS-only,
-// so the renderContainer function is a no-op there (returns the children
-// directly, no wrapper).
-const renderContainer =
-  Platform.OS === 'ios'
-    ? ({ children }: React.PropsWithChildren) => (
-        <FullWindowOverlay>{children as React.ReactElement}</FullWindowOverlay>
-      )
-    : undefined;
 
 const ONB_ACCENT = '#007AFF';
 const mono = Platform.OS === 'ios' ? 'Menlo' : 'monospace';
 
 const PIPELINE_STEPS = [
-  {
-    num: '01',
-    label: 'Inlines all CSS',
-    desc: 'Gmail ignores <style> blocks. We convert classes to inline style="".',
-  },
-  {
-    num: '02',
-    label: 'Strips dangerous tags',
-    desc: '<script> <iframe> <form> — gone. Only safe HTML survives.',
-  },
-  {
-    num: '03',
-    label: 'Removes unsupported CSS',
-    desc: 'position, transform, box-shadow, animation — stripped.',
-  },
-  {
-    num: '04',
-    label: 'Converts headings',
-    desc: '<h1> → <p style="font-size:22px;font-weight:bold">.',
-  },
-  {
-    num: '05',
-    label: 'Fixes invisible text',
-    desc: 'Light text on white? We darken it until WCAG contrast ≥ 3:1 — hue preserved.',
-  },
-  {
-    num: '06',
-    label: 'Strips dark backgrounds',
-    desc: 'background:#1a1a1a removed; text re-tinted to read on white.',
-  },
-  {
-    num: '07',
-    label: 'Forces explicit colors',
-    desc: "Adds color:#000 and background:#fff so Gmail's dark mode can't invert anything.",
-  },
-  {
-    num: '08',
-    label: 'Cleans up',
-    desc: 'Empty spans, redundant wrappers, orphan attributes — stripped.',
-  },
+  { num: '01', label: 'Inlines all CSS', desc: 'Gmail ignores <style> blocks. We convert classes to inline style="".' },
+  { num: '02', label: 'Strips dangerous tags', desc: '<script> <iframe> <form> — gone. Only safe HTML survives.' },
+  { num: '03', label: 'Removes unsupported CSS', desc: 'position, transform, box-shadow, animation — stripped.' },
+  { num: '04', label: 'Converts headings', desc: '<h1> → <p style="font-size:22px;font-weight:bold">.' },
+  { num: '05', label: 'Fixes invisible text', desc: 'Light text on white? We darken it until WCAG contrast ≥ 3:1 — hue preserved.' },
+  { num: '06', label: 'Strips dark backgrounds', desc: 'background:#1a1a1a removed; text re-tinted to read on white.' },
+  { num: '07', label: 'Forces explicit colors', desc: "Adds color:#000 and background:#fff so Gmail's dark mode can't invert anything." },
+  { num: '08', label: 'Cleans up', desc: 'Empty spans, redundant wrappers, orphan attributes — stripped.' },
 ];
 
 interface PipelineSheetProps {
@@ -81,16 +28,8 @@ interface PipelineSheetProps {
   onClose: () => void;
 }
 
-// Single snap point at 88% — matches the previous Modal-based implementation
-// so the visual footprint is unchanged. Computed once; `snapPoints` is an
-// array because gorhom supports multi-stop sheets (e.g. ['25%', '88%']).
 const SNAP_POINTS = ['88%'];
 
-/**
- * Backdrop that fades in from 0 → 0.4 opacity as the sheet opens, fades
- * back out as it closes. Tap-to-dismiss is handled by gorhom via
- * pressBehavior="close".
- */
 function renderBackdrop(props: BottomSheetBackdropProps) {
   return (
     <BottomSheetBackdrop
@@ -103,32 +42,51 @@ function renderBackdrop(props: BottomSheetBackdropProps) {
   );
 }
 
-// Bottom sheet implemented with @gorhom/bottom-sheet. Gestures run on the
-// UI thread via react-native-gesture-handler + reanimated worklets, so the
-// sheet tracks the finger 1:1 without the JS-bridge lag the previous
-// PanResponder + Animated.setValue implementation had.
+// Non-modal BottomSheet: rendered inline at the bottom of SettingsScreen,
+// controlled via the `index` prop. We tried BottomSheetModal first (in
+// v1.1.3/v1.1.4) but the portal interaction with expo-router's Stack
+// screens was broken — present() fired, no visible output. The non-modal
+// flavor is simpler: no provider needed, no portal, sheet renders inline
+// at index -1 (closed) until we set index to 0 (the only snap point).
 //
-// Callers keep the same { open, onClose } interface; we translate the
-// declarative `open` boolean into imperative present()/dismiss() calls on
-// the modal ref.
+// Layout: parent must give us absolute positioning over the screen — done
+// via the StyleSheet.absoluteFill wrapper.
 export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
   const { dark, t } = useTokens();
-  const sheetRef = useRef<BottomSheetModal>(null);
+  const insets = useSafeAreaInsets();
+  const sheetRef = useRef<BottomSheet>(null);
 
+  // Drive open/close via the bottom-sheet's imperative API. snapToIndex(0)
+  // opens to our single snap point; close() animates back to -1.
   useEffect(() => {
     if (open) {
-      sheetRef.current?.present();
+      sheetRef.current?.snapToIndex(0);
     } else {
-      sheetRef.current?.dismiss();
+      sheetRef.current?.close();
     }
   }, [open]);
 
-  // gorhom fires onDismiss when the sheet has fully closed — whether the
-  // user swiped, tapped the backdrop, or the parent set open=false. We
-  // forward to the parent's onClose so its open state stays in sync.
-  const handleDismiss = useCallback(() => {
-    onClose();
-  }, [onClose]);
+  // gorhom fires onChange(-1) on initial mount (before the sheet has ever
+  // been opened) AND on real user dismisses (swipe down / backdrop tap).
+  // If we forward both to the parent's onClose, the initial -1 fires
+  // onClose while the parent is in the middle of setting open=true → the
+  // sheet ping-pongs and never settles.
+  //
+  // Gate: only fire onClose if we've previously seen a non-negative index
+  // (i.e. the sheet was actually open before this -1). The ref also gets
+  // reset so the next open cycle works.
+  const hasBeenOpenedRef = useRef(false);
+  const handleChange = useCallback(
+    (index: number) => {
+      if (index >= 0) {
+        hasBeenOpenedRef.current = true;
+      } else if (index === -1 && hasBeenOpenedRef.current) {
+        hasBeenOpenedRef.current = false;
+        onClose();
+      }
+    },
+    [onClose],
+  );
 
   const backgroundStyle = useMemo(
     () => ({ backgroundColor: dark ? '#1c1c1e' : '#f2f2f7' }),
@@ -144,89 +102,84 @@ export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
   );
 
   return (
-    <BottomSheetModal
-      ref={sheetRef}
-      snapPoints={SNAP_POINTS}
-      enablePanDownToClose
-      onDismiss={handleDismiss}
-      backdropComponent={renderBackdrop}
-      backgroundStyle={backgroundStyle}
-      handleIndicatorStyle={handleStyle}
-      containerComponent={renderContainer}>
-      <View style={styles.header}>
-        <View style={{ flex: 1 }}>
-          <Text style={[styles.title, { color: t.ink }]}>
-            How PasteClean works
-          </Text>
-          <Text style={[styles.subtitle, { color: t.inkMuted }]}>
-            An 8-step pipeline runs on every copy
-          </Text>
+    <View style={StyleSheet.absoluteFill} pointerEvents={open ? 'auto' : 'box-none'}>
+      <BottomSheet
+        ref={sheetRef}
+        index={-1}
+        snapPoints={SNAP_POINTS}
+        topInset={insets.top}
+        enablePanDownToClose
+        onChange={handleChange}
+        backdropComponent={renderBackdrop}
+        backgroundStyle={backgroundStyle}
+        handleIndicatorStyle={handleStyle}>
+        <View style={styles.header}>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.title, { color: t.ink }]}>
+              How PasteClean works
+            </Text>
+            <Text style={[styles.subtitle, { color: t.inkMuted }]}>
+              An 8-step pipeline runs on every copy
+            </Text>
+          </View>
+          <TouchableOpacity
+            onPress={() => sheetRef.current?.close()}
+            style={[
+              styles.closeBtn,
+              {
+                backgroundColor: dark
+                  ? 'rgba(255,255,255,0.12)'
+                  : 'rgba(60,60,67,0.12)',
+              },
+            ]}
+            testID="pipeline-sheet-close">
+            <FontAwesome name="times" size={14} color={t.ink} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          onPress={() => sheetRef.current?.dismiss()}
-          style={[
-            styles.closeBtn,
-            {
-              backgroundColor: dark
-                ? 'rgba(255,255,255,0.12)'
-                : 'rgba(60,60,67,0.12)',
-            },
-          ]}
-          testID="pipeline-sheet-close">
-          <FontAwesome name="times" size={14} color={t.ink} />
-        </TouchableOpacity>
-      </View>
-      <BottomSheetScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}>
-        {/* Input/output code chips intentionally stay dark in both themes —
-            they read as terminal/IDE blocks. */}
-        <View style={styles.inputChip}>
-          <Text style={styles.inputLabel}>INPUT</Text>
-          <Text style={styles.inputCode} numberOfLines={1}>
-            {'<style>.x{color:#fff}</style>…'}
-          </Text>
-        </View>
-        <View style={{ gap: 10 }}>
-          {PIPELINE_STEPS.map((s) => (
-            <View
-              key={s.num}
-              style={[
-                styles.step,
-                {
-                  backgroundColor: t.surface,
-                  borderColor: t.borderFaint,
-                },
-              ]}>
+        <BottomSheetScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}>
+          <View style={styles.inputChip}>
+            <Text style={styles.inputLabel}>INPUT</Text>
+            <Text style={styles.inputCode} numberOfLines={1}>
+              {'<style>.x{color:#fff}</style>…'}
+            </Text>
+          </View>
+          <View style={{ gap: 10 }}>
+            {PIPELINE_STEPS.map((s) => (
               <View
+                key={s.num}
                 style={[
-                  styles.numBadge,
-                  {
-                    backgroundColor:
-                      ONB_ACCENT + (dark ? '28' : '14'),
-                  },
+                  styles.step,
+                  { backgroundColor: t.surface, borderColor: t.borderFaint },
                 ]}>
-                <Text style={styles.numBadgeText}>{s.num}</Text>
+                <View
+                  style={[
+                    styles.numBadge,
+                    { backgroundColor: ONB_ACCENT + (dark ? '28' : '14') },
+                  ]}>
+                  <Text style={styles.numBadgeText}>{s.num}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.stepLabel, { color: t.ink }]}>
+                    {s.label}
+                  </Text>
+                  <Text style={[styles.stepDesc, { color: t.inkMuted }]}>
+                    {s.desc}
+                  </Text>
+                </View>
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.stepLabel, { color: t.ink }]}>
-                  {s.label}
-                </Text>
-                <Text style={[styles.stepDesc, { color: t.inkMuted }]}>
-                  {s.desc}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </View>
-        <View style={styles.outputChip}>
-          <Text style={styles.outputLabel}>OUTPUT</Text>
-          <Text style={styles.outputCode} numberOfLines={1}>
-            {'<p style="color:#000">…</p>'}
-          </Text>
-        </View>
-      </BottomSheetScrollView>
-    </BottomSheetModal>
+            ))}
+          </View>
+          <View style={styles.outputChip}>
+            <Text style={styles.outputLabel}>OUTPUT</Text>
+            <Text style={styles.outputCode} numberOfLines={1}>
+              {'<p style="color:#000">…</p>'}
+            </Text>
+          </View>
+        </BottomSheetScrollView>
+      </BottomSheet>
+    </View>
   );
 }
 
@@ -240,15 +193,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     gap: 12,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    letterSpacing: -0.4,
-  },
-  subtitle: {
-    fontSize: 14,
-    marginTop: 2,
-  },
+  title: { fontSize: 20, fontWeight: '700', letterSpacing: -0.4 },
+  subtitle: { fontSize: 14, marginTop: 2 },
   closeBtn: {
     width: 32,
     height: 32,
@@ -256,14 +202,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingHorizontal: 22,
-    paddingTop: 4,
-    paddingBottom: 40,
-  },
+  scroll: { flex: 1 },
+  scrollContent: { paddingHorizontal: 22, paddingTop: 4, paddingBottom: 40 },
   inputChip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -279,12 +219,7 @@ const styles = StyleSheet.create({
     fontFamily: mono,
     fontWeight: '600',
   },
-  inputCode: {
-    color: '#ff8a80',
-    fontSize: 12,
-    fontFamily: mono,
-    flex: 1,
-  },
+  inputCode: { color: '#ff8a80', fontSize: 12, fontFamily: mono, flex: 1 },
   step: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -312,10 +247,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.1,
     marginBottom: 3,
   },
-  stepDesc: {
-    fontSize: 14,
-    lineHeight: 19,
-  },
+  stepDesc: { fontSize: 14, lineHeight: 19 },
   outputChip: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -331,10 +263,5 @@ const styles = StyleSheet.create({
     fontFamily: mono,
     fontWeight: '600',
   },
-  outputCode: {
-    color: '#86efac',
-    fontSize: 12,
-    fontFamily: mono,
-    flex: 1,
-  },
+  outputCode: { color: '#86efac', fontSize: 12, fontFamily: mono, flex: 1 },
 });

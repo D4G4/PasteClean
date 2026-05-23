@@ -6,7 +6,12 @@ tags:
   - smoke
   - copy
 ---
-- launchApp
+# Clear state so autoOpenGmail starts false (otherwise a stale AsyncStorage
+# value from a previous run can flip the post-copy flow to "open Gmail
+# directly" and the toast never appears — breaking the assertion).
+- launchApp:
+    clearState: true
+    clearKeychain: true
 
 - runFlow:
     when:
@@ -24,9 +29,20 @@ tags:
 - tapOn:
     id: "copy-button"
 
-# Two affordances confirm the copy succeeded: the in-button "Copied!" chip
-# (auto-clears after 2s) and the handoff toast (sticky until dismissed).
-- assertVisible: "Copied!"
+# Give copyForGmail's async chain (getHTML + sanitize + native clipboard
+# write + setCopied + show toast) time to settle before reading the
+# accessibility tree.
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# The Copy button's accessibilityLabel flips from "Copy to Gmail" to
+# "Copied" when copied=true. (The visible text "Copied!" is grouped under
+# the TouchableOpacity's accessibility node, not surfaced separately —
+# Maestro only sees the label.)
+- assertVisible: "Copied"
+
+# The toast appears when autoOpenGmail is false (which clearState above
+# guarantees on first run).
 - assertVisible: "Copied — open Gmail?"
 - assertVisible: "Open Gmail"
 

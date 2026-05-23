@@ -1,0 +1,64 @@
+# PipelineSheet — opens via "How It Works" row in Settings, closes via the
+# X button. This flow exists because v1.1.3 shipped a broken sheet that
+# Jest + tsc both signed off on (Jest mocks @gorhom/bottom-sheet entirely,
+# so the actual sheet rendering is untested by unit tests). The Maestro
+# flow exercises the real binary and is the gate that should have been in
+# place before v1.1.3 went out.
+appId: com.pasteclean.app
+tags:
+  - smoke
+  - sheet
+---
+- launchApp
+
+# If we land on onboarding (first launch / state was cleared upstream),
+# walk through it. Otherwise we're already on the editor.
+- runFlow:
+    when:
+      visible:
+        id: "onboarding-page-0"
+    file: 01_onboarding_to_editor.yaml
+
+# Navigate to Settings via the gear icon in the editor header.
+- tapOn:
+    id: "settings-button"
+- assertVisible: "Settings"
+
+# ---- Open the sheet ----
+- tapOn:
+    id: "how-it-works-row"
+
+# Sheet has an open animation (~300ms in gorhom defaults). Give it room
+# to finish before asserting — otherwise we race the animation and may
+# read the accessibility tree before the sheet content has registered.
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# gorhom exposes the sheet as a single accessibility group rather than
+# surfacing each child text node, so we assert on its accessibility
+# labels — "Bottom Sheet" and "Bottom sheet handle" — to prove the sheet
+# actually opened. Together with the testIDs we add to the title/X
+# button below, this catches the v1.1.3 "modal didn't render" bug AND
+# any layout regression that hides the content.
+- assertVisible: "Bottom Sheet"
+- assertVisible: "Bottom sheet handle"
+
+# The close button is the only child we expose by testID. It's enough to
+# prove the header rendered (and lets the next step tap it).
+- assertVisible:
+    id: "pipeline-sheet-close"
+
+- takeScreenshot: pipeline-sheet-open
+
+# ---- Close via the X button ----
+- tapOn:
+    id: "pipeline-sheet-close"
+
+# Close animation (~220ms in gorhom defaults).
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# After close, the sheet's accessibility labels should be gone. The
+# handle and the X button both disappear from the tree.
+- assertNotVisible:
+    id: "pipeline-sheet-close"

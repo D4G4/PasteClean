@@ -23,6 +23,7 @@ function SettingsRow({
   showChevron = false,
   isLast = false,
   onPress,
+  testID,
   fg,
   fgMuted,
   fgFaint,
@@ -33,6 +34,7 @@ function SettingsRow({
   showChevron?: boolean;
   isLast?: boolean;
   onPress?: () => void;
+  testID?: string;
   fg: string;
   fgMuted: string;
   fgFaint: string;
@@ -43,7 +45,8 @@ function SettingsRow({
       style={styles.row}
       activeOpacity={onPress ? 0.5 : 1}
       onPress={onPress}
-      disabled={!onPress}>
+      disabled={!onPress}
+      testID={testID}>
       <Text style={[styles.rowTitle, { color: fg }]}>{title}</Text>
       <View style={styles.rowRight}>
         {detail != null && (
@@ -92,6 +95,7 @@ export default function SettingsScreen() {
             title="How It Works"
             showChevron
             onPress={() => setPipelineOpen(true)}
+            testID="how-it-works-row"
             fg={colors.fg}
             fgMuted={colors.fgMuted}
             fgFaint={colors.fgFaint}
@@ -108,7 +112,7 @@ export default function SettingsScreen() {
           />
           <SettingsRow
             title="Version"
-            detail="1.1.4"
+            detail="1.1.5"
             isLast
             fg={colors.fg}
             fgMuted={colors.fgMuted}

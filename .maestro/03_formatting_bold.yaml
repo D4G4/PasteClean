@@ -37,14 +37,19 @@ tags:
 - tapOn: "B"
 - inputText: " plain again"
 
-- assertVisible: "Plain"
-- assertVisible: "BOLD"
-- assertVisible: "plain again"
+# Substring/regex assertions — iOS predictive text can prepend suggestions
+# when Maestro types key-by-key, so we match anywhere in the surrounding
+# accessibility text rather than the exact strings.
+- assertVisible: ".*Plain.*"
+- assertVisible: ".*BOLD.*"
+- assertVisible: ".*plain again.*"
 
-# Copy and confirm the sanitized payload made it out. We don't validate the
-# clipboard contents from inside Maestro (would need a custom shim), but the
-# "Copied!" affordance proves the whole sanitize → clipboard chain ran
-# without throwing.
+# Copy and confirm the sanitized payload made it out. The Copy button's
+# accessibilityLabel flips from "Copy to Gmail" to "Copied" — Maestro
+# sees the label, not the literal "Copied!" text node (which is grouped
+# under the TouchableOpacity's accessibility node).
 - tapOn:
     id: "copy-button"
-- assertVisible: "Copied!"
+- waitForAnimationToEnd:
+    timeout: 1500
+- assertVisible: "Copied"
