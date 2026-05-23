@@ -2,9 +2,9 @@
  * Dark-mode snapshots. We mock the tokens module so every consumer reads
  * `dark: true` regardless of the actual system color scheme.
  *
- * The Gmail message mocks (Problem cards, Vanish cards, Fixed card) stay
- * fixed because they don't read from the tokens — they're real Gmail
- * renderings, not app chrome.
+ * The Gmail message mocks (Problem cards, Fixed card) stay fixed because
+ * they don't read from the tokens — they're real Gmail renderings, not
+ * app chrome.
  */
 import React from 'react';
 
@@ -17,7 +17,6 @@ jest.mock('../tokens', () => {
 });
 
 import ProblemScreen from '../screens/ProblemScreen';
-import VanishScreen from '../screens/VanishScreen';
 import FixedScreen from '../screens/FixedScreen';
 import FlowScreen from '../screens/FlowScreen';
 import ThemeScreen from '../screens/ThemeScreen';
@@ -28,10 +27,6 @@ import { snapshotOf } from '../test-utils';
 describe('Onboarding — dark mode', () => {
   it('ProblemScreen', () => {
     expect(snapshotOf(<ProblemScreen />)).toMatchSnapshot();
-  });
-
-  it('VanishScreen', () => {
-    expect(snapshotOf(<VanishScreen />)).toMatchSnapshot();
   });
 
   it('FixedScreen', () => {

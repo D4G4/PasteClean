@@ -5,7 +5,6 @@ exports[`ProblemScreen matches snapshot 1`] = `
   style={
     [
       {
-        "backgroundColor": "#fff",
         "flex": 1,
       },
       {
@@ -17,1060 +16,857 @@ exports[`ProblemScreen matches snapshot 1`] = `
   <View
     style={
       {
-        "flex": 1,
-        "justifyContent": "center",
-        "paddingBottom": 8,
-        "paddingHorizontal": 22,
+        "alignItems": "center",
+        "paddingBottom": 0,
+        "paddingHorizontal": 36,
+        "paddingTop": 56,
       }
     }
   >
     <View
       style={
         {
-          "flexDirection": "row",
-          "gap": 12,
+          "height": 250,
+          "position": "relative",
+          "width": "100%",
         }
       }
     >
       <View
+        collapsable={false}
         style={
           {
-            "flex": 1,
-            "gap": 6,
+            "backgroundColor": "#202124",
+            "borderRadius": 14,
+            "bottom": 0,
+            "elevation": 16,
+            "left": 0,
+            "opacity": 1,
+            "overflow": "hidden",
+            "position": "absolute",
+            "right": 0,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 20,
+              "width": 0,
+            },
+            "shadowOpacity": 0.28,
+            "shadowRadius": 40,
+            "top": 0,
           }
         }
+        testID="onboarding-problem-compose"
       >
-        <Text
-          style={
-            [
-              {
-                "color": "rgba(60,60,67,0.55)",
-                "fontSize": 10,
-                "fontWeight": "600",
-                "letterSpacing": 0.4,
-                "paddingLeft": 4,
-                "textTransform": "uppercase",
-              },
-              {
-                "color": "rgba(60,60,67,0.55)",
-              },
-            ]
-          }
-        >
-          You wrote (dark mode)
-        </Text>
         <View
           style={
-            [
+            {
+              "alignItems": "center",
+              "borderBottomColor": "#3c4043",
+              "borderBottomWidth": 0.5,
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "paddingHorizontal": 12,
+              "paddingVertical": 8,
+            }
+          }
+        >
+          <Text
+            style={
               {
-                "elevation": 10,
-                "shadowColor": "#000",
-                "shadowOffset": {
-                  "height": 10,
-                  "width": 0,
-                },
-                "shadowOpacity": 0.22,
-                "shadowRadius": 13,
-              },
-            ]
+                "color": "#e8eaed",
+                "fontSize": 11,
+                "fontWeight": "600",
+                "letterSpacing": -0.1,
+              }
+            }
+          >
+            New message
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "borderBottomColor": "#3c4043",
+              "borderBottomWidth": 0.5,
+              "paddingHorizontal": 12,
+              "paddingVertical": 4,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#9aa0a6",
+                "fontSize": 10,
+              }
+            }
+          >
+            To
+             
+            <Text
+              style={
+                {
+                  "color": "#e8eaed",
+                }
+              }
+            >
+              sam@company.com
+            </Text>
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "borderBottomColor": "#3c4043",
+              "borderBottomWidth": 0.5,
+              "paddingHorizontal": 12,
+              "paddingVertical": 4,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "color": "#e8eaed",
+                "fontSize": 11,
+                "fontWeight": "500",
+              }
+            }
+          >
+            Q2 launch recap
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "flex": 1,
+              "overflow": "hidden",
+              "paddingBottom": 6,
+              "paddingHorizontal": 12,
+              "paddingTop": 10,
+            }
           }
         >
           <View
             style={
-              [
-                {
-                  "borderRadius": 14,
-                  "height": 220,
-                  "overflow": "hidden",
-                  "width": "100%",
-                },
-                {
-                  "backgroundColor": "#202124",
-                  "borderColor": "transparent",
-                  "borderWidth": 0,
-                },
-              ]
+              {
+                "gap": 4,
+              }
             }
           >
-            <View
+            <Text
               style={
-                {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "gap": 6,
-                  "justifyContent": "space-between",
-                  "paddingBottom": 6,
-                  "paddingHorizontal": 10,
-                  "paddingTop": 8,
-                }
-              }
-            >
-              <Text
-                numberOfLines={1}
-                style={
-                  [
-                    {
-                      "flex": 1,
-                      "fontSize": 11,
-                      "fontWeight": "500",
-                      "letterSpacing": -0.1,
-                    },
-                    {
-                      "color": "#e8eaed",
-                    },
-                  ]
-                }
-              >
-                Q2 launch recap
-              </Text>
-              <View
-                style={
-                  [
-                    {
-                      "alignItems": "center",
-                      "borderRadius": 7,
-                      "borderWidth": 1,
-                      "height": 14,
-                      "justifyContent": "center",
-                      "width": 14,
-                    },
-                    {
-                      "borderColor": "#9aa0a6",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    {
-                      "color": "#9aa0a6",
-                      "fontSize": 7,
-                    }
-                  }
-                >
-                  ›
-                </Text>
-              </View>
-            </View>
-            <View
-              style={
-                {
-                  "paddingBottom": 6,
-                  "paddingHorizontal": 10,
-                }
-              }
-            >
-              <View
-                style={
-                  [
-                    {
-                      "alignSelf": "flex-start",
-                      "borderRadius": 3,
-                      "borderWidth": 1,
-                      "paddingHorizontal": 4,
-                      "paddingVertical": 1,
-                    },
-                    {
-                      "borderColor": "#5f6368",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 7,
-                        "fontWeight": "500",
-                        "letterSpacing": 0.1,
-                      },
-                      {
-                        "color": "#9aa0a6",
-                      },
-                    ]
-                  }
-                >
-                  Inbox
-                </Text>
-              </View>
-            </View>
-            <View
-              style={
-                {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "gap": 7,
-                  "paddingBottom": 8,
-                  "paddingHorizontal": 10,
-                }
-              }
-            >
-              <View
-                style={
-                  [
-                    {
-                      "alignItems": "center",
-                      "borderRadius": 11,
-                      "height": 22,
-                      "justifyContent": "center",
-                      "width": 22,
-                    },
-                    {
-                      "backgroundColor": "#8ab4f8",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 10,
-                        "fontWeight": "700",
-                      },
-                      {
-                        "color": "#202124",
-                      },
-                    ]
-                  }
-                >
-                  M
-                </Text>
-              </View>
-              <View
-                style={
+                [
                   {
-                    "flex": 1,
-                  }
-                }
-              >
-                <View
-                  style={
-                    {
-                      "alignItems": "center",
-                      "flexDirection": "row",
-                      "gap": 4,
-                    }
-                  }
-                >
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontSize": 9.5,
-                          "fontWeight": "600",
-                        },
-                        {
-                          "color": "#e8eaed",
-                        },
-                      ]
-                    }
-                  >
-                    me
-                  </Text>
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontSize": 8,
-                          "fontWeight": "400",
-                        },
-                        {
-                          "color": "#9aa0a6",
-                        },
-                      ]
-                    }
-                  >
-                    9:47 AM
-                  </Text>
-                </View>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 8,
-                      },
-                      {
-                        "color": "#9aa0a6",
-                      },
-                    ]
-                  }
-                >
-                  to Sam ▾
-                </Text>
-              </View>
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                  },
+                ]
+              }
+            >
+              Hi Sam,
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                  },
+                ]
+              }
+            >
+              Quick recap from this morning's sync —
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                    "marginTop": 3,
+                  },
+                ]
+              }
+            >
+              •
+               
               <Text
                 style={
                   {
-                    "color": "#9aa0a6",
-                    "fontSize": 10,
+                    "color": "#fff",
+                    "fontWeight": "700",
                   }
                 }
               >
-                ←
+                Beta signups:
               </Text>
-            </View>
-            <View
-              style={
-                {
-                  "flex": 1,
-                  "paddingHorizontal": 10,
-                }
-              }
-            >
-              <View
+               
+              <Text
                 style={
                   {
-                    "gap": 4,
+                    "color": "#34C759",
+                    "fontWeight": "600",
                   }
                 }
               >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
+                247
+              </Text>
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                  },
+                ]
+              }
+            >
+              •
+               
+              <Text
+                style={
+                  {
+                    "color": "#fff",
+                    "fontWeight": "700",
                   }
-                >
-                  Hey team,
-                </Text>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
+                }
+              >
+                Blocker:
+              </Text>
+               
+              <Text
+                style={
+                  {
+                    "color": "#FF9F0A",
+                    "fontWeight": "600",
                   }
-                >
-                  Quick notes from this morning's sync —
-                </Text>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
+                }
+              >
+                auth on Android
+              </Text>
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                  },
+                ]
+              }
+            >
+              •
+               
+              <Text
+                style={
+                  {
+                    "color": "#fff",
+                    "fontWeight": "700",
                   }
-                >
-                  •
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#fff",
-                        "fontWeight": "700",
-                      }
-                    }
-                  >
-                    Beta signups:
-                  </Text>
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#34C759",
-                      }
-                    }
-                  >
-                    247
-                  </Text>
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "rgba(255,255,255,0.5)",
-                      }
-                    }
-                  >
-                    (+38)
-                  </Text>
-                </Text>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
+                }
+              >
+                Ship date:
+              </Text>
+               
+              <Text
+                style={
+                  {
+                    "color": "#34C759",
+                    "fontWeight": "700",
                   }
-                >
-                  •
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#fff",
-                        "fontWeight": "700",
-                      }
-                    }
-                  >
-                    Blocker:
-                  </Text>
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#FF9F0A",
-                      }
-                    }
-                  >
-                    auth on Android
-                  </Text>
-                </Text>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
-                  }
-                >
-                  •
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#fff",
-                        "fontWeight": "700",
-                      }
-                    }
-                  >
-                    Ship date:
-                  </Text>
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#34C759",
-                        "fontWeight": "700",
-                      }
-                    }
-                  >
-                    May 28
-                  </Text>
-                </Text>
-              </View>
-            </View>
-            <View
+                }
+              >
+                May 28
+              </Text>
+            </Text>
+          </View>
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "center",
+              "borderTopColor": "#3c4043",
+              "borderTopWidth": 0.5,
+              "flexDirection": "row",
+              "paddingBottom": 8,
+              "paddingHorizontal": 12,
+              "paddingTop": 6,
+            }
+          }
+        >
+          <View
+            style={
+              {
+                "backgroundColor": "#8ab4f8",
+                "borderRadius": 99,
+                "paddingHorizontal": 12,
+                "paddingVertical": 4,
+              }
+            }
+          >
+            <Text
               style={
                 {
-                  "flexDirection": "row",
-                  "gap": 5,
-                  "paddingBottom": 6,
-                  "paddingHorizontal": 10,
+                  "color": "#202124",
+                  "fontSize": 10,
+                  "fontWeight": "700",
                 }
               }
             >
-              <View
-                style={
-                  [
-                    {
-                      "borderRadius": 14,
-                      "borderWidth": 1,
-                      "paddingHorizontal": 7,
-                      "paddingVertical": 2,
-                    },
-                    {
-                      "borderColor": "#5f6368",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 8.5,
-                        "fontWeight": "500",
-                      },
-                      {
-                        "color": "#9aa0a6",
-                      },
-                    ]
-                  }
-                >
-                  ↶ Reply
-                </Text>
-              </View>
-              <View
-                style={
-                  [
-                    {
-                      "borderRadius": 14,
-                      "borderWidth": 1,
-                      "paddingHorizontal": 7,
-                      "paddingVertical": 2,
-                    },
-                    {
-                      "borderColor": "#5f6368",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 8.5,
-                        "fontWeight": "500",
-                      },
-                      {
-                        "color": "#9aa0a6",
-                      },
-                    ]
-                  }
-                >
-                  ↷ Forward
-                </Text>
-              </View>
-            </View>
+              Send
+            </Text>
           </View>
         </View>
       </View>
       <View
+        collapsable={false}
         style={
           {
-            "flex": 1,
-            "gap": 6,
+            "backgroundColor": "#fff",
+            "borderColor": "rgba(60,60,67,0.18)",
+            "borderRadius": 14,
+            "borderWidth": 0.5,
+            "bottom": 0,
+            "elevation": 24,
+            "left": 0,
+            "opacity": 0,
+            "overflow": "hidden",
+            "position": "absolute",
+            "right": 0,
+            "shadowColor": "#000",
+            "shadowOffset": {
+              "height": 18,
+              "width": 0,
+            },
+            "shadowOpacity": 0.38,
+            "shadowRadius": 32,
+            "top": 0,
           }
         }
+        testID="onboarding-problem-sent"
       >
-        <Text
-          style={
-            [
-              {
-                "color": "rgba(60,60,67,0.55)",
-                "fontSize": 10,
-                "fontWeight": "600",
-                "letterSpacing": 0.4,
-                "paddingLeft": 4,
-                "textTransform": "uppercase",
-              },
-              {
-                "color": "#FF3B30",
-              },
-            ]
-          }
-        >
-          In Gmail (light)
-        </Text>
         <View
           style={
-            [
+            {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
+              "paddingBottom": 4,
+              "paddingHorizontal": 12,
+              "paddingTop": 10,
+            }
+          }
+        >
+          <Text
+            style={
               {
-                "elevation": 10,
-                "shadowColor": "#000",
-                "shadowOffset": {
-                  "height": 10,
-                  "width": 0,
-                },
-                "shadowOpacity": 0.22,
-                "shadowRadius": 13,
-              },
-            ]
+                "color": "#202124",
+                "fontSize": 12,
+                "fontWeight": "500",
+              }
+            }
+          >
+            Q2 launch recap
+          </Text>
+          <View
+            style={
+              {
+                "borderColor": "#dadce0",
+                "borderRadius": 3,
+                "borderWidth": 1,
+                "paddingHorizontal": 4,
+                "paddingVertical": 1,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#5f6368",
+                  "fontSize": 8,
+                  "fontWeight": "500",
+                }
+              }
+            >
+              Inbox
+            </Text>
+          </View>
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "center",
+              "flexDirection": "row",
+              "gap": 8,
+              "paddingBottom": 8,
+              "paddingHorizontal": 12,
+            }
           }
         >
           <View
             style={
-              [
+              {
+                "alignItems": "center",
+                "backgroundColor": "#1a73e8",
+                "borderRadius": 11,
+                "height": 22,
+                "justifyContent": "center",
+                "width": 22,
+              }
+            }
+          >
+            <Text
+              style={
                 {
-                  "borderRadius": 14,
-                  "height": 220,
-                  "overflow": "hidden",
-                  "width": "100%",
-                },
+                  "color": "#fff",
+                  "fontSize": 11,
+                  "fontWeight": "700",
+                }
+              }
+            >
+              M
+            </Text>
+          </View>
+          <View
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            <Text
+              style={
                 {
-                  "backgroundColor": "#fff",
-                  "borderColor": "rgba(60,60,67,0.18)",
-                  "borderWidth": 0.5,
-                },
-              ]
+                  "color": "#202124",
+                  "fontSize": 10,
+                  "fontWeight": "600",
+                }
+              }
+            >
+              me 
+              <Text
+                style={
+                  {
+                    "color": "#5f6368",
+                    "fontSize": 9,
+                    "fontWeight": "400",
+                  }
+                }
+              >
+                9:47 AM
+              </Text>
+            </Text>
+            <Text
+              style={
+                {
+                  "color": "#5f6368",
+                  "fontSize": 9,
+                  "fontWeight": "400",
+                }
+              }
+            >
+              to Sam ▾
+            </Text>
+          </View>
+        </View>
+        <View
+          style={
+            {
+              "backgroundColor": "#dadce0",
+              "height": 0.5,
+            }
+          }
+        />
+        <View
+          style={
+            {
+              "flex": 1,
+              "overflow": "hidden",
+              "paddingBottom": 6,
+              "paddingHorizontal": 12,
+              "paddingTop": 10,
+              "position": "relative",
+            }
+          }
+        >
+          <View
+            style={
+              {
+                "gap": 4,
+              }
+            }
+          >
+            <Text
+              style={
+                [
+                  {
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                  },
+                ]
+              }
+            >
+              Hi Sam,
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                  },
+                ]
+              }
+            >
+              Quick recap from this morning's sync —
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                    "marginTop": 3,
+                  },
+                ]
+              }
+            >
+              •
+               
+              <Text
+                style={
+                  {
+                    "color": "#fff",
+                    "fontWeight": "700",
+                  }
+                }
+              >
+                Beta signups:
+              </Text>
+               
+              <Text
+                style={
+                  {
+                    "color": "#34C759",
+                    "fontWeight": "600",
+                  }
+                }
+              >
+                247
+              </Text>
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                  },
+                ]
+              }
+            >
+              •
+               
+              <Text
+                style={
+                  {
+                    "color": "#fff",
+                    "fontWeight": "700",
+                  }
+                }
+              >
+                Blocker:
+              </Text>
+               
+              <Text
+                style={
+                  {
+                    "color": "#FF9F0A",
+                    "fontWeight": "600",
+                  }
+                }
+              >
+                auth on Android
+              </Text>
+            </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                  },
+                  {
+                    "color": "rgba(255,255,255,0.92)",
+                  },
+                ]
+              }
+            >
+              •
+               
+              <Text
+                style={
+                  {
+                    "color": "#fff",
+                    "fontWeight": "700",
+                  }
+                }
+              >
+                Ship date:
+              </Text>
+               
+              <Text
+                style={
+                  {
+                    "color": "#34C759",
+                    "fontWeight": "700",
+                  }
+                }
+              >
+                May 28
+              </Text>
+            </Text>
+          </View>
+          <View
+            pointerEvents="none"
+            style={
+              {
+                "alignItems": "center",
+                "bottom": 0,
+                "justifyContent": "center",
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
             }
           >
             <View
               style={
                 {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "gap": 6,
-                  "justifyContent": "space-between",
-                  "paddingBottom": 6,
-                  "paddingHorizontal": 10,
-                  "paddingTop": 8,
+                  "backgroundColor": "#FF3B30",
+                  "borderRadius": 999,
+                  "elevation": 8,
+                  "paddingHorizontal": 11,
+                  "paddingVertical": 6,
+                  "shadowColor": "#FF3B30",
+                  "shadowOffset": {
+                    "height": 8,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 0.35,
+                  "shadowRadius": 18,
                 }
               }
             >
               <Text
-                numberOfLines={1}
-                style={
-                  [
-                    {
-                      "flex": 1,
-                      "fontSize": 11,
-                      "fontWeight": "500",
-                      "letterSpacing": -0.1,
-                    },
-                    {
-                      "color": "#202124",
-                    },
-                  ]
-                }
-              >
-                Q2 launch recap
-              </Text>
-              <View
-                style={
-                  [
-                    {
-                      "alignItems": "center",
-                      "borderRadius": 7,
-                      "borderWidth": 1,
-                      "height": 14,
-                      "justifyContent": "center",
-                      "width": 14,
-                    },
-                    {
-                      "borderColor": "#5f6368",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    {
-                      "color": "#5f6368",
-                      "fontSize": 7,
-                    }
-                  }
-                >
-                  ›
-                </Text>
-              </View>
-            </View>
-            <View
-              style={
-                {
-                  "paddingBottom": 6,
-                  "paddingHorizontal": 10,
-                }
-              }
-            >
-              <View
-                style={
-                  [
-                    {
-                      "alignSelf": "flex-start",
-                      "borderRadius": 3,
-                      "borderWidth": 1,
-                      "paddingHorizontal": 4,
-                      "paddingVertical": 1,
-                    },
-                    {
-                      "borderColor": "#dadce0",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 7,
-                        "fontWeight": "500",
-                        "letterSpacing": 0.1,
-                      },
-                      {
-                        "color": "#5f6368",
-                      },
-                    ]
-                  }
-                >
-                  Inbox
-                </Text>
-              </View>
-            </View>
-            <View
-              style={
-                {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "gap": 7,
-                  "paddingBottom": 8,
-                  "paddingHorizontal": 10,
-                }
-              }
-            >
-              <View
-                style={
-                  [
-                    {
-                      "alignItems": "center",
-                      "borderRadius": 11,
-                      "height": 22,
-                      "justifyContent": "center",
-                      "width": 22,
-                    },
-                    {
-                      "backgroundColor": "#1a73e8",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 10,
-                        "fontWeight": "700",
-                      },
-                      {
-                        "color": "#fff",
-                      },
-                    ]
-                  }
-                >
-                  M
-                </Text>
-              </View>
-              <View
                 style={
                   {
-                    "flex": 1,
-                  }
-                }
-              >
-                <View
-                  style={
-                    {
-                      "alignItems": "center",
-                      "flexDirection": "row",
-                      "gap": 4,
-                    }
-                  }
-                >
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontSize": 9.5,
-                          "fontWeight": "600",
-                        },
-                        {
-                          "color": "#202124",
-                        },
-                      ]
-                    }
-                  >
-                    me
-                  </Text>
-                  <Text
-                    style={
-                      [
-                        {
-                          "fontSize": 8,
-                          "fontWeight": "400",
-                        },
-                        {
-                          "color": "#5f6368",
-                        },
-                      ]
-                    }
-                  >
-                    9:47 AM
-                  </Text>
-                </View>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 8,
-                      },
-                      {
-                        "color": "#5f6368",
-                      },
-                    ]
-                  }
-                >
-                  to Sam ▾
-                </Text>
-              </View>
-              <Text
-                style={
-                  {
-                    "color": "#5f6368",
+                    "color": "#fff",
                     "fontSize": 10,
+                    "fontWeight": "700",
+                    "letterSpacing": -0.1,
                   }
                 }
               >
-                ←
+                where did everything go?
               </Text>
-            </View>
-            <View
-              style={
-                {
-                  "flex": 1,
-                  "paddingHorizontal": 10,
-                }
-              }
-            >
-              <View
-                style={
-                  {
-                    "gap": 4,
-                  }
-                }
-              >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
-                  }
-                >
-                  Hey team,
-                </Text>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
-                  }
-                >
-                  Quick notes from this morning's sync —
-                </Text>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
-                  }
-                >
-                  •
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#fff",
-                        "fontWeight": "700",
-                      }
-                    }
-                  >
-                    Beta signups:
-                  </Text>
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#34C759",
-                      }
-                    }
-                  >
-                    247
-                  </Text>
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "rgba(255,255,255,0.5)",
-                      }
-                    }
-                  >
-                    (+38)
-                  </Text>
-                </Text>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
-                  }
-                >
-                  •
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#fff",
-                        "fontWeight": "700",
-                      }
-                    }
-                  >
-                    Blocker:
-                  </Text>
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#FF9F0A",
-                      }
-                    }
-                  >
-                    auth on Android
-                  </Text>
-                </Text>
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 9.5,
-                        "lineHeight": 14,
-                      },
-                      {
-                        "color": "rgba(255,255,255,0.92)",
-                      },
-                    ]
-                  }
-                >
-                  •
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#fff",
-                        "fontWeight": "700",
-                      }
-                    }
-                  >
-                    Ship date:
-                  </Text>
-                   
-                  <Text
-                    style={
-                      {
-                        "color": "#34C759",
-                        "fontWeight": "700",
-                      }
-                    }
-                  >
-                    May 28
-                  </Text>
-                </Text>
-              </View>
-            </View>
-            <View
-              style={
-                {
-                  "flexDirection": "row",
-                  "gap": 5,
-                  "paddingBottom": 6,
-                  "paddingHorizontal": 10,
-                }
-              }
-            >
-              <View
-                style={
-                  [
-                    {
-                      "borderRadius": 14,
-                      "borderWidth": 1,
-                      "paddingHorizontal": 7,
-                      "paddingVertical": 2,
-                    },
-                    {
-                      "borderColor": "#dadce0",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 8.5,
-                        "fontWeight": "500",
-                      },
-                      {
-                        "color": "#5f6368",
-                      },
-                    ]
-                  }
-                >
-                  ↶ Reply
-                </Text>
-              </View>
-              <View
-                style={
-                  [
-                    {
-                      "borderRadius": 14,
-                      "borderWidth": 1,
-                      "paddingHorizontal": 7,
-                      "paddingVertical": 2,
-                    },
-                    {
-                      "borderColor": "#dadce0",
-                    },
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    [
-                      {
-                        "fontSize": 8.5,
-                        "fontWeight": "500",
-                      },
-                      {
-                        "color": "#5f6368",
-                      },
-                    ]
-                  }
-                >
-                  ↷ Forward
-                </Text>
-              </View>
             </View>
           </View>
         </View>
+        <View
+          style={
+            {
+              "flexDirection": "row",
+              "gap": 5,
+              "paddingBottom": 10,
+              "paddingHorizontal": 12,
+              "paddingTop": 4,
+            }
+          }
+        >
+          <View
+            style={
+              {
+                "borderColor": "#dadce0",
+                "borderRadius": 14,
+                "borderWidth": 1,
+                "paddingHorizontal": 9,
+                "paddingVertical": 3,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#5f6368",
+                  "fontSize": 9.5,
+                  "fontWeight": "500",
+                }
+              }
+            >
+              ↶ Reply
+            </Text>
+          </View>
+          <View
+            style={
+              {
+                "borderColor": "#dadce0",
+                "borderRadius": 14,
+                "borderWidth": 1,
+                "paddingHorizontal": 9,
+                "paddingVertical": 3,
+              }
+            }
+          >
+            <Text
+              style={
+                {
+                  "color": "#5f6368",
+                  "fontSize": 9.5,
+                  "fontWeight": "500",
+                }
+              }
+            >
+              ↷ Forward
+            </Text>
+          </View>
+        </View>
+      </View>
+    </View>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "alignSelf": "stretch",
+          "height": 20,
+          "justifyContent": "center",
+          "marginTop": 14,
+        }
+      }
+    >
+      <View
+        collapsable={false}
+        pointerEvents="none"
+        style={
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "gap": 6,
+            "opacity": 1,
+            "position": "absolute",
+          }
+        }
+      >
+        <View
+          style={
+            {
+              "backgroundColor": "#8ab4f8",
+              "borderRadius": 3,
+              "elevation": 0,
+              "height": 6,
+              "shadowColor": "#8ab4f8",
+              "shadowOffset": {
+                "height": 0,
+                "width": 0,
+              },
+              "shadowOpacity": 1,
+              "shadowRadius": 8,
+              "width": 6,
+            }
+          }
+        />
+        <Text
+          style={
+            {
+              "color": "#8ab4f8",
+              "fontSize": 11,
+              "fontWeight": "700",
+              "letterSpacing": 0.8,
+            }
+          }
+        >
+          COMPOSING
+        </Text>
+      </View>
+      <View
+        collapsable={false}
+        pointerEvents="none"
+        style={
+          {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "gap": 6,
+            "opacity": 0,
+            "position": "absolute",
+          }
+        }
+      >
+        <View
+          style={
+            [
+              {
+                "backgroundColor": "#8ab4f8",
+                "borderRadius": 3,
+                "elevation": 0,
+                "height": 6,
+                "shadowColor": "#8ab4f8",
+                "shadowOffset": {
+                  "height": 0,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 8,
+                "width": 6,
+              },
+              {
+                "backgroundColor": "#FF3B30",
+                "shadowOpacity": 0,
+              },
+            ]
+          }
+        />
+        <Text
+          style={
+            {
+              "color": "#FF3B30",
+              "fontSize": 11,
+              "fontWeight": "700",
+              "letterSpacing": 0.8,
+            }
+          }
+        >
+          SENT · IN GMAIL
+        </Text>
       </View>
     </View>
   </View>
@@ -1078,8 +874,9 @@ exports[`ProblemScreen matches snapshot 1`] = `
     style={
       {
         "flex": 1,
+        "paddingBottom": 4,
         "paddingHorizontal": 28,
-        "paddingTop": 24,
+        "paddingTop": 28,
       }
     }
   >
@@ -1087,7 +884,6 @@ exports[`ProblemScreen matches snapshot 1`] = `
       style={
         [
           {
-            "color": "#1c1c1e",
             "fontSize": 28,
             "fontWeight": "700",
             "letterSpacing": -0.6,
@@ -1106,7 +902,6 @@ exports[`ProblemScreen matches snapshot 1`] = `
       style={
         [
           {
-            "color": "rgba(60,60,67,0.72)",
             "fontSize": 15,
             "letterSpacing": -0.2,
             "lineHeight": 21,
@@ -1117,58 +912,7 @@ exports[`ProblemScreen matches snapshot 1`] = `
         ]
       }
     >
-      You're on your phone. Writing to a
-       
-      <Text
-        style={
-          [
-            {
-              "color": "#1c1c1e",
-              "fontWeight": "700",
-            },
-            {
-              "color": "#1c1c1e",
-            },
-          ]
-        }
-      >
-        recruiter
-      </Text>
-      , an
-       
-      <Text
-        style={
-          [
-            {
-              "color": "#1c1c1e",
-              "fontWeight": "700",
-            },
-            {
-              "color": "#1c1c1e",
-            },
-          ]
-        }
-      >
-        investor
-      </Text>
-      , your
-       
-      <Text
-        style={
-          [
-            {
-              "color": "#1c1c1e",
-              "fontWeight": "700",
-            },
-            {
-              "color": "#1c1c1e",
-            },
-          ]
-        }
-      >
-        VP
-      </Text>
-      . No laptop. No time to redo it. And Gmail mangles every dark-mode paste — white text on white background, colors trashed. Not a great look when stakes are high.
+      Your email looks perfect while you write. The moment Gmail repaints it on a white background, the text you can't see is the text your recipient won't read.
     </Text>
   </View>
 </View>

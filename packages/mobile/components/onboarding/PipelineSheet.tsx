@@ -109,6 +109,14 @@ export default function PipelineSheet({ open, onClose }: PipelineSheetProps) {
         snapPoints={SNAP_POINTS}
         topInset={insets.top}
         enablePanDownToClose
+        // Cap upward drag at the 88% snap point. Without this, gorhom's
+        // default enableOverDrag lets the user pull the sheet ABOVE the
+        // snap (with resistance) up to the topInset — but the visual
+        // result on iOS is the sheet content overlapping the Settings
+        // navigation header ("How PasteClean works" colliding with
+        // "Settings" large title). Disabling overdrag locks the upper
+        // edge to the snap point; downward pan-to-close is unaffected.
+        enableOverDrag={false}
         onChange={handleChange}
         backdropComponent={renderBackdrop}
         backgroundStyle={backgroundStyle}

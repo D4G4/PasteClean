@@ -202,7 +202,7 @@ describe('useCopyForGmail', () => {
       await handle().copyForGmail();
     });
     expect(handle().toastVisible).toBe(false);
-    expect(openURLSpy).toHaveBeenCalledWith('googlegmail://co');
+    expect(openURLSpy).toHaveBeenCalledWith('googlegmail://');
   });
 
   it('dismissToast hides the toast', async () => {
@@ -234,10 +234,10 @@ describe('useCopyForGmail', () => {
       await Promise.resolve();
     });
 
-    expect(openURLSpy).toHaveBeenNthCalledWith(1, 'googlegmail://co');
+    expect(openURLSpy).toHaveBeenNthCalledWith(1, 'googlegmail://');
     expect(openURLSpy).toHaveBeenNthCalledWith(
       2,
-      'https://mail.google.com/mail/u/0/#drafts',
+      'https://mail.google.com/mail/',
     );
   });
 

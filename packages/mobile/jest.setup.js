@@ -97,3 +97,58 @@ jest.mock(
   },
 );
 
+// @gorhom/bottom-sheet runs reanimated worklets when its modules load. The
+// reanimated mock that ships with jest-expo doesn't compile worklets either,
+// so the import explodes with "Passed a function that is not a worklet"
+// before any component renders. Mock the surface to plain Views — the
+// snapshot then captures the props/children we wire through, not the
+// gesture-handler internals (those are validated on the simulator by
+// Maestro flow 07).
+jest.mock('@gorhom/bottom-sheet', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const BottomSheet = React.forwardRef(({ children }, _ref) =>
+    React.createElement(View, { testID: 'mock-bottom-sheet' }, children),
+  );
+  BottomSheet.displayName = 'BottomSheet';
+  return {
+    __esModule: true,
+    default: BottomSheet,
+    BottomSheetModal: BottomSheet,
+    BottomSheetModalProvider: ({ children }) => children,
+    BottomSheetBackdrop: () =>
+      React.createElement(View, { testID: 'mock-backdrop' }),
+    BottomSheetScrollView: ({ children }) =>
+      React.createElement(View, { testID: 'mock-scroll' }, children),
+    BottomSheetView: ({ children }) =>
+      React.createElement(View, { testID: 'mock-sheet-view' }, children),
+  };
+});
+
+// react-native-gesture-handler is loaded by gorhom's BottomSheetModalProvider
+// and by app/_layout.tsx. Its native module isn't available in Jest. Stub the
+// pieces we touch.
+jest.mock('react-native-gesture-handler', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    GestureHandlerRootView: ({ children }) => children,
+    PanGestureHandler: ({ children }) => children,
+    State: {},
+    Directions: {},
+    gestureHandlerRootHOC: (c) => c,
+    Swipeable: View,
+  };
+});
+
+// react-native-screens FullWindowOverlay (used by PipelineSheet on iOS).
+// We don't render the real overlay in tests.
+jest.mock('react-native-screens', () => {
+  const actual = jest.requireActual('react-native-screens');
+  const React = require('react');
+  return {
+    ...actual,
+    FullWindowOverlay: ({ children }) => children,
+  };
+});
+
