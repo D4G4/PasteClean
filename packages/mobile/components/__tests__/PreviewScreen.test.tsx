@@ -395,6 +395,36 @@ describe('PreviewScreen', () => {
     }
   });
 
+  it('copied state auto-clears 2s after Copy (covers setTimeout callback)', async () => {
+    jest.useFakeTimers();
+    try {
+      mockScheme = 'light';
+      let tree;
+      await act(async () => {
+        tree = renderer.create(<PreviewScreen />);
+      });
+      const textNodes = tree.root.findAll(
+        (n) =>
+          n.children &&
+          n.children.length === 1 &&
+          typeof n.children[0] === 'string' &&
+          n.children[0].includes('Copy for Gmail'),
+      );
+      let p = textNodes[0].parent;
+      while (p && typeof p.props.onPress !== 'function') p = p.parent;
+      await act(async () => {
+        await p.props.onPress();
+      });
+      // Advance past the 2s timer to fire setCopied(false).
+      act(() => {
+        jest.advanceTimersByTime(2001);
+      });
+      act(() => tree.unmount());
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it('handleCopy catch path: clipboard write rejects → Alert', async () => {
     // Grab the global mock (installed via jest.setup.js) and swap its
     // resolved value for a rejection. No resetModules — that would tear
