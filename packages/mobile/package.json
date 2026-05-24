@@ -20,7 +20,27 @@
     },
     "transformIgnorePatterns": [
       "node_modules/(?!\\.pnpm/|((jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@10play/.*))"
-    ]
+    ],
+    "collectCoverageFrom": [
+      "app/**/*.{ts,tsx}",
+      "components/**/*.{ts,tsx}",
+      "hooks/**/*.{ts,tsx}",
+      "contexts/**/*.{ts,tsx}",
+      "native/**/*.{ts,tsx}"
+    ],
+    "coveragePathIgnorePatterns": [
+      "__tests__",
+      "\\+html.tsx",
+      "components/useColorScheme.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 70,
+        "branches": 60,
+        "functions": 55,
+        "lines": 72
+      }
+    }
   },
   "dependencies": {
     "@10play/tentap-editor": "^1.0.1",

@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RootLayout mounts the provider tree — dark 1`] = `
+<View
+  testID="mock-stack"
+/>
+`;
+
+exports[`RootLayout mounts the provider tree — light 1`] = `
+<View
+  testID="mock-stack"
+/>
+`;

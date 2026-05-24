@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TabLayout renders Tabs container with the editor screen registered 1`] = `
+<View
+  testID="mock-tabs"
+>
+  <View
+    testID="mock-tabs-screen-index"
+  />
+</View>
+`;
