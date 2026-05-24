@@ -41,14 +41,21 @@ const STORAGE_KEY_AUTO_OPEN = '@pasteclean/auto_open_gmail';
 //      (rather than via editor.setPlaceholder() after mount) ensures the
 //      string is set before the WebView's first paint, instead of relying
 //      on an async bridge message that races the WebView's JS bootstrap.
-// Heading support is removed end-to-end: Gmail's compose-area sanitizer
-// strips inline font-size from <p> on paste, so an H1/H2/H3 just lands
-// as bold paragraph text anyway. Bold is already in the toolbar; offering
-// a heading button promises visual hierarchy we can't deliver. We also
-// drop the markdown `# foo` shortcut for the same reason — and the
-// toolbar's "Aa" heading switcher below.
+// Removed bridge extensions — both are formatting affordances Gmail
+// flattens on paste, so exposing them in the editor would promise more
+// than the destination can render:
+//   - 'heading': Gmail's compose-area sanitizer strips inline font-size
+//     from <p> regardless of paste source, so H1/H2/H3 always lands as
+//     bold paragraph text. We remove the markdown `# foo` shortcut and
+//     the toolbar's "Aa" switcher (filtered below) so the editor only
+//     exposes what survives.
+//   - 'taskList': Gmail's WKWebView doesn't render <ul data-type="taskList">
+//     checkboxes — they show as empty bullets. Same logic: don't offer
+//     a control that doesn't survive paste.
+const REMOVED_EXTENSIONS = new Set(['heading', 'taskList']);
+
 const bridgeExtensions = TenTapStartKit.filter(
-  (ext) => ext.name !== 'heading',
+  (ext) => !REMOVED_EXTENSIONS.has(ext.name),
 ).map((ext) => {
   if (ext.name === 'link') {
     return LinkBridge.extendExtension({ inclusive: false });
@@ -64,10 +71,11 @@ const bridgeExtensions = TenTapStartKit.filter(
   return ext;
 });
 
-// Filter out the heading switcher ("Aa" button) from the default toolbar.
-// Identity comparison against Images.Aa is safer than a positional index.
+// Filter out toolbar buttons for the removed affordances. Identity
+// comparison against the Images export is safer than a positional index.
+const REMOVED_TOOLBAR_IMAGES = new Set([Images.Aa, Images.checkList]);
 const TOOLBAR_ITEMS = DEFAULT_TOOLBAR_ITEMS.filter(
-  (item) => item.image({} as never) !== Images.Aa,
+  (item) => !REMOVED_TOOLBAR_IMAGES.has(item.image({} as never)),
 );
 
 // ---------------------------------------------------------------------------
@@ -384,12 +392,15 @@ export default function EditorScreen() {
       {/*    horizontal indent. Using wrapper padding (not WebView CSS)    */}
       {/*    means the editor stays correctly inset even before our        */}
       {/*    injectCSS lands — no cold-start flash from 0 padding to       */}
-      {/*    18 padding. The `key` forces a remount when the system theme  */}
-      {/*    flips — TenTap's WebView reads webview.backgroundColor only   */}
-      {/*    at mount time.                                                */}
+      {/*    18 padding.                                                   */}
+      {/*                                                                  */}
+      {/*    No `key={isDark}` remount on theme flip. The earlier version  */}
+      {/*    re-mounted the subtree to pick up a new webview background    */}
+      {/*    color — but that obliterated the user's draft. applyTheme()   */}
+      {/*    already drives the live body bg via injectCSS + injectJS, so  */}
+      {/*    a remount isn't needed; this View just restyles in place.    */}
       {/* ================================================================ */}
       <View
-        key={isDark ? 'dark' : 'light'}
         testID="editor-body"
         style={[
           styles.editorWrap,

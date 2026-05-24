@@ -40,6 +40,7 @@ jest.mock('@10play/tentap-editor', () => {
     }),
     useBridgeState: () => ({ isReady: true }),
     DEFAULT_TOOLBAR_ITEMS: [],
+    Images: { Aa: 'Aa', checkList: 'checkList' },
     darkEditorTheme: { webview: { backgroundColor: '#1C1C1E' } },
     defaultEditorTheme: { webview: { backgroundColor: '#FFFFFF' } },
     darkEditorCss: '* { background:#1C1C1E; color:white; }',

@@ -1005,7 +1005,7 @@ exports[`SettingsScreen matches snapshot — dark 1`] = `
                 ]
               }
             >
-              1.1.10
+              1.1.11
             </Text>
           </View>
         </View>
@@ -1979,7 +1979,7 @@ exports[`SettingsScreen matches snapshot — light 1`] = `
                 ]
               }
             >
-              1.1.10
+              1.1.11
             </Text>
           </View>
         </View>
