@@ -1,6 +1,9 @@
 node_modules/
 dist/
 .expo/
+coverage/
+*.png
+!packages/mobile/ios/PasteClean/Images.xcassets/**/*.png
 # Xcode archive output — produced by `xcodebuild archive`, contains the .app
 # bundle, dSYMs (one was 76MB), and compiled frameworks. Never commit.
 build/

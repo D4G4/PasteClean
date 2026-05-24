@@ -8,7 +8,8 @@
     "test": "turbo test",
     "lint": "turbo lint",
     "e2e": "maestro test .maestro/",
-    "e2e:link": "maestro test .maestro/04_link_regression.yaml"
+    "e2e:link": "maestro test .maestro/04_link_regression.yaml",
+    "submit": "./scripts/safe-submit.sh"
   },
   "devDependencies": {
     "turbo": "^2.5.0",

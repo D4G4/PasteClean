@@ -1,0 +1,48 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  jest:
+    name: Jest (unit + snapshot, coverage gated)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      # gmail-sanitizer is consumed via workspace:* by the mobile app's
+      # Jest tests; its dist/ must exist before tests run.
+      - name: Build gmail-sanitizer
+        run: pnpm --filter @pasteclean/gmail-sanitizer build
+
+      - name: Sanitizer unit tests
+        run: pnpm --filter @pasteclean/gmail-sanitizer test
+
+      # Coverage thresholds in packages/mobile/package.json#jest are the
+      # gate — Jest exits non-zero if any axis backslides below
+      # statements/branches/functions/lines targets.
+      - name: Mobile tests + coverage gate
+        working-directory: packages/mobile
+        run: npx jest --coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: packages/mobile/coverage/
+          retention-days: 14
