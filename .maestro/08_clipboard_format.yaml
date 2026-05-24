@@ -52,20 +52,31 @@ tags:
 - waitForAnimationToEnd:
     timeout: 1500
 
-# Navigate to the debug route. Expo Router supports navigation via
-# the deep-link scheme; the editor screen is at the root and we can
-# launch /debug/clipboard via openLink.
+# Navigate to the debug route. Expo Router auto-handles deep links to
+# our scheme. iOS may show "Open in PasteClean?" the first time the
+# URL is dispatched from outside the app; sometimes it remembers the
+# choice and skips. Handle both cases.
 - openLink: "pasteclean://debug/clipboard"
+- runFlow:
+    when:
+      visible: "Open in"
+    commands:
+      - tapOn: "Open"
 
-- waitForAnimationToEnd:
-    timeout: 1500
+# Wait for the debug route to actually navigate in + its useEffect
+# to fetch the pasteboard types. Use extendedWaitUntil instead of a
+# fixed wait so a slow simulator still lands the assertion.
+- extendedWaitUntil:
+    visible: "UIPasteboard types"
+    timeout: 5000
 
-# The proof. Native module present + writing webarchive → this string
-# is in the rendered types list.
-- assertVisible: "com.apple.webarchive"
-
-# Belt and suspenders — also verify the public.html type is there
-# (the other entry the Swift module writes).
-- assertVisible: "public.html"
+# The proof. Native module present + writing webarchive → this
+# substring is in the rendered types list. We use `webarchive` and
+# `public` rather than the full dotted identifiers because Maestro's
+# matcher treats the assertion string as a regex and dots are
+# wildcards (which works) but quoting the dotted form has had matching
+# weirdness; the short substrings are unambiguous.
+- assertVisible: ".*webarchive.*"
+- assertVisible: ".*public.html.*"
 
 - takeScreenshot: clipboard-format-verified
