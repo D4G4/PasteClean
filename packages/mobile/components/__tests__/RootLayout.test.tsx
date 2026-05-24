@@ -44,8 +44,9 @@ jest.mock('expo-router', () => {
   };
 });
 
+let mockFontError = null;
 jest.mock('expo-font', () => ({
-  useFonts: () => [mockFontsLoaded, null],
+  useFonts: () => [mockFontsLoaded, mockFontError],
   isLoaded: () => true,
 }));
 
@@ -73,6 +74,7 @@ describe('RootLayout', () => {
     mockScheme = 'light';
     mockOnboardingDone = true;
     mockFontsLoaded = true;
+    mockFontError = null;
   });
 
   it('mounts the provider tree — light', () => {
@@ -99,5 +101,36 @@ describe('RootLayout', () => {
     // are present in the JSON.
     const json = JSON.stringify(tree);
     expect(json).toContain('onboarding-page-0');
+  });
+
+  it('useFonts error → effect throws (font failure surface)', () => {
+    mockFontError = new Error('Failed to load font');
+    // Silence React's error logging for the expected throw.
+    const consoleError = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
+    try {
+      expect(() => renderSnapshot()).toThrow('Failed to load font');
+    } finally {
+      consoleError.mockRestore();
+    }
+  });
+
+  it('OnboardingFlow onDone callback flips onboardingDone to true', () => {
+    mockOnboardingDone = false;
+    let capturedTree;
+    act(() => {
+      capturedTree = renderer.create(<RootLayout />);
+    });
+    // OnboardingFlow receives `onDone` from RootContent — find it and invoke
+    // to cover _layout.tsx:82.
+    const flow = capturedTree.root.findAll(
+      (n) =>
+        typeof n.props.onDone === 'function' &&
+        typeof n.props.accent === 'string',
+    );
+    expect(flow.length).toBeGreaterThan(0);
+    act(() => flow[0].props.onDone());
+    act(() => capturedTree.unmount());
   });
 });

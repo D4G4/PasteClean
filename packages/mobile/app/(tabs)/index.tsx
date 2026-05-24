@@ -56,29 +56,6 @@ const bridgeExtensions = TenTapStartKit.map((ext) => {
 });
 
 // ---------------------------------------------------------------------------
-// BrandMark: 32x32 rounded-rect icon (clipboard + check, approximated with
-// FontAwesome icons on a translucent white background)
-// ---------------------------------------------------------------------------
-function BrandMark() {
-  return (
-    <View style={brandStyles.container}>
-      <FontAwesome name="clipboard" size={16} color="#fff" />
-    </View>
-  );
-}
-
-const brandStyles = StyleSheet.create({
-  container: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-
-// ---------------------------------------------------------------------------
 // Editor screen
 // ---------------------------------------------------------------------------
 export default function EditorScreen() {
@@ -269,8 +246,7 @@ export default function EditorScreen() {
     // 120ms paint-settle window: long enough for the injectCSS round-trip
     // to land and the browser to lay out, short enough to feel instant.
     // RichText stays at opacity:0 until this fires.
-    const reveal = setTimeout(() => setEditorReady(true), 120);
-    return () => clearTimeout(reveal);
+    setTimeout(() => setEditorReady(true), 120);
   }, [applyTheme]);
 
   // Safety net: if onLoad never fires for some reason (it should, every

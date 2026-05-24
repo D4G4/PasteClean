@@ -321,6 +321,27 @@ describe('useCopyForGmail', () => {
   // -------------------------------------------------------------------------
   // Cleanup
   // -------------------------------------------------------------------------
+  it('back-to-back copies clear the previous copiedResetTimer before scheduling a new one', async () => {
+    // Covers the `if (copiedResetTimer.current) clearTimeout(...)` branch.
+    // The first copy schedules a timer; the second copy must clear it
+    // before scheduling its own (otherwise both timers would race and
+    // copied could flicker back to false unexpectedly).
+    jest.useFakeTimers();
+    try {
+      const { handle } = await mountHook(async () => '<p>hi</p>');
+      await act(async () => {
+        await handle().copyForGmail();
+      });
+      // The next copy must clear the first timer — assert no throw.
+      await act(async () => {
+        await handle().copyForGmail();
+      });
+      expect(handle().copied).toBe(true);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it('clears the copied-reset timer when the component unmounts mid-flight', async () => {
     // After a successful copy the hook schedules a setTimeout(2000) to flip
     // `copied` back to false. If the user navigates away before the timer

@@ -9,6 +9,8 @@ export function snapshotOf(element: ReactElement): unknown {
   act(() => {
     r = renderer.create(element);
   });
+  /* istanbul ignore next — defensive guard, react-test-renderer always
+     returns a non-null instance when create() doesn't throw. */
   if (!r) throw new Error('snapshotOf: renderer.create returned nothing');
   return r.toJSON();
 }

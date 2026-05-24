@@ -48,6 +48,8 @@ export interface LinkPatchOptions {
 // trivially greppable in Metro: `link-patch`.
 const LOG_ENABLED = true;
 const log = (...args: unknown[]) => {
+  /* istanbul ignore else — LOG_ENABLED is a debug toggle; the else
+     branch is only reachable if a developer flips the const to false. */
   if (LOG_ENABLED) {
     // eslint-disable-next-line no-console
     console.log('[link-patch]', ...args);

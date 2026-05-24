@@ -370,6 +370,7 @@ exports[`EditorScreen — dark mode matches snapshot 1`] = `
     testID="editor-body"
   >
     <View
+      onLoad={[Function]}
       style={
         [
           {

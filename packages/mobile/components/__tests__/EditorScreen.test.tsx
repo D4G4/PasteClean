@@ -25,8 +25,8 @@ jest.mock('@10play/tentap-editor', () => {
   const React = require('react');
   const { View } = require('react-native');
   return {
-    RichText: ({ style }: { style?: unknown }) =>
-      React.createElement(View, { testID: 'rich-text', style }),
+    RichText: ({ style, onLoad }: { style?: unknown; onLoad?: () => void }) =>
+      React.createElement(View, { testID: 'rich-text', style, onLoad }),
     Toolbar: () => React.createElement(View, { testID: 'toolbar' }),
     useEditorBridge: () => ({
       getHTML: async () => '',
@@ -41,10 +41,18 @@ jest.mock('@10play/tentap-editor', () => {
     darkEditorTheme: { webview: { backgroundColor: '#1C1C1E' } },
     defaultEditorTheme: { webview: { backgroundColor: '#FFFFFF' } },
     darkEditorCss: '* { background:#1C1C1E; color:white; }',
-    TenTapStartKit: [{ name: 'link' }],
+    TenTapStartKit: [
+      { name: 'link' },
+      { name: 'placeholder' },
+      { name: 'bold' },
+    ],
     LinkBridge: {
       name: 'link',
       extendExtension: () => ({ name: 'link' }),
+    },
+    PlaceholderBridge: {
+      name: 'placeholder',
+      configureExtension: () => ({ name: 'placeholder' }),
     },
   };
 });
