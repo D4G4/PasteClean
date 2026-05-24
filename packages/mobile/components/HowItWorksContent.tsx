@@ -39,8 +39,8 @@ const PIPELINE_STEPS = [
   },
   {
     num: '04',
-    label: 'Converts headings',
-    desc: '<h1> → <p style="font-size:22px;font-weight:bold">.',
+    label: 'Flattens pasted headings',
+    desc: '<h1>–<h6> → <p style="font-weight:bold">. Gmail strips inline font-size, so size couldn’t survive paste — bold is what lands.',
   },
   {
     num: '05',

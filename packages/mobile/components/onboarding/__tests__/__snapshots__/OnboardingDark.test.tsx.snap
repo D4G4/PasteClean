@@ -1609,7 +1609,7 @@ exports[`Onboarding — dark mode HowItWorksContent 1`] = `
                 ]
               }
             >
-              Converts headings
+              Flattens pasted headings
             </Text>
             <Text
               style={
@@ -1624,7 +1624,7 @@ exports[`Onboarding — dark mode HowItWorksContent 1`] = `
                 ]
               }
             >
-              &lt;h1&gt; → &lt;p style="font-size:22px;font-weight:bold"&gt;.
+              &lt;h1&gt;–&lt;h6&gt; → &lt;p style="font-weight:bold"&gt;. Gmail strips inline font-size, so size couldn’t survive paste — bold is what lands.
             </Text>
           </View>
         </View>

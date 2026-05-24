@@ -25,6 +25,7 @@ import {
   DEFAULT_TOOLBAR_ITEMS,
   darkEditorTheme,
   defaultEditorTheme,
+  Images,
   LinkBridge,
   PlaceholderBridge,
   TenTapStartKit,
@@ -40,7 +41,15 @@ const STORAGE_KEY_AUTO_OPEN = '@pasteclean/auto_open_gmail';
 //      (rather than via editor.setPlaceholder() after mount) ensures the
 //      string is set before the WebView's first paint, instead of relying
 //      on an async bridge message that races the WebView's JS bootstrap.
-const bridgeExtensions = TenTapStartKit.map((ext) => {
+// Heading support is removed end-to-end: Gmail's compose-area sanitizer
+// strips inline font-size from <p> on paste, so an H1/H2/H3 just lands
+// as bold paragraph text anyway. Bold is already in the toolbar; offering
+// a heading button promises visual hierarchy we can't deliver. We also
+// drop the markdown `# foo` shortcut for the same reason — and the
+// toolbar's "Aa" heading switcher below.
+const bridgeExtensions = TenTapStartKit.filter(
+  (ext) => ext.name !== 'heading',
+).map((ext) => {
   if (ext.name === 'link') {
     return LinkBridge.extendExtension({ inclusive: false });
   }
@@ -54,6 +63,12 @@ const bridgeExtensions = TenTapStartKit.map((ext) => {
   }
   return ext;
 });
+
+// Filter out the heading switcher ("Aa" button) from the default toolbar.
+// Identity comparison against Images.Aa is safer than a positional index.
+const TOOLBAR_ITEMS = DEFAULT_TOOLBAR_ITEMS.filter(
+  (item) => item.image({} as never) !== Images.Aa,
+);
 
 // ---------------------------------------------------------------------------
 // Editor screen
@@ -428,7 +443,7 @@ export default function EditorScreen() {
             <View style={styles.toolbarScrollable}>
               <Toolbar
                 editor={editor}
-                items={DEFAULT_TOOLBAR_ITEMS}
+                items={TOOLBAR_ITEMS}
                 hidden={false}
               />
             </View>
