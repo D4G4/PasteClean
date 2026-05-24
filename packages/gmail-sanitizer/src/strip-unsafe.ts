@@ -147,14 +147,18 @@ const HEADING_SIZES: Record<string, string> = {
 };
 
 export function convertHeadingsToParagraphs($: CheerioAPI): void {
-  // Convert headings to <p> with bold. Gmail's compose paste strips font-size
-  // from all elements (h1-h6, p, span, div) so heading size can't be preserved.
-  // We keep font-weight: bold so headings are at least visually distinct.
-  for (const [tag] of Object.entries(HEADING_SIZES)) {
+  // Convert headings to <p> with explicit font-size + bold. Earlier
+  // versions (v1.0.0 era) dropped font-size on the assumption that
+  // Gmail's paste strips it — that was true for the expo-clipboard
+  // HTML mode, which round-tripped through NSAttributedString and
+  // discarded inline sizes. Since v1.1.0 we write a
+  // `com.apple.webarchive` entry to UIPasteboard, and Gmail's WKWebView
+  // honors inline font-size from webarchive paste. Restore the sizes.
+  for (const [tag, size] of Object.entries(HEADING_SIZES)) {
     $(tag).each(function () {
       const el = $(this);
       const existingStyle = el.attr('style') || '';
-      const newStyle = `font-weight: bold${existingStyle ? '; ' + existingStyle : ''}`;
+      const newStyle = `font-size: ${size}; font-weight: bold${existingStyle ? '; ' + existingStyle : ''}`;
       el.attr('style', newStyle);
       (this as any).tagName = 'p';
     });
