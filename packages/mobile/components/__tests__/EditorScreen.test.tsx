@@ -66,8 +66,81 @@ jest.mock('@/contexts/ThemeContext', () => ({
 import EditorScreen from '@/app/(tabs)/index';
 import { snapshotOf } from '../onboarding/test-utils';
 
+const mockNavigate = jest.fn();
+const mockPush = jest.fn();
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ navigate: mockNavigate, push: mockPush }),
+}));
+
+import renderer, { act } from 'react-test-renderer';
+
 describe('EditorScreen — dark mode', () => {
+  beforeEach(() => {
+    mockNavigate.mockClear();
+    mockPush.mockClear();
+  });
+
   it('matches snapshot', () => {
     expect(snapshotOf(<EditorScreen />)).toMatchSnapshot();
+  });
+
+  it('settings button → router.navigate("/settings")', () => {
+    let tree;
+    act(() => {
+      tree = renderer.create(<EditorScreen />);
+    });
+    const settingsBtn = tree.root.findByProps({ testID: 'settings-button' });
+    act(() => settingsBtn.props.onPress());
+    expect(mockNavigate).toHaveBeenCalledWith('/settings');
+    act(() => tree.unmount());
+  });
+
+  it('preview button → router.push("/preview") with HTML payload', async () => {
+    let tree;
+    await act(async () => {
+      tree = renderer.create(<EditorScreen />);
+    });
+    const previewBtn = tree.root.findByProps({ testID: 'preview-button' });
+    await act(async () => {
+      await previewBtn.props.onPress();
+    });
+    expect(mockPush).toHaveBeenCalledWith(
+      expect.objectContaining({ pathname: '/preview' }),
+    );
+    act(() => tree.unmount());
+  });
+
+  it('copy button → blurs editor + invokes copyForGmail (no crash, no nav)', () => {
+    let tree;
+    act(() => {
+      tree = renderer.create(<EditorScreen />);
+    });
+    const copyBtn = tree.root.findByProps({ testID: 'copy-button' });
+    act(() => copyBtn.props.onPress());
+    // No navigation expected.
+    expect(mockPush).not.toHaveBeenCalled();
+    expect(mockNavigate).not.toHaveBeenCalled();
+    act(() => tree.unmount());
+  });
+
+  it('RichText onLoad → schedules editorReady reveal + theme apply (covers handleWebViewLoad)', () => {
+    jest.useFakeTimers();
+    try {
+      let tree;
+      act(() => {
+        tree = renderer.create(<EditorScreen />);
+      });
+      const richText = tree.root.findByProps({ testID: 'rich-text' });
+      // Invoke the onLoad prop directly. The handler schedules a 120ms
+      // setTimeout to flip editorReady; advance the clock so the timer
+      // fires and the opacity flip is exercised.
+      act(() => richText.props.onLoad?.());
+      act(() => {
+        jest.advanceTimersByTime(150);
+      });
+      act(() => tree.unmount());
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });

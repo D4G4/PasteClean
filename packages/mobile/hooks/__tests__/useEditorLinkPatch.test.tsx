@@ -65,8 +65,10 @@ function makeFakeEditor(
   return editor;
 }
 
-function Harness({ editor }: { editor: LinkPatchEditor }) {
-  useEditorLinkPatch(editor);
+function Harness({ editor }: { editor: LinkPatchEditor | null }) {
+  // Cast through unknown because the hook's prod type doesn't admit null,
+  // but the hook's *implementation* has a null guard that we need to cover.
+  useEditorLinkPatch(editor as unknown as LinkPatchEditor);
   return null;
 }
 
@@ -217,6 +219,21 @@ describe('useEditorLinkPatch', () => {
       jest.advanceTimersByTime(1);
     });
     expect(editor.setSelection).toHaveBeenCalledWith(10, 10);
+  });
+
+  it('null editor → skips wrap entirely (defensive guard for early mount)', () => {
+    // The hook can be called before useEditorBridge has returned a non-null
+    // editor on first render. The guard exits cleanly; nothing crashes.
+    let tree: renderer.ReactTestRenderer | undefined;
+    act(() => {
+      tree = renderer.create(<Harness editor={null} />);
+    });
+    expect(tree).toBeDefined();
+    // No spies were attached because nothing was wrapped — the test passes
+    // by virtue of not throwing.
+    act(() => {
+      tree!.unmount();
+    });
   });
 
   it('does not re-invoke setLink during the cleanup (regression: setLink("") was unsetting the link)', () => {

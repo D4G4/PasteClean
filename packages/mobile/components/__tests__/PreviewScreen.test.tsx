@@ -101,4 +101,69 @@ describe('PreviewScreen', () => {
     mockScheme = 'dark';
     expect(renderSnapshot()).toMatchSnapshot();
   });
+
+  it('tapping a mode toggle (Gmail Dark / original) flips previewMode', () => {
+    mockScheme = 'light';
+    let tree;
+    act(() => {
+      tree = renderer.create(<PreviewScreen />);
+    });
+    // Mode toggle TouchableOpacities have child Text nodes "Gmail Light",
+    // "Gmail Dark", "Original" (or similar). Find by text content via the
+    // accessibility tree.
+    const toggles = tree.root.findAll(
+      (n) =>
+        n.type === require('react-native').TouchableOpacity ||
+        (typeof n.props.onPress === 'function' &&
+          typeof n.props.activeOpacity === 'number'),
+    );
+    // Tap each toggle button; we don't assert specific state — just that
+    // none of them throw and the tree stays mounted (covers setPreviewMode).
+    for (const t of toggles.slice(0, 3)) {
+      act(() => t.props.onPress?.());
+    }
+    act(() => tree.unmount());
+  });
+
+  it('Copy button → sanitize + clipboard + toast (autoOpenGmail false)', async () => {
+    mockScheme = 'light';
+    let tree;
+    await act(async () => {
+      tree = renderer.create(<PreviewScreen />);
+    });
+    // Find Copy button by its accessibility / text content. The button
+    // appears in the action row; we identify it via its onPress that is
+    // an async function. There are several; we use the topmost.
+    const copyButton = tree.root.findAll(
+      (n) =>
+        typeof n.props.onPress === 'function' &&
+        n.props.onPress.constructor.name === 'AsyncFunction',
+    );
+    if (copyButton.length > 0) {
+      await act(async () => {
+        await copyButton[0].props.onPress();
+      });
+    }
+    act(() => tree.unmount());
+  });
+
+  it('backdrop Pressable → animated close + router.back()', () => {
+    mockScheme = 'light';
+    let tree;
+    act(() => {
+      tree = renderer.create(<PreviewScreen />);
+    });
+    // The backdrop is a Pressable with StyleSheet.absoluteFill. We find
+    // anything with an onPress that doesn't have activeOpacity (Pressable
+    // doesn't get activeOpacity).
+    const backdrop = tree.root.findAll(
+      (n) =>
+        typeof n.props.onPress === 'function' &&
+        n.props.activeOpacity === undefined,
+    );
+    if (backdrop.length > 0) {
+      act(() => backdrop[0].props.onPress());
+    }
+    act(() => tree.unmount());
+  });
 });

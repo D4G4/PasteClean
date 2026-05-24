@@ -10,17 +10,19 @@ import React from 'react';
 import renderer, { act } from 'react-test-renderer';
 
 let mockScheme = 'light';
+let mockOnboardingDone = true;
+let mockFontsLoaded = true;
+
 jest.mock('@/components/useColorScheme', () => ({
   useColorScheme: () => mockScheme,
 }));
 
-// Pretend onboarding is done so we render the Stack (not OnboardingFlow).
 jest.mock('@/contexts/ThemeContext', () => ({
   ThemeProvider: ({ children }) => children,
   useTheme: () => ({
     accent: '#FF6B5C',
     setAccent: jest.fn(),
-    onboardingDone: true,
+    onboardingDone: mockOnboardingDone,
     setOnboardingDone: jest.fn(),
     isReady: true,
   }),
@@ -43,7 +45,8 @@ jest.mock('expo-router', () => {
 });
 
 jest.mock('expo-font', () => ({
-  useFonts: () => [true, null],
+  useFonts: () => [mockFontsLoaded, null],
+  isLoaded: () => true,
 }));
 
 jest.mock('expo-splash-screen', () => ({
@@ -66,13 +69,35 @@ function renderSnapshot() {
 }
 
 describe('RootLayout', () => {
-  it('mounts the provider tree — light', () => {
+  beforeEach(() => {
     mockScheme = 'light';
+    mockOnboardingDone = true;
+    mockFontsLoaded = true;
+  });
+
+  it('mounts the provider tree — light', () => {
     expect(renderSnapshot()).toMatchSnapshot();
   });
 
   it('mounts the provider tree — dark', () => {
     mockScheme = 'dark';
     expect(renderSnapshot()).toMatchSnapshot();
+  });
+
+  it('returns null until fonts have loaded (splash guard)', () => {
+    mockFontsLoaded = false;
+    // useFonts returning [false, ...] makes the layout return null,
+    // hiding the rest of the app behind the splash screen.
+    expect(renderSnapshot()).toBeNull();
+  });
+
+  it('renders OnboardingFlow when onboardingDone=false (not the Stack)', () => {
+    mockOnboardingDone = false;
+    const tree = renderSnapshot();
+    // OnboardingFlow root has the testID-bearing onboarding-page-0 inside.
+    // jest.setup.js mocks PagerView to a passthrough View so the testIDs
+    // are present in the JSON.
+    const json = JSON.stringify(tree);
+    expect(json).toContain('onboarding-page-0');
   });
 });

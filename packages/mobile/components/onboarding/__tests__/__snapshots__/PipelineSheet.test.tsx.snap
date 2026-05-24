@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`PipelineSheet matches snapshot — closed 1`] = `
+exports[`PipelineSheet — snapshots matches snapshot — closed 1`] = `
 <View
   pointerEvents="box-none"
   style={
@@ -14,8 +14,6 @@ exports[`PipelineSheet matches snapshot — closed 1`] = `
   }
 >
   <View
-    data-background="{"backgroundColor":"#f2f2f7"}"
-    data-handle="{"backgroundColor":"rgba(60,60,67,0.25)"}"
     data-index={-1}
     data-snap-points="["88%"]"
     testID="mock-bottom-sheet"
@@ -934,7 +932,7 @@ exports[`PipelineSheet matches snapshot — closed 1`] = `
 </View>
 `;
 
-exports[`PipelineSheet matches snapshot — open 1`] = `
+exports[`PipelineSheet — snapshots matches snapshot — open 1`] = `
 <View
   pointerEvents="auto"
   style={
@@ -948,8 +946,6 @@ exports[`PipelineSheet matches snapshot — open 1`] = `
   }
 >
   <View
-    data-background="{"backgroundColor":"#f2f2f7"}"
-    data-handle="{"backgroundColor":"rgba(60,60,67,0.25)"}"
     data-index={-1}
     data-snap-points="["88%"]"
     testID="mock-bottom-sheet"

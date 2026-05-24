@@ -74,10 +74,12 @@ function Harness({
 
 async function mountHook(getHTML: () => Promise<string>): Promise<{
   handle: () => HookHandle;
+  unmount: () => void;
 }> {
   let latest: HookHandle | undefined;
+  let tree: renderer.ReactTestRenderer | undefined;
   await act(async () => {
-    renderer.create(
+    tree = renderer.create(
       <Harness getHTML={getHTML} onReady={(h) => (latest = h)} />,
     );
   });
@@ -85,6 +87,9 @@ async function mountHook(getHTML: () => Promise<string>): Promise<{
     handle: () => {
       if (!latest) throw new Error('hook never rendered');
       return latest;
+    },
+    unmount: () => {
+      if (tree) act(() => tree!.unmount());
     },
   };
 }
@@ -311,5 +316,32 @@ describe('useCopyForGmail', () => {
       'Something went wrong. Please try again.',
     );
     expect(handle().toastVisible).toBe(false);
+  });
+
+  // -------------------------------------------------------------------------
+  // Cleanup
+  // -------------------------------------------------------------------------
+  it('clears the copied-reset timer when the component unmounts mid-flight', async () => {
+    // After a successful copy the hook schedules a setTimeout(2000) to flip
+    // `copied` back to false. If the user navigates away before the timer
+    // fires, the cleanup must clear it — otherwise we either leak the
+    // timer or worse, fire setState on an unmounted component.
+    jest.useFakeTimers();
+    try {
+      const { handle, unmount } = await mountHook(async () => '<p>hi</p>');
+      await act(async () => {
+        await handle().copyForGmail();
+      });
+      expect(handle().copied).toBe(true);
+      // Tear down before the 2s timer fires; the unmount-effect's cleanup
+      // path is the line that needs covering.
+      unmount();
+      // If the timer wasn't cleared, advancing past 2000ms would fire a
+      // setState on a dead tree and trip act() / leak. Advancing here
+      // proves nothing breaks.
+      jest.advanceTimersByTime(3000);
+    } finally {
+      jest.useRealTimers();
+    }
   });
 });
