@@ -10,3 +10,4 @@ executionOrder:
     - 06_toolbar_visibility.yaml
     - 07_pipeline_sheet.yaml
     - 08_clipboard_format.yaml
+    - 09_onboarding_peek.yaml

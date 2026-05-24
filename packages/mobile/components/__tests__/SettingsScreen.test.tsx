@@ -1,17 +1,11 @@
 /**
  * Snapshot tests for the Settings screen. Verifies the rendered tree in both
- * light and dark mode. Gorhom + gesture-handler are stubbed globally by
- * jest.setup.js, so PipelineSheet (rendered inside Settings) collapses to a
- * plain mock View tree — fine for snapshot drift detection at the screen
- * level; the sheet's gesture wiring is exercised by Maestro flow 07.
+ * light and dark mode. "How It Works" navigation is via router.push to the
+ * formSheet Stack route — the row tap is asserted by spying on the router.
  */
 import React from 'react';
 import renderer, { act } from 'react-test-renderer';
 
-// Mutable flag controls which scheme the mocked hook returns. Set before
-// each renderSnapshot(). We deliberately avoid jest.resetModules() — that
-// would tear down React mid-suite and the next useState() throws "Cannot
-// read properties of null".
 let mockScheme = 'light';
 jest.mock('@/components/useColorScheme', () => ({
   useColorScheme: () => mockScheme,
@@ -26,6 +20,11 @@ jest.mock('@/contexts/ThemeContext', () => ({
     setOnboardingDone: jest.fn(),
     isReady: true,
   }),
+}));
+
+const mockRouterPush = jest.fn();
+jest.mock('expo-router', () => ({
+  useRouter: () => ({ push: mockRouterPush }),
 }));
 
 import SettingsScreen from '@/app/settings';
@@ -53,20 +52,16 @@ describe('SettingsScreen', () => {
     expect(renderSnapshot()).toMatchSnapshot();
   });
 
-  it('tapping "How It Works" opens the PipelineSheet (open prop flips true)', () => {
+  it('tapping "How It Works" navigates to /how-it-works (formSheet route)', () => {
     mockScheme = 'light';
+    mockRouterPush.mockClear();
     let tree;
     act(() => {
       tree = renderer.create(<SettingsScreen />);
     });
     const row = tree.root.findByProps({ testID: 'how-it-works-row' });
     act(() => row.props.onPress());
-    // Find the mocked BottomSheet by its testID and verify it now reflects
-    // open=true. Our PipelineSheet wrapper passes the boolean through to
-    // gorhom via ref.snapToIndex(0); since the setup.js mock doesn't
-    // capture that, we instead check that the component rerendered without
-    // throwing (and that hitting the row didn't crash).
-    expect(tree.root.findByProps({ testID: 'how-it-works-row' })).toBeTruthy();
+    expect(mockRouterPush).toHaveBeenCalledWith('/how-it-works');
     act(() => tree.unmount());
   });
 
@@ -79,20 +74,6 @@ describe('SettingsScreen', () => {
     const version = tree.root.findAll((n) => n.props.title === 'Version');
     expect(version[0].props.onPress).toBeUndefined();
     expect(version[0].props.detail).toMatch(/^\d+\.\d+\.\d+$/);
-    act(() => tree.unmount());
-  });
-
-  it('PipelineSheet onClose handler is wired (flips open=false)', () => {
-    mockScheme = 'light';
-    let tree;
-    act(() => {
-      tree = renderer.create(<SettingsScreen />);
-    });
-    const sheets = tree.root.findAll(
-      (n) => typeof n.props.onClose === 'function' && 'open' in n.props,
-    );
-    expect(sheets.length).toBeGreaterThan(0);
-    act(() => sheets[0].props.onClose());
     act(() => tree.unmount());
   });
 

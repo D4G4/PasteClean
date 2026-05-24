@@ -1,0 +1,63 @@
+# Onboarding "How do I work?" peek — covers the modal that the user
+# can open during the FlowScreen step of onboarding. This is a
+# DIFFERENT code path from the post-onboarding /how-it-works route:
+#   - Onboarding renders BEFORE the Stack mounts, so router.push
+#     can't reach a Stack screen.
+#   - The peek is an RN <Modal presentationStyle="pageSheet">
+#     wrapping HowItWorksContent in OnboardingFlow.
+#
+# This flow exists because the earlier Maestro suite always skipped
+# onboarding (clearState → walk through CTA), so the peek modal was
+# never exercised on a real binary.
+appId: com.pasteclean.app
+tags:
+  - onboarding
+  - peek
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+
+# Onboarding starts at page 0 (Problem). Walk to page 2 (Flow), which
+# is the only page with the "How do I work?" peek button.
+- assertVisible:
+    id: "onboarding-page-0"
+- tapOn:
+    id: "onboarding-cta"
+- tapOn:
+    id: "onboarding-cta"
+- assertVisible:
+    id: "onboarding-page-2"
+
+# Tap the peek button by testID (its accessibilityText is the combined
+# title + subtitle, which Maestro's substring match doesn't reliably
+# pick).
+- tapOn:
+    id: "onboarding-flow-how-trigger"
+
+# The RN Modal slides up with the HowItWorksContent inside. Wait for
+# it to render and assert the title + step content are visible.
+- extendedWaitUntil:
+    visible: "How PasteClean works"
+    timeout: 3000
+- assertVisible: "An 8-step pipeline runs on every copy"
+- assertVisible: "Inlines all CSS"
+
+- takeScreenshot: onboarding-peek-open
+
+# Swipe down on the modal's drag area (top edge of pageSheet) to
+# dismiss. RN's pageSheet supports native drag-to-dismiss; onDismiss
+# fires which flips peekOpen to false.
+- swipe:
+    from:
+      text: "How PasteClean works"
+    direction: DOWN
+    duration: 700
+
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# Back on the FlowScreen onboarding page; modal is gone.
+- assertNotVisible: "An 8-step pipeline runs on every copy"
+- assertVisible:
+    id: "onboarding-page-2"

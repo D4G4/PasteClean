@@ -4,6 +4,7 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Modal,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import PagerView from 'react-native-pager-view';
@@ -12,7 +13,7 @@ import ProblemScreen from './screens/ProblemScreen';
 import FixedScreen from './screens/FixedScreen';
 import FlowScreen from './screens/FlowScreen';
 import ThemeScreen from './screens/ThemeScreen';
-import PipelineSheet from './PipelineSheet';
+import HowItWorksContent from '@/components/HowItWorksContent';
 import { useTokens } from './tokens';
 import { resolveAccent } from '@/constants/Colors';
 
@@ -115,8 +116,23 @@ export default function OnboardingFlow({
         </TouchableOpacity>
       </View>
 
-      {/* Pipeline sheet — launched from FlowScreen "How do I work?" */}
-      <PipelineSheet open={peekOpen} onClose={() => setPeekOpen(false)} />
+      {/* "How PasteClean works" peek — RN Modal here (not the Stack's
+          formSheet) because onboarding renders BEFORE the Stack mounts,
+          so router.push isn't an option during onboarding. The
+          formSheet variant is used from Settings post-onboarding;
+          both contexts share the same content component.
+          Dismissal: iOS pageSheet supports swipe-down natively;
+          onRequestClose fires when the user does that, so peekOpen
+          flips back to false. No in-content X button (see
+          HowItWorksContent's comment for why). */}
+      <Modal
+        visible={peekOpen}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setPeekOpen(false)}
+        onDismiss={() => setPeekOpen(false)}>
+        <HowItWorksContent />
+      </Modal>
     </View>
   );
 }

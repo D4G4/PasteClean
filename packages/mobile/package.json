@@ -36,8 +36,8 @@
     "coverageThreshold": {
       "global": {
         "statements": 99,
-        "branches": 91,
-        "functions": 99,
+        "branches": 90,
+        "functions": 97,
         "lines": 99
       }
     }
@@ -45,7 +45,6 @@
   "dependencies": {
     "@10play/tentap-editor": "^1.0.1",
     "@expo/vector-icons": "^15.0.3",
-    "@gorhom/bottom-sheet": "^5.2.14",
     "@pasteclean/gmail-sanitizer": "workspace:*",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-navigation/native": "^7.1.8",

@@ -1,12 +1,10 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { View } from 'react-native';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -42,19 +40,10 @@ export default function RootLayout() {
     return null;
   }
 
-  // GestureHandlerRootView MUST be at the very top — react-native-gesture-
-  // handler attaches its native gesture recognizers to this view's UIView,
-  // and any sheet/swipe using it has to be a descendant. BottomSheetModal-
-  // Provider is what allows BottomSheetModal instances anywhere in the tree
-  // to portal-render up to this provider.
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <BottomSheetModalProvider>
-          <RootLayoutNav />
-        </BottomSheetModalProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <RootLayoutNav />
+    </SafeAreaProvider>
   );
 }
 
@@ -102,6 +91,21 @@ function RootContent() {
           presentation: 'transparentModal',
           headerShown: false,
           animation: 'none',
+        }}
+      />
+      {/* "How It Works" — native iOS form sheet via
+          UISheetPresentationController (iOS 15+). UIKit owns the drag,
+          snap, dismiss, and over-drag behaviors; no JS in the gesture
+          path. Replaces the @gorhom/bottom-sheet implementation that
+          crashed on scroll-inside-sheet under reanimated 4. */}
+      <Stack.Screen
+        name="how-it-works"
+        options={{
+          presentation: 'formSheet',
+          sheetGrabberVisible: true,
+          sheetCornerRadius: 18,
+          sheetAllowedDetents: ['large'],
+          headerShown: false,
         }}
       />
     </Stack>

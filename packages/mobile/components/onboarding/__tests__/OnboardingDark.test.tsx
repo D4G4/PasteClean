@@ -20,7 +20,7 @@ import ProblemScreen from '../screens/ProblemScreen';
 import FixedScreen from '../screens/FixedScreen';
 import FlowScreen from '../screens/FlowScreen';
 import ThemeScreen from '../screens/ThemeScreen';
-import PipelineSheet from '../PipelineSheet';
+import HowItWorksContent from '@/components/HowItWorksContent';
 import OnboardingFlow from '../OnboardingFlow';
 import { snapshotOf } from '../test-utils';
 
@@ -45,10 +45,8 @@ describe('Onboarding — dark mode', () => {
     ).toMatchSnapshot();
   });
 
-  it('PipelineSheet — open', () => {
-    expect(
-      snapshotOf(<PipelineSheet open onClose={() => {}} />),
-    ).toMatchSnapshot();
+  it('HowItWorksContent', () => {
+    expect(snapshotOf(<HowItWorksContent />)).toMatchSnapshot();
   });
 
   it('OnboardingFlow — Coral accent', () => {

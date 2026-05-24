@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -7,12 +7,12 @@ import {
   TouchableOpacity,
   Linking,
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useColorScheme } from '@/components/useColorScheme';
 import { getColors } from '@/constants/Colors';
 import { useTheme } from '@/contexts/ThemeContext';
 import AccentPicker from '@/components/AccentPicker';
-import PipelineSheet from '@/components/onboarding/PipelineSheet';
 
 // ---------------------------------------------------------------------------
 // Settings row
@@ -71,7 +71,7 @@ export default function SettingsScreen() {
   const dark = colorScheme === 'dark';
   const colors = getColors(dark);
   const { accent, setAccent } = useTheme();
-  const [pipelineOpen, setPipelineOpen] = useState(false);
+  const router = useRouter();
 
   return (
     <View style={[styles.container, { backgroundColor: dark ? '#000' : '#f2f2f7' }]}>
@@ -94,7 +94,7 @@ export default function SettingsScreen() {
           <SettingsRow
             title="How It Works"
             showChevron
-            onPress={() => setPipelineOpen(true)}
+            onPress={() => router.push('/how-it-works')}
             testID="how-it-works-row"
             fg={colors.fg}
             fgMuted={colors.fgMuted}
@@ -128,8 +128,6 @@ export default function SettingsScreen() {
           white-on-white.
         </Text>
       </ScrollView>
-
-      <PipelineSheet open={pipelineOpen} onClose={() => setPipelineOpen(false)} />
     </View>
   );
 }

@@ -1,9 +1,13 @@
-# PipelineSheet — opens via "How It Works" row in Settings, closes via the
-# X button. This flow exists because v1.1.3 shipped a broken sheet that
-# Jest + tsc both signed off on (Jest mocks @gorhom/bottom-sheet entirely,
-# so the actual sheet rendering is untested by unit tests). The Maestro
-# flow exercises the real binary and is the gate that should have been in
-# place before v1.1.3 went out.
+# "How It Works" sheet — opens via Settings, renders as a native iOS
+# formSheet (UISheetPresentationController), dismisses via close button
+# OR by swiping down. This flow exists because v1.1.6 shipped a sheet
+# that crashed on scroll-inside (gorhom + reanimated worklet) and the
+# previous version of this flow didn't exercise the scroll gesture.
+#
+# Coverage that was MISSING before this rewrite:
+#   - scroll inside the sheet body (the gesture that crashed)
+#   - swipe down to dismiss (the native iOS dismissal)
+# Both are now asserted below.
 appId: com.pasteclean.app
 tags:
   - smoke
@@ -11,8 +15,7 @@ tags:
 ---
 - launchApp
 
-# If we land on onboarding (first launch / state was cleared upstream),
-# walk through it. Otherwise we're already on the editor.
+# If we land on onboarding, walk through.
 - runFlow:
     when:
       visible:
@@ -24,41 +27,57 @@ tags:
     id: "settings-button"
 - assertVisible: "Settings"
 
-# ---- Open the sheet ----
+# ---- Open the sheet (formSheet route navigation) ----
 - tapOn:
     id: "how-it-works-row"
 
-# Sheet has an open animation (~300ms in gorhom defaults). Give it room
-# to finish before asserting — otherwise we race the animation and may
-# read the accessibility tree before the sheet content has registered.
+# The formSheet animation takes ~300ms on iOS. Wait until the title
+# inside the sheet content is reachable.
+- extendedWaitUntil:
+    visible: "How PasteClean works"
+    timeout: 3000
+
+# Step body should render in the formSheet's ScrollView.
+- assertVisible: "Inlines all CSS"
+
+- takeScreenshot: how-it-works-open
+
+# ---- Gesture coverage 1: scroll inside the sheet body ----
+# This is the gesture that crashed the gorhom implementation
+# (reanimated worklet throwing during scroll). With the native
+# formSheet, scrolling inside the ScrollView is pure UIKit; no JS
+# in the gesture path.
+- swipe:
+    from:
+      id: "how-it-works-scroll"
+    direction: UP
+    duration: 400
+
+- waitForAnimationToEnd:
+    timeout: 1000
+
+# After scrolling, the last step should be reachable.
+- assertVisible: "Cleans up"
+
+# ---- Gesture coverage 2: swipe down to dismiss ----
+# Native iOS formSheet dismisses via drag on the Sheet Grabber. UIKit
+# only honors the dismiss gesture on the grabber + the few px of inset
+# above the sheet's content; swiping anywhere lower scrolls the inner
+# ScrollView instead. Use the Sheet Grabber as the swipe origin.
+- swipe:
+    from:
+      text: "Sheet Grabber"
+    direction: DOWN
+    duration: 600
+
 - waitForAnimationToEnd:
     timeout: 1500
 
-# gorhom exposes the sheet as a single accessibility group rather than
-# surfacing each child text node, so we assert on its accessibility
-# labels — "Bottom Sheet" and "Bottom sheet handle" — to prove the sheet
-# actually opened. Together with the testIDs we add to the title/X
-# button below, this catches the v1.1.3 "modal didn't render" bug AND
-# any layout regression that hides the content.
-- assertVisible: "Bottom Sheet"
-- assertVisible: "Bottom sheet handle"
+# Sheet should be dismissed — Settings is visible again, sheet
+# content is not.
+- assertVisible: "Settings"
+- assertNotVisible: "How PasteClean works"
 
-# The close button is the only child we expose by testID. It's enough to
-# prove the header rendered (and lets the next step tap it).
-- assertVisible:
-    id: "pipeline-sheet-close"
-
-- takeScreenshot: pipeline-sheet-open
-
-# ---- Close via the X button ----
-- tapOn:
-    id: "pipeline-sheet-close"
-
-# Close animation (~220ms in gorhom defaults).
-- waitForAnimationToEnd:
-    timeout: 1500
-
-# After close, the sheet's accessibility labels should be gone. The
-# handle and the X button both disappear from the tree.
-- assertNotVisible:
-    id: "pipeline-sheet-close"
+# (X button removed — iOS sheets dismiss by drag, same as Apple Mail
+# compose / Reminders. Swipe-down on the grabber is the only dismiss
+# path, asserted above.)
