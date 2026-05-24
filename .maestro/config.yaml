@@ -9,3 +9,4 @@ executionOrder:
     - 05_copy_to_gmail.yaml
     - 06_toolbar_visibility.yaml
     - 07_pipeline_sheet.yaml
+    - 08_clipboard_format.yaml

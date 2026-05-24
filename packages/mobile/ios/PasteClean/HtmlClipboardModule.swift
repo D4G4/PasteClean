@@ -50,4 +50,20 @@ class HtmlClipboardBridge: NSObject {
     UIPasteboard.general.setItems([items])
     resolve(nil)
   }
+
+  /// Returns the type identifiers currently on UIPasteboard as a JSON-
+  /// encoded array of strings. Used by the Maestro clipboard-format flow
+  /// to assert `com.apple.webarchive` is present after a Copy — the
+  /// signal that distinguishes the working binary from a v1.1.0-class
+  /// regression where the native module was missing from the build.
+  @objc func getAvailableTypes(_ resolve: @escaping RCTPromiseResolveBlock,
+                                rejecter reject: @escaping RCTPromiseRejectBlock) {
+    let types = UIPasteboard.general.types
+    if let data = try? JSONSerialization.data(withJSONObject: types, options: []),
+       let json = String(data: data, encoding: .utf8) {
+      resolve(json)
+    } else {
+      reject("ERR", "Failed to serialize pasteboard types", nil)
+    }
+  }
 }

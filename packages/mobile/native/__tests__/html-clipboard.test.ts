@@ -88,3 +88,65 @@ describe('copyHtmlToClipboard', () => {
     expect(mockSetStringAsync).toHaveBeenCalled();
   });
 });
+
+describe('getAvailableClipboardTypes', () => {
+  it('iOS + native module → returns parsed type identifiers', async () => {
+    Object.defineProperty(Platform, 'OS', { value: 'ios', configurable: true });
+    // @ts-expect-error
+    NativeModules.HtmlClipboard = {
+      getAvailableTypes: () =>
+        Promise.resolve(
+          JSON.stringify([
+            'com.apple.webarchive',
+            'public.html',
+            'public.utf8-plain-text',
+          ]),
+        ),
+    };
+
+    const { getAvailableClipboardTypes } = await importFresh();
+    const types = await getAvailableClipboardTypes();
+    expect(types).toEqual([
+      'com.apple.webarchive',
+      'public.html',
+      'public.utf8-plain-text',
+    ]);
+  });
+
+  it('iOS without native module → returns null (regression marker)', async () => {
+    Object.defineProperty(Platform, 'OS', { value: 'ios', configurable: true });
+    const { getAvailableClipboardTypes } = await importFresh();
+    expect(await getAvailableClipboardTypes()).toBeNull();
+  });
+
+  it('android → returns null (no UIPasteboard equivalent)', async () => {
+    Object.defineProperty(Platform, 'OS', {
+      value: 'android',
+      configurable: true,
+    });
+    const { getAvailableClipboardTypes } = await importFresh();
+    expect(await getAvailableClipboardTypes()).toBeNull();
+  });
+
+  it('malformed native response (non-JSON) → returns null', async () => {
+    Object.defineProperty(Platform, 'OS', { value: 'ios', configurable: true });
+    // @ts-expect-error
+    NativeModules.HtmlClipboard = {
+      getAvailableTypes: () => Promise.resolve('not json {'),
+    };
+
+    const { getAvailableClipboardTypes } = await importFresh();
+    expect(await getAvailableClipboardTypes()).toBeNull();
+  });
+
+  it('native response that is JSON but not an array → returns null', async () => {
+    Object.defineProperty(Platform, 'OS', { value: 'ios', configurable: true });
+    // @ts-expect-error
+    NativeModules.HtmlClipboard = {
+      getAvailableTypes: () => Promise.resolve('{"oops": true}'),
+    };
+
+    const { getAvailableClipboardTypes } = await importFresh();
+    expect(await getAvailableClipboardTypes()).toBeNull();
+  });
+});

@@ -1,0 +1,71 @@
+# Clipboard format regression test — exercises the real binary's
+# native HtmlClipboard module and asserts that copying produces a
+# pasteboard containing `com.apple.webarchive`. That marker is what
+# makes Gmail's WKWebView preserve formatting on paste; its absence
+# was the v1.1.0 regression (EAS prebuild stripped the Swift module
+# from the binary, JS fell back to expo-clipboard's HTML mode which
+# round-trips through NSAttributedString and loses inline styles).
+#
+# How this flow catches it:
+#   - We can't ask Maestro to read UIPasteboard directly — Maestro
+#     only sees the accessibility tree of our app.
+#   - So we ship a gated debug route /debug/clipboard that calls
+#     HtmlClipboard.getAvailableTypes() and renders the result as a
+#     joined string the accessibility tree exposes.
+#   - This flow types content, taps Copy, opens the debug route via
+#     deep link, and asserts the magic substring is in the rendered
+#     types list.
+#
+# If the native module is missing (the v1.1.0 state):
+#   - getAvailableClipboardTypes() returns null
+#   - The debug screen renders "null — native module missing..."
+#   - The assertVisible for com.apple.webarchive fails — exactly the
+#     regression signal we want.
+appId: com.pasteclean.app
+tags:
+  - smoke
+  - clipboard
+  - regression
+---
+- launchApp:
+    clearState: true
+    clearKeychain: true
+
+- runFlow:
+    when:
+      visible:
+        id: "onboarding-page-0"
+    file: 01_onboarding_to_editor.yaml
+
+- tapOn:
+    id: "editor-body"
+- waitForAnimationToEnd:
+    timeout: 2000
+
+- inputText: "Hello team — formatted content for the clipboard."
+
+- tapOn:
+    id: "copy-button"
+
+# Wait for the copy chain (getHTML → sanitize → native clipboard write
+# → setCopied) to settle before reading the pasteboard.
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# Navigate to the debug route. Expo Router supports navigation via
+# the deep-link scheme; the editor screen is at the root and we can
+# launch /debug/clipboard via openLink.
+- openLink: "pasteclean://debug/clipboard"
+
+- waitForAnimationToEnd:
+    timeout: 1500
+
+# The proof. Native module present + writing webarchive → this string
+# is in the rendered types list.
+- assertVisible: "com.apple.webarchive"
+
+# Belt and suspenders — also verify the public.html type is there
+# (the other entry the Swift module writes).
+- assertVisible: "public.html"
+
+- takeScreenshot: clipboard-format-verified

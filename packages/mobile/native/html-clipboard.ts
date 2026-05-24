@@ -29,3 +29,28 @@ export async function copyHtmlToClipboard(
     inputFormat: Clipboard.StringFormat.HTML,
   });
 }
+
+/**
+ * Returns the type identifiers currently on UIPasteboard (iOS only). Used
+ * by the Maestro clipboard-format flow to verify that
+ * `com.apple.webarchive` lands on the pasteboard after a Copy — the
+ * marker that proves the native module survived prebuild AND that
+ * Gmail's WKWebView will preserve formatting on paste.
+ *
+ * Returns null on platforms / builds where the native module isn't wired
+ * (Android, web, or the broken v1.1.0-class state). Callers that need
+ * to assert the type list should treat null as "we have nothing to
+ * inspect" — that itself is the regression signal.
+ */
+export async function getAvailableClipboardTypes(): Promise<string[] | null> {
+  if (Platform.OS !== 'ios' || !HtmlClipboard?.getAvailableTypes) {
+    return null;
+  }
+  const json: string = await HtmlClipboard.getAvailableTypes();
+  try {
+    const parsed = JSON.parse(json);
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
