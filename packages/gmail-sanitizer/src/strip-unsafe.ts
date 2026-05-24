@@ -132,33 +132,23 @@ export function filterStyleString(style: string): string {
 }
 
 /**
- * Convert heading tags (<h1>–<h6>) to <p> with explicit font-size and font-weight.
- * Gmail supports <h1>–<h6> but they produce browser-default sizing which doesn't
- * match what Gmail's own compose toolbar generates. Converting to <p> with inline
- * styles produces output consistent with Gmail's native font-size picker.
+ * Convert heading tags (<h1>–<h6>) to <p> with font-weight: bold.
+ *
+ * Size note: we tried writing an inline `font-size` on the converted <p>
+ * (which webarchive paste does carry into WKWebView in general). Verified
+ * on a real device against Gmail compose: Gmail's compose-area sanitizer
+ * strips inline `font-size` from <p> regardless of paste source. Bold
+ * weight, color, and italic survive; size does not. So we drop the size
+ * and keep bold as the only heading marker that actually lands.
  */
-const HEADING_SIZES: Record<string, string> = {
-  h1: '22px',
-  h2: '18px',
-  h3: '16px',
-  h4: '14px',
-  h5: '13px',
-  h6: '12px',
-};
+const HEADING_TAGS = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] as const;
 
 export function convertHeadingsToParagraphs($: CheerioAPI): void {
-  // Convert headings to <p> with explicit font-size + bold. Earlier
-  // versions (v1.0.0 era) dropped font-size on the assumption that
-  // Gmail's paste strips it — that was true for the expo-clipboard
-  // HTML mode, which round-tripped through NSAttributedString and
-  // discarded inline sizes. Since v1.1.0 we write a
-  // `com.apple.webarchive` entry to UIPasteboard, and Gmail's WKWebView
-  // honors inline font-size from webarchive paste. Restore the sizes.
-  for (const [tag, size] of Object.entries(HEADING_SIZES)) {
+  for (const tag of HEADING_TAGS) {
     $(tag).each(function () {
       const el = $(this);
       const existingStyle = el.attr('style') || '';
-      const newStyle = `font-size: ${size}; font-weight: bold${existingStyle ? '; ' + existingStyle : ''}`;
+      const newStyle = `font-weight: bold${existingStyle ? '; ' + existingStyle : ''}`;
       el.attr('style', newStyle);
       (this as any).tagName = 'p';
     });

@@ -283,32 +283,33 @@ describe('sanitizeForGmail', () => {
   });
 
   describe('heading to paragraph conversion', () => {
-    it('converts <h1> to <p> with font-size: 22px and font-weight: bold', () => {
+    // Gmail's compose-area sanitizer strips inline font-size from <p>
+    // regardless of paste source (verified on-device). Bold survives,
+    // size does not — so we don't write a size in the first place.
+    it('converts <h1> to <p> with bold (no font-size — Gmail strips it)', () => {
       const result = sanitizeForGmail('<h1>Big Title</h1>');
       expect(result).not.toContain('<h1');
       expect(result).toContain('<p');
-      expect(result).toContain('font-size: 22px');
       expect(result).toContain('font-weight: bold');
+      expect(result).not.toContain('font-size');
       expect(result).toContain('Big Title');
     });
 
-    it('converts <h2> to <p> with font-size: 18px and bold', () => {
+    it('converts <h2> to <p> with bold', () => {
       const result = sanitizeForGmail('<h2>Subtitle</h2>');
       expect(result).not.toContain('<h2');
-      expect(result).toContain('font-size: 18px');
       expect(result).toContain('font-weight: bold');
+      expect(result).not.toContain('font-size');
     });
 
-    it('converts <h3> to <p> with font-size: 16px and bold', () => {
+    it('converts <h3> to <p> with bold', () => {
       const result = sanitizeForGmail('<h3>Section</h3>');
       expect(result).not.toContain('<h3');
-      expect(result).toContain('font-size: 16px');
       expect(result).toContain('font-weight: bold');
     });
 
     it('preserves existing inline styles on headings', () => {
       const result = sanitizeForGmail('<h1 style="color: red;">Styled Title</h1>');
-      expect(result).toContain('font-size: 22px');
       expect(result).toContain('font-weight: bold');
       expect(result).toContain('color: red');
     });
