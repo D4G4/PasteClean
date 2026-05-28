@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://apps.apple.com/app/pasteclean/id000000000">App Store</a> &bull;
+  <a href="https://apps.apple.com/us/app/pasteclean/id6769190276">App Store</a> &bull;
   <a href="PRIVACY_POLICY.md">Privacy Policy</a>
 </p>
 
